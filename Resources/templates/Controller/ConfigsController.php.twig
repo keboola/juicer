@@ -1,0 +1,10 @@
+<?php
+
+namespace Keboola\{{ classPrefix }}ExtractorBundle\Controller;
+
+use Keboola\ExtractorBundle\Controller\ConfigsController as Controller;
+
+class ConfigsController extends Controller {
+	protected $appName = "{{ appName }}";
+	protected $columns = {{ tableColumns|raw }};
+}

@@ -1,0 +1,18 @@
+parameters:
+    required_attributes:
+    # TODO use in ConfigsController
+    job_config_fields:
+
+services:
+    {{ appName }}.job_executor:
+        class: Keboola\{{ classPrefix }}ExtractorBundle\Job\Executor
+        arguments: [@keboola_extractor.configuration, @{{ appName }}.extractor, @logger, @syrup.temp, @syrup.encryptor]
+
+    {{ appName }}.extractor:
+        class: Keboola\{{ classPrefix }}ExtractorBundle\{{ classPrefix }}Extractor
+        arguments: []
+
+    # FIXME - should stay within EX-bundle!
+    keboola_extractor.configuration:
+        class: Keboola\ExtractorBundle\Config\Configuration
+        arguments: [%app_name%, @syrup.temp, %required_attributes%]

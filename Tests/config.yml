@@ -1,0 +1,26 @@
+config:
+    username: "user"
+    password: "pass"
+    jobs:
+        -
+            endpoint: "list"
+            children:
+                -
+                    endpoint: "detail?id={id}"
+                    children:
+                        -
+                            #{id,2} says 2 levels up. 1st level is the direct parent
+                            endpoint: "subdetail?id={id,2}&subId={id}"
+                        -
+                            endpoint: "anotherdetail?id={id,2}&subId={id}"
+
+
+
+###
+#item:
+    #id: 1
+    #name: "whatevs"
+    #subitems:
+        #-
+            #id: "1.1"
+            #name: "idk"

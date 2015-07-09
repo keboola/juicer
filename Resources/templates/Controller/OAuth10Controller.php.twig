@@ -1,0 +1,39 @@
+<?php
+
+namespace Keboola\{{ classPrefix }}ExtractorBundle\Controller;
+
+use Keboola\ExtractorBundle\Controller\OAuth10Controller;
+
+class OAuthController extends OAuth10Controller
+{
+	/**
+	 * @var string
+	 */
+	protected $appName = "{{ appName }}";
+
+	/**
+	 * See (A) at @link http://oauth.net/core/diagram.png
+	 * ie: https://api.example.com/oauth/request_token
+	 * @var string
+	 */
+	protected $requestTokenUrl = "";
+
+	/**
+	 * See (E) at @link http://oauth.net/core/diagram.png
+	 * ie: https://api.example.com/oauth/access_token
+	 * @var string
+	 */
+	protected $accessTokenUrl = "";
+
+	/**
+	 * Create OAuth /authenticate URL
+	 * See (C) at @link http://oauth.net/core/diagram.png
+	 * @param string $redirUrl Redirect URL
+	 * @return string URL
+	 * ie: return "https://api.example.com/oauth/authenticate?oauth_token={$oauthToken}"
+	 */
+	protected function getAuthenticateUrl($oauthToken)
+	{
+		// return "https://api.example.com/oauth/authenticate?oauth_token={$oauthToken}"
+	}
+}

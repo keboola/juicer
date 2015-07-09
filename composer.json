@@ -1,0 +1,27 @@
+{
+    "name": "keboola/extractor-bundle",
+    "description": "Keboola Extractor Development Bundle",
+    "keywords": ["keboola", "syrup", "extractor", "development"],
+    "authors": [
+        {
+            "name": "Ondrej Vana",
+            "email": "ondrej.vana@keboola.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "keboola/json-parser": "~0.2.0",
+        "keboola/php-temp": "~0.1.0",
+        "keboola/php-utils": "~0.1.8",
+        "keboola/php-csvtable": "~0.1.3",
+        "keboola/filter": "~0.1.0",
+        "symfony/yaml": "~2.6.3",
+        "guzzlehttp/retry-subscriber": "~0.1.2"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-4": { "Keboola\\ExtractorBundle\\": "" }
+    }
+}
