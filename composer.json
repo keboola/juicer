@@ -1,5 +1,5 @@
 {
-    "name": "keboola/extractor-bundle",
+    "name": "keboola/juicer",
     "description": "Keboola Extractor Development Bundle",
     "keywords": ["keboola", "syrup", "extractor", "development"],
     "authors": [
@@ -22,6 +22,6 @@
 		"phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-4": { "Keboola\\ExtractorBundle\\": "" }
+        "psr-4": { "Keboola\\Juicer\\": "" }
     }
 }
