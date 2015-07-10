@@ -10,7 +10,7 @@ class ExtractorTestCase extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->extractor = new \Keboola\ExtractorBundle\Tests\Extractor\MockExtractor();
+		$this->extractor = new \Keboola\Juicer\Tests\Extractor\MockExtractor();
 	}
 
 	protected static function callMethod($obj, $name, array $args)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Exception;
+namespace Keboola\Juicer\Exception;
 
 /**
  *

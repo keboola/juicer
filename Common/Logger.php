@@ -1,8 +1,8 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Common;
+namespace Keboola\Juicer\Common;
 
-use	Keboola\ExtractorBundle\Exception\ApplicationException as Exception;
+use	Keboola\Juicer\Exception\ApplicationException as Exception;
 use	Monolog\Logger as Monolog;
 
 /**

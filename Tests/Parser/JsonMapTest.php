@@ -1,6 +1,6 @@
 <?php
 
-use	Keboola\ExtractorBundle\Parser\JsonMap;
+use	Keboola\Juicer\Parser\JsonMap;
 use	Keboola\Csv\CsvFile;
 
 class JsonMapTest extends ExtractorTestCase {

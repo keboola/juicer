@@ -1,8 +1,8 @@
 <?php
-namespace Keboola\ExtractorBundle\Extractor;
+namespace Keboola\Juicer\Extractor;
 
 use Keboola\CsvTable\Table;
-use	Keboola\ExtractorBundle\Config\Config;
+use	Keboola\Juicer\Config\Config;
 
 interface ExtractorInterface
 {
@@ -13,7 +13,7 @@ interface ExtractorInterface
 	 *	[
 	 *		"attributes": [array of attributes of the config],
 	 *		"data": [raw data of the configuration (DEPRECATED)],
-	 *		"jobs": \Keboola\ExtractorBundle\Common\JobConfig[]
+	 *		"jobs": \Keboola\Juicer\Common\JobConfig[]
 	 *	]
 	 * @param array $params parameters of the call
 	 * 	- should contain "config" string including the name of the config called (DEPRECATED?)

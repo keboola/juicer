@@ -1,9 +1,9 @@
 <?php
 
-use Keboola\ExtractorBundle\Dummy\DummyExtractor;
+use Keboola\Juicer\Dummy\DummyExtractor;
 
-use Keboola\ExtractorBundle\Syrup\Job\Executor,
-	Keboola\ExtractorBundle\Config\Configuration;
+use Keboola\Juicer\Syrup\Job\Executor,
+	Keboola\Juicer\Config\Configuration;
 use	Keboola\Temp\Temp;
 
 require_once(dirname(__FILE__) . "/vendor/autoload.php");

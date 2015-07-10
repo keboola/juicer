@@ -1,11 +1,12 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor;
+namespace Keboola\Juicer\Extractor;
 
-use	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Exception\UserException;
 use	Keboola\Temp\Temp;
 use	Keboola\CsvTable\Table;
-use	Keboola\ExtractorBundle\Config\Config;
+use	Keboola\Juicer\Config\Config;
+use	Monolog\Logger;
 
 /**
  * Base extractor class
@@ -102,5 +103,10 @@ abstract class Extractor implements ExtractorInterface {
 	public function getMetadata()
 	{
 		return $this->metadata;
+	}
+
+	protected function getLogger()
+	{
+		return new Logger($this->getFullName());
 	}
 }

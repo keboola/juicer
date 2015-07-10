@@ -1,10 +1,10 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor\Jobs;
 
 use	Keboola\Json\Parser;
 use	Keboola\Utils\Utils;
-use	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Common\Logger;
 
 /**
  * {@inheritdoc}

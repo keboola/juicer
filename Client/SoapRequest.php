@@ -1,8 +1,8 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Client;
+namespace Keboola\Juicer\Client;
 
-use	Keboola\ExtractorBundle\Exception\ApplicationException as Exception;
+use	Keboola\Juicer\Exception\ApplicationException as Exception;
 /**
  *
  */

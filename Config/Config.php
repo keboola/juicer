@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Config;
+namespace Keboola\Juicer\Config;
 
 /**
  * Carries the extractor configuration

@@ -1,5 +1,5 @@
 <?php
-namespace Keboola\ExtractorBundle\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor\Jobs;
 
 /**
  * Interface for use of recursive API calls.

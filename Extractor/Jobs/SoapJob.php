@@ -1,10 +1,10 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor\Jobs;
 
-use	Keboola\ExtractorBundle\Exception\UserException;
-use	Keboola\ExtractorBundle\Extractor\Job,
-	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Exception\UserException;
+use	Keboola\Juicer\Extractor\Job,
+	Keboola\Juicer\Common\Logger;
 /**
  * {@inheritdoc}
  * This class handles download from SOAP APIs
@@ -21,7 +21,7 @@ abstract class SoapJob extends Job
 	 * Use $this->updateRequest($request) to update the request (ie auth)
 	 * between calls, exp. fallback retries etc.
 	 *
-	 * @param \Keboola\ExtractorBundle\Client\SoapRequest $request
+	 * @param \Keboola\Juicer\Client\SoapRequest $request
 	 * @return object response
 	 */
 	protected function download($request) {

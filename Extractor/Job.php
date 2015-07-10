@@ -1,12 +1,12 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor;
+namespace Keboola\Juicer\Extractor;
 
 use	GuzzleHttp\Client as GuzzleClient;
 use	Keboola\Utils\Utils;
-use	Keboola\ExtractorBundle\Common\Logger,
-	Keboola\ExtractorBundle\Config\JobConfig;
-use	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Common\Logger,
+	Keboola\Juicer\Config\JobConfig;
+use	Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */
@@ -71,7 +71,7 @@ abstract class Job
 	 *  Download an URL from REST or SOAP API and return its body as an object.
 	 * should handle the API call, backoff and response decoding
 	 *
-	 * @param \GuzzleHttp\Message\Request|\Keboola\ExtractorBundle\Client\SoapRequest|... $request
+	 * @param \GuzzleHttp\Message\Request|\Keboola\Juicer\Client\SoapRequest|... $request
 	 * @return \StdClass $response
 	 */
 	abstract protected function download($request);
@@ -90,7 +90,7 @@ abstract class Job
 	 *
 	 * @param mixed $response
 	 * @param array|null $data
-	 * @return \Keboola\ExtractorBundle\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
+	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
 	 */
 	protected function nextPage($response, $data)
 	{
@@ -102,7 +102,7 @@ abstract class Job
 	 * Return a download request
 	 *
 	 * @param $response
-	 * @return \Keboola\ExtractorBundle\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
+	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
 	 * @todo abstract?
 	 */
 	protected function firstPage()

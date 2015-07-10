@@ -1,8 +1,8 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Tests\Extractor\Jobs;
+namespace Keboola\Juicer\Tests\Extractor\Jobs;
 
-use	Keboola\ExtractorBundle\Extractor\Jobs\JsonJob;
+use	Keboola\Juicer\Extractor\Jobs\JsonJob;
 
 /**
  * Because abstract is right

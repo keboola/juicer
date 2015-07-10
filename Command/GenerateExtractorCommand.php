@@ -4,7 +4,7 @@
  * Date: 17/09/14
  */
 
-namespace Keboola\ExtractorBundle\Command;
+namespace Keboola\Juicer\Command;
 
 
 use	Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -73,7 +73,7 @@ class GenerateExtractorCommand extends ContainerAwareCommand
 			$defaultClassName = Utils::camelize(substr($appName, 3), true);
 			$className = $dialog->ask(
 				$output,
-				"Bundle/Class name prefix (eg. {$defaultClassName} for Keboola/{$defaultClassName}ExtractorBundle/{$defaultClassName}Extractor) [<options=bold>{$defaultClassName}</options=bold>]: ",
+				"Bundle/Class name prefix (eg. {$defaultClassName} for Keboola/{$defaultClassName}Juicer/{$defaultClassName}Extractor) [<options=bold>{$defaultClassName}</options=bold>]: ",
 				$defaultClassName
 			);
 		}

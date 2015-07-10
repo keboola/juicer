@@ -1,10 +1,10 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Config;
+namespace Keboola\Juicer\Config;
 
 use	Keboola\Utils\Utils,
 	Keboola\Utils\Exception\JsonDecodeException;
-use	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Exception\UserException;
 
 /**
  * Carries a job configuration

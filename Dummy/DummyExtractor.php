@@ -1,11 +1,11 @@
 <?php
-namespace Keboola\ExtractorBundle\Dummy;
+namespace Keboola\Juicer\Dummy;
 
-use Keboola\ExtractorBundle\Extractor\Extractor;
-use	Keboola\ExtractorBundle\Config\Config;
+use Keboola\Juicer\Extractor\Extractors\JsonExtractor;
+use	Keboola\Juicer\Config\Config;
 use	GuzzleHttp\Client;
 
-class DummyExtractor extends Extractor
+class DummyExtractor extends JsonExtractor
 {
 	/**
 	 * Setup the extractor and loop through each job from $config["jobs"] and run the job
@@ -16,9 +16,13 @@ class DummyExtractor extends Extractor
 	public function run(Config $config)
 	{
 		$client = new Client();
+		$parser = $this->getParser($config);
 		foreach($config->getJobs() as $job) {
-			var_dump($job);
+			$job = new DummyExtractorJob($job, $client, $parser);
+			$job->run();
 		}
 
+
+		## get out. files and save
 	}
 }

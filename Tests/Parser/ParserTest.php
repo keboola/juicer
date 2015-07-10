@@ -1,6 +1,6 @@
 <?php
 
-use	Keboola\ExtractorBundle\Parser\Parser;
+use	Keboola\Juicer\Parser\Parser;
 use	Keboola\Csv\CsvFile;
 use	Keboola\Temp\Temp;
 

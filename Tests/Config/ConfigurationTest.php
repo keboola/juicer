@@ -1,6 +1,6 @@
 <?php
-use	Keboola\ExtractorBundle\Config\Configuration,
-	Keboola\ExtractorBundle\Config\Config;
+use	Keboola\Juicer\Config\Configuration,
+	Keboola\Juicer\Config\Config;
 use Keboola\Temp\Temp;
 
 class ConfigurationTest extends ExtractorTestCase
@@ -14,14 +14,14 @@ class ConfigurationTest extends ExtractorTestCase
 	{
 		// TODO create and fill the table first, then compare actual contents!
 		$config = $this->configuration->getConfig(['config' => "test"], "sys.c-extractor-bundle-test");
-		$this->assertContainsOnlyInstancesOf("\Keboola\ExtractorBundle\Config\JobConfig", $config->getJobs());
+		$this->assertContainsOnlyInstancesOf("\Keboola\Juicer\Config\JobConfig", $config->getJobs());
 		$this->assertEquals(["apiKey" => "value"], $config->getAttributes());
 	}
 
 	public function testGetConfigByRowId()
 	{
 		$config = $this->configuration->getConfig(['config' => "test", 'rowId' => 2], "sys.c-extractor-bundle-test");
-		$this->assertContainsOnlyInstancesOf("\Keboola\ExtractorBundle\Config\JobConfig", $config->getJobs());
+		$this->assertContainsOnlyInstancesOf("\Keboola\Juicer\Config\JobConfig", $config->getJobs());
 		$this->assertCount(1, $config->getJobs());
 		$this->assertEquals(2, $config->getJobs()[2]->getJobId());
 	}
@@ -45,7 +45,7 @@ class ConfigurationTest extends ExtractorTestCase
 	}
 
 	/**
-	 * @expectedException \Keboola\ExtractorBundle\Exception\UserException
+	 * @expectedException \Keboola\Juicer\Exception\UserException
 	 */
 	public function testCheckConfigFail()
 	{

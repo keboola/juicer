@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Parser;
+namespace Keboola\Juicer\Parser;
 
 use	Keboola\Temp\Temp;
 

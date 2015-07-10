@@ -1,12 +1,12 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Config;
+namespace Keboola\Juicer\Config;
 
 use Symfony\Component\Yaml\Yaml;
 
 
-use	Keboola\ExtractorBundle\Exception\ApplicationException,
-	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Exception\ApplicationException,
+	Keboola\Juicer\Exception\UserException;
 use	Keboola\Temp\Temp;
 use	Keboola\CsvTable\Table;
 

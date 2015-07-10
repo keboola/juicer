@@ -1,12 +1,12 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor\Jobs;
 
-use	Keboola\ExtractorBundle\Exception\ApplicationException,
-	Keboola\ExtractorBundle\Exception\UserException;
-use	Keboola\ExtractorBundle\Extractor\Job,
-	Keboola\ExtractorBundle\Config\JobConfig,
-	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Exception\ApplicationException,
+	Keboola\Juicer\Exception\UserException;
+use	Keboola\Juicer\Extractor\Job,
+	Keboola\Juicer\Config\JobConfig,
+	Keboola\Juicer\Common\Logger;
 use	Keboola\Utils\Utils;
 use	GuzzleHttp\Client as GuzzleClient,
 	GuzzleHttp\Exception\BadResponseException,

@@ -1,11 +1,11 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Parser;
+namespace Keboola\Juicer\Parser;
 
 use	Keboola\Utils\Utils;
 use	Keboola\Csv\CsvFile;
-use	Keboola\ExtractorBundle\Parser\Parser,
-	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Parser\Parser,
+	Keboola\Juicer\Common\Logger;
 
 /**
  * Parses Json into a single CSV based on a predefined mapping.

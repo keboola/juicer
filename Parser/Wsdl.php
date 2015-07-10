@@ -1,11 +1,11 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Parser;
+namespace Keboola\Juicer\Parser;
 
-use	Keboola\ExtractorBundle\Exception\ApplicationException as Exception;
+use	Keboola\Juicer\Exception\ApplicationException as Exception;
 use	Keboola\Utils\Utils;
 use	Keboola\CsvTable\Table;
-use	Keboola\ExtractorBundle\Parser\Parser;
+use	Keboola\Juicer\Parser\Parser;
 
 /**
  * Parse XML results from SOAP API to CSV

@@ -1,9 +1,9 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Extractors;
+namespace Keboola\Juicer\Extractor\Extractors;
 
 use	Keboola\Json\Parser as JsonParser;
-use	Keboola\ExtractorBundle\Config\Config;
+use	Keboola\Juicer\Config\Config;
 use	Monolog\Registry as Monolog;
 
 /**
@@ -28,7 +28,7 @@ abstract class JsonExtractor extends RestExtractor
 		}
 
 		$rowsToAnalyze = !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
-		$parser = new JsonParser(Monolog::getInstance('extractor'), $struct, $rowsToAnalyze);
+		$parser = new JsonParser($this->getLogger(), $struct, $rowsToAnalyze);
 		$parser->setTemp($this->getTemp());
 		return $parser;
 	}

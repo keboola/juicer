@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\ExtractorBundle\DependencyInjection;
+namespace Keboola\Juicer\DependencyInjection;
 
 use	Symfony\Component\DependencyInjection\ContainerBuilder;
 use	Symfony\Component\Config\FileLocator;

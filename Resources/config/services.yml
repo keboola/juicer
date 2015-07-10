@@ -1,13 +1,13 @@
 parameters:
-#    keboola_syrup_extractor.example.class: Keboola\ExtractorBundle\Example
+#    keboola_syrup_extractor.example.class: Keboola\Juicer\Example
 #     # Components
 #     components:
 #         ex-bundle:
-#             bundle:  Keboola\ExtractorBundle\KeboolaExtractorBundle
+#             bundle:  Keboola\Juicer\KeboolaJuicer
 
 services:
     # FIXME - doesn't work in a bundle, has to be in the "child" bundle
     keboola_extractor.configuration:
-        class: Keboola\ExtractorBundle\Common\Configuration
+        class: Keboola\Juicer\Common\Configuration
         arguments: [%app_name%, @syrup.encryptor, @syrup.temp]
 

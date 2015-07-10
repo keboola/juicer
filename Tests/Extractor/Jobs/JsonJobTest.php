@@ -1,13 +1,13 @@
 <?php
 
-use	Keboola\ExtractorBundle\Tests\Extractor\Jobs\MockJsonJob,
-	Keboola\ExtractorBundle\Config\JobConfig,
-	Keboola\ExtractorBundle\Common\Logger as KbLog;
+use	Keboola\Juicer\Tests\Extractor\Jobs\MockJsonJob,
+	Keboola\Juicer\Config\JobConfig,
+	Keboola\Juicer\Common\Logger as KbLog;
 
 use	Keboola\Json\Parser;
 use	Keboola\Utils\Utils;
 use	Monolog\Logger;
-use	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Exception\UserException;
 
 use	GuzzleHttp\Client;
 use	GuzzleHttp\Subscriber\Retry\RetrySubscriber,
@@ -73,7 +73,7 @@ class JsonJobTest extends ExtractorTestCase
 	}
 
 	/**
-	 * @expectedException Keboola\ExtractorBundle\Exception\UserException
+	 * @expectedException Keboola\Juicer\Exception\UserException
 	 * @expectedExceptionMessage More than one array found in response! Use "dataField" column to specify a key to the data array.
 	 */
 	public function testParseMultiArrayFailure()

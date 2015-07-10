@@ -1,9 +1,9 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Tests\Extractor;
+namespace Keboola\Juicer\Tests\Extractor;
 
-use	Keboola\ExtractorBundle\Extractor\Extractor,
-	Keboola\ExtractorBundle\Config\Config;
+use	Keboola\Juicer\Extractor\Extractor,
+	Keboola\Juicer\Config\Config;
 
 /**
  * Because abstract is right
