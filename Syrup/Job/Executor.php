@@ -4,11 +4,11 @@
  * Date: 17/09/14
  */
 
-namespace Keboola\ExtractorBundle\Syrup\Job;
+namespace Keboola\Juicer\Syrup\Job;
 
 
-use	Keboola\ExtractorBundle\Exception\UserException,
-	Keboola\ExtractorBundle\Exception\ApplicationException;
+use	Keboola\Juicer\Exception\UserException,
+	Keboola\Juicer\Exception\ApplicationException;
 
 use	Monolog\Logger as Monolog,
 	Monolog\Registry as MonologRegistry;
@@ -16,11 +16,11 @@ use	Monolog\Logger as Monolog,
 use	Keboola\Temp\Temp;
 use	Keboola\CsvTable\Table;
 
-use	Keboola\ExtractorBundle\Config\Configuration,
-	Keboola\ExtractorBundle\Config\Config,
-	Keboola\ExtractorBundle\Extractor\Extractor,
-	Keboola\ExtractorBundle\Common\Logger,
-	Keboola\ExtractorBundle\Syrup\SapiUploader;
+use	Keboola\Juicer\Config\Configuration,
+	Keboola\Juicer\Config\Config,
+	Keboola\Juicer\Extractor\Extractor,
+	Keboola\Juicer\Common\Logger,
+	Keboola\Juicer\Syrup\SapiUploader;
 
 /**
  * Called by Async Syrup with the Job details and initializes the Extractor.

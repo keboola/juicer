@@ -1,13 +1,13 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Extractors;
+namespace Keboola\Juicer\Extractor\Extractors;
 
-use	Keboola\ExtractorBundle\Extractor\Extractor;
+use	Keboola\Juicer\Extractor\Extractor;
 
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber,
 	GuzzleHttp\Event\AbstractTransferEvent;
 
-use	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Common\Logger;
 
 use Keboola\Utils\Utils;
 

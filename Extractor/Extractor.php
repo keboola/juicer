@@ -72,6 +72,7 @@ abstract class Extractor implements ExtractorInterface {
 
 	/**
 	 * @param Temp $temp
+	 * @deprecated
 	 */
 	public function setTemp(Temp $temp)
 	{

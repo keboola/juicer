@@ -1,12 +1,12 @@
 <?php
 
-namespace Keboola\ExtractorBundle\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor\Jobs;
 
-use	Keboola\ExtractorBundle\Config\JobConfig,
-	Keboola\ExtractorBundle\Common\Logger;
+use	Keboola\Juicer\Config\JobConfig,
+	Keboola\Juicer\Common\Logger;
 use	Keboola\Filter\Filter;
 use	Keboola\Utils\Utils;
-use	Keboola\ExtractorBundle\Exception\UserException;
+use	Keboola\Juicer\Exception\UserException;
 /**
  * {@inheritdoc}
  * Adds a capability to process recursive calls based on
