@@ -39,7 +39,7 @@ class Configuration
 	{
 		$configYml = Yaml::parse(file_get_contents($dataDir . "/config.yml"))['config'];
 
-// 		$configName = $params['config']; // FIXME load from env_var (docker)
+// 		$configName = $params['config']; // FIXME load from env_var (docker) N/A https://github.com/keboola/docker-bundle/blob/master/ENVIRONMENT.md
 $configName = "test";
 $params = []; // FIXME
 

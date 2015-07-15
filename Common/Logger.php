@@ -41,7 +41,7 @@ class Logger {
 	public static function log($level, $message, array $context = array()) {
 		if (self::$logger == null) {
 			if (self::$strict) {
-				$e = new Exception(500, "Logger has not been set!");
+				$e = new Exception("Logger has not been set!");
 				$e->setData(array(
 					"level" => $level,
 					"message" => $message,
