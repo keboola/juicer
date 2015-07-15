@@ -16,7 +16,8 @@
         "keboola/php-csvtable": "~0.1.3",
         "keboola/filter": "~0.1.0",
         "symfony/yaml": "~2.6.3",
-        "guzzlehttp/retry-subscriber": "~0.1.2"
+        "guzzlehttp/retry-subscriber": "~0.1.2",
+        "monolog/monolog": "~1.15.0"
     },
     "require-dev": {
 		"phpunit/phpunit": "3.7.*"
