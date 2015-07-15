@@ -9,8 +9,15 @@ use	Monolog\Logger as Monolog;
  * Wrapper for Monolog\Logger
  * @see \Monolog\Logger
  */
-class Logger {
+class Logger
+{
+	/**
+	 * @var Monolog
+	 */
 	private static $logger = null;
+	/**
+	 * @var bool
+	 */
 	private static $strict = true;
 
 	/**
@@ -18,15 +25,25 @@ class Logger {
 	 */
 	private function __construct() {}
 
-	public static function setLogger(Monolog $logger) {
+	public static function setLogger(Monolog $logger)
+	{
 		self::$logger = $logger;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public static function initLogger($name = '')
+	{
+		self::$logger = new Monolog($name, [new StreamHandler('php://stdout')]);
 	}
 
 	/**
 	 * Set whether to fail or ignore the logging when no logger is set.
 	 * @param bool $bool
 	 */
-	public static function setStrict($bool) {
+	public static function setStrict($bool)
+	{
 		self::$strict = (bool) $bool;
 	}
 
@@ -38,7 +55,8 @@ class Logger {
 	 * @param array $context
 	 * @return bool
 	 */
-	public static function log($level, $message, array $context = array()) {
+	public static function log($level, $message, array $context = array())
+	{
 		if (self::$logger == null) {
 			if (self::$strict) {
 				$e = new Exception("Logger has not been set!");
