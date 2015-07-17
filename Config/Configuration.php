@@ -25,19 +25,30 @@ class Configuration
 	 */
 	protected $temp;
 
-	public function __construct($appName, Temp $temp)
+	/**
+	 * @var array
+	 */
+	protected $ymlConfig = [];
+
+	/**
+	 * @var string
+	 */
+	protected $dataDir;
+
+	public function __construct($dataDir, $appName, Temp $temp)
 	{
 		$this->appName = $appName;
 		$this->temp = $temp;
+		$this->dataDir = $dataDir;
 	}
 
 	/**
 	 * @param string $dataDir Path to folder containing config.yml
 	 * @return Config
 	 */
-	public function getConfig($dataDir)
+	public function getConfig()
 	{
-		$configYml = Yaml::parse(file_get_contents($dataDir . "/config.yml"))['config'];
+		$configYml = $this->getYmlConfig()['parameters']['config'];
 
 // 		$configName = $params['config']; // FIXME load from env_var (docker) N/A https://github.com/keboola/docker-bundle/blob/master/ENVIRONMENT.md
 $configName = "test";
@@ -69,20 +80,27 @@ $params = []; // FIXME
 	}
 
 	/**
-	 * @param string $dataDir
 	 * @return array
 	 */
-	public function getConfigMetadata($dataDir)
+	public function getConfigMetadata()
 	{
-		if (file_exists($dataDir . "/state.yml")) {
-			return Yaml::parse(file_get_contents($dataDir . "/state.yml"));
+		if (file_exists($this->dataDir . "/in/state.yml")) {
+			return $this->getYmlConfig($this->dataDir, "/in/state.yml");
 		} else {
 			return null;
 		}
 	}
 
-	public function saveConfigMetadata($dataDir, array $data)
+	public function saveConfigMetadata(array $data)
 	{
-		file_put_contents($dataDir . "/state.yml", Yaml::dump($data));
+		file_put_contents($this->dataDir . "/out/state.yml", Yaml::dump($data));
+	}
+
+	protected function getYmlConfig($path = '/config.yml')
+	{
+		if (empty($this->ymlConfig[$path])) {
+			$this->ymlConfig[$path] = Yaml::parse(file_get_contents($this->dataDir . $path));
+		}
+		return $this->ymlConfig[$path];
 	}
 }
