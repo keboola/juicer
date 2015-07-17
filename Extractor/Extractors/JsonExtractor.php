@@ -27,7 +27,7 @@ abstract class JsonExtractor extends RestExtractor
 			$struct = [];
 		}
 
-		$rowsToAnalyze = !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
+		$rowsToAnalyze = null != $config && !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
 		$parser = new JsonParser($this->getLogger(), $struct, $rowsToAnalyze);
 		$parser->setTemp($this->getTemp());
 		return $parser;
