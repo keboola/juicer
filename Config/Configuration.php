@@ -85,7 +85,7 @@ $params = []; // FIXME
 	public function getConfigMetadata()
 	{
 		if (file_exists($this->dataDir . "/in/state.yml")) {
-			return $this->getYmlConfig($this->dataDir, "/in/state.yml");
+			return $this->getYmlConfig("/in/state.yml");
 		} else {
 			return null;
 		}
@@ -96,6 +96,11 @@ $params = []; // FIXME
 		file_put_contents($this->dataDir . "/out/state.yml", Yaml::dump($data));
 	}
 
+	/**
+	 * @param string $path
+	 * @return array
+	 * @todo 2nd param to get part of the config with "not found" handling
+	 */
 	protected function getYmlConfig($path = '/config.yml')
 	{
 		if (empty($this->ymlConfig[$path])) {
