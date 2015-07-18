@@ -33,6 +33,10 @@ abstract class JsonExtractor extends RestExtractor
 		return $parser;
 	}
 
+	/**
+	 * Get metadata from parser and save in $this->metadata
+	 * @param JsonParser $parser
+	 */
 	protected function updateParserMetadata(JsonParser $parser)
 	{
 		if ($parser->hasAnalyzed()) {
