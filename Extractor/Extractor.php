@@ -11,7 +11,8 @@ use	Monolog\Logger;
 /**
  * Base extractor class
  */
-abstract class Extractor implements ExtractorInterface {
+abstract class Extractor implements ExtractorInterface
+{
 	/**
 	 * Application name, i.e. name of the API (lowercase)
 	 * @var string
@@ -39,17 +40,6 @@ abstract class Extractor implements ExtractorInterface {
 		$this->temp = $temp;
 	}
 
-// 	/**
-// 	 * Wrapper function for run() to allow further setup (parser, client etc) in the framework
-// 	 *
-// 	 * @param Config $config
-// 	 * @return Table[]
-// 	 */
-// 	public function process(Config $config)
-// 	{
-// 		return $this->run($config);
-// 	}
-//
 	/**
 	 * Setup the extractor and loop through each job from $config["jobs"] and run the job
 	 *

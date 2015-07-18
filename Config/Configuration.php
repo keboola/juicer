@@ -2,9 +2,7 @@
 
 namespace Keboola\Juicer\Config;
 
-use Symfony\Component\Yaml\Yaml;
-
-
+use	Symfony\Component\Yaml\Yaml;
 use	Keboola\Juicer\Exception\ApplicationException,
 	Keboola\Juicer\Exception\UserException;
 use	Keboola\Temp\Temp;
@@ -108,4 +106,20 @@ $params = []; // FIXME
 		}
 		return $this->ymlConfig[$path];
 	}
+
+	/**
+	 * @param Table[] $csvFiles
+	 */
+	protected function storeResults(array $csvFiles)
+	{
+		foreach($csvFiles as $key => $file) {
+			$apiName = "TODO"; // FIXME
+			$configName = "TODO";
+			file_put_contents($this->dataDir . '/' . $key . '.manifest', Yaml::dump([
+				'destination' => "in.c-ex-api-{$apiName}-{$configName}.{$key}"
+			]));
+			copy($file->getPathname(), $this->dataDir . '/' . $key);
+		}
+	}
+
 }
