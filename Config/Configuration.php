@@ -112,13 +112,14 @@ $params = []; // FIXME
 	 */
 	public function storeResults(array $csvFiles)
 	{
+		$path = $this->dataDir . '/out/tables/';
 		foreach($csvFiles as $key => $file) {
 			$apiName = "TODO"; // FIXME
 			$configName = "TODO";
-			file_put_contents($this->dataDir . '/' . $key . '.manifest', Yaml::dump([
+			file_put_contents($path . $key . '.manifest', Yaml::dump([
 				'destination' => "in.c-ex-api-{$apiName}-{$configName}.{$key}"
 			]));
-			copy($file->getPathname(), $this->dataDir . '/' . $key);
+			copy($file->getPathname(), $path . $key);
 		}
 	}
 
