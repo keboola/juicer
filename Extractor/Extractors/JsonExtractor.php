@@ -22,7 +22,7 @@ abstract class JsonExtractor extends RestExtractor
 	public function getParser(Config $config = null)
 	{
 		if (!empty($this->metadata['json_parser.struct']) && is_string($this->metadata['json_parser.struct'])) {
-			$struct = unserialize($this->metadata['json_parser.struct']);
+			$struct = $this->metadata['json_parser.struct'];
 		} else {
 			$struct = [];
 		}
@@ -40,7 +40,7 @@ abstract class JsonExtractor extends RestExtractor
 	protected function updateParserMetadata(JsonParser $parser)
 	{
 		if ($parser->hasAnalyzed()) {
-			$this->metadata['json_parser.struct'] = serialize($parser->getStruct());
+			$this->metadata['json_parser.struct'] = $parser->getStruct();
 		}
 	}
 }
