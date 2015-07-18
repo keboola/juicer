@@ -110,7 +110,7 @@ $params = []; // FIXME
 	/**
 	 * @param Table[] $csvFiles
 	 */
-	protected function storeResults(array $csvFiles)
+	public function storeResults(array $csvFiles)
 	{
 		foreach($csvFiles as $key => $file) {
 			$apiName = "TODO"; // FIXME
