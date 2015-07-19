@@ -48,9 +48,12 @@ class Configuration
 	{
 		$configYml = $this->getYmlConfig()['parameters']['config'];
 
-// 		$configName = $params['config']; // FIXME load from env_var (docker) N/A https://github.com/keboola/docker-bundle/blob/master/ENVIRONMENT.md
-$configName = "test";
-$params = []; // FIXME
+		if (empty($configYml['id'])) {
+			throw new UserException("Missing config parameter 'id'!");
+		}
+
+		$configName = $configYml['id'];
+		$params = []; // TODO get runtime params from console
 
 		$jobs = $configYml['jobs'];
 		$jobConfigs = [];
@@ -108,16 +111,25 @@ $params = []; // FIXME
 	}
 
 	/**
-	 * @param Table[] $csvFiles
+	 * @return string
 	 */
-	public function storeResults(array $csvFiles)
+	public function getAppName()
+	{
+		return $this->appName;
+	}
+
+	/**
+	 * @param Table[] $csvFiles
+	 * @param string $configName
+	 * @param string $appName
+	 */
+	public function storeResults(array $csvFiles, $configName, $appName = null)
 	{
 		$path = $this->dataDir . '/out/tables/';
+		$apiName = is_null($appName) ? $this->getAppName() : $appName;
 		foreach($csvFiles as $key => $file) {
-			$apiName = "TODO"; // FIXME
-			$configName = "TODO";
 			file_put_contents($path . $key . '.manifest', Yaml::dump([
-				'destination' => "in.c-ex-api-{$apiName}-{$configName}.{$key}"
+				'destination' => "in.c-{$apiName}-{$configName}.{$key}"
 			]));
 			copy($file->getPathname(), $path . $key);
 		}
