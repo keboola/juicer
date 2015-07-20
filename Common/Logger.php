@@ -32,11 +32,21 @@ class Logger
 	}
 
 	/**
+	 * @return Monolog
+	 */
+	public static function getLogger()
+	{
+		return self::$logger;
+	}
+
+	/**
 	 * @param string $name
 	 */
 	public static function initLogger($name = '')
 	{
-		self::$logger = new Monolog($name, [new StreamHandler('php://stdout')]);
+		$options = getopt("", ['debug']);
+		$level = isset($options['debug']) ? Monolog::DEBUG : Monolog::INFO;
+		self::$logger = new Monolog($name, [new StreamHandler('php://stdout', $level)]);
 	}
 
 	/**

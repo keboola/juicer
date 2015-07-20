@@ -35,6 +35,11 @@ abstract class Extractor implements ExtractorInterface
 	 */
 	protected $metadata = [];
 
+	/**
+	 * @var Logger
+	 */
+	protected $logger;
+
 	public function __construct(Temp $temp)
 	{
 		$this->temp = $temp;
@@ -98,6 +103,15 @@ abstract class Extractor implements ExtractorInterface
 
 	protected function getLogger()
 	{
-		return new Logger($this->getFullName());
+		if (empty($this->logger)) {
+			$this->logger = new Logger($this->getFullName());
+		}
+
+		return $this->logger;
+	}
+
+	public function setLogger(Logger $logger)
+	{
+		return $this->logger;
 	}
 }
