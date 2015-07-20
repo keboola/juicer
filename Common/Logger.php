@@ -4,7 +4,8 @@ namespace Keboola\Juicer\Common;
 
 use	Keboola\Juicer\Exception\ApplicationException as Exception;
 use	Monolog\Logger as Monolog,
-	Monolog\Handler\StreamHandler;
+	Monolog\Handler\StreamHandler,
+	Monolog\Formatter\LineFormatter;
 
 /**
  * Wrapper for Monolog\Logger
@@ -46,7 +47,10 @@ class Logger
 	{
 		$options = getopt("", ['debug']);
 		$level = isset($options['debug']) ? Monolog::DEBUG : Monolog::INFO;
-		self::$logger = new Monolog($name, [new StreamHandler('php://stdout', $level)]);
+
+		$handler = new StreamHandler('php://stdout', $level);
+		$handler->setFormatter(new LineFormatter('%message%'));
+		self::$logger = new Monolog($name, [$handler]);
 	}
 
 	/**

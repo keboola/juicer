@@ -15,7 +15,8 @@ use Keboola\Utils\Utils;
  * {@inheritdoc}
  * Adds a getBackoff function for GuzzleHttp.
  */
-abstract class RestExtractor extends Extractor {
+abstract class RestExtractor extends Extractor
+{
 	/**
 	 * Returns an exponential backoff (prefers Retry-After header) for GuzzleClient (4.*).
 	 * Use: `$client->getEmitter()->attach($this->getBackoff());`
