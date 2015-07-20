@@ -112,6 +112,6 @@ abstract class Extractor implements ExtractorInterface
 
 	public function setLogger(Logger $logger)
 	{
-		return $this->logger;
+		$this->logger = $logger;
 	}
 }
