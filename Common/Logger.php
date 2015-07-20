@@ -49,7 +49,7 @@ class Logger
 		$level = isset($options['debug']) ? Monolog::DEBUG : Monolog::INFO;
 
 		$handler = new StreamHandler('php://stdout', $level);
-		$handler->setFormatter(new LineFormatter('%message%'));
+		$handler->setFormatter(new LineFormatter("%message%\n"));
 		self::$logger = new Monolog($name, [$handler]);
 	}
 
