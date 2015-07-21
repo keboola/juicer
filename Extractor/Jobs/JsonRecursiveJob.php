@@ -25,7 +25,10 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	/** @var JobConfig[] */
 	protected $childJobs = [];
 
-	/** @var array */
+	/**
+	 * @var array
+	 * @obsolete
+	 */
 	protected $parentParams = [];
 
 	/** @var mixed */
@@ -34,7 +37,8 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct(JobConfig $config, $client, $parser = null) {
+	public function __construct(JobConfig $config, $client, $parser = null)
+	{
 		$this->childJobs = $config->getChildJobs();
 
 		parent::__construct($config, $client, $parser);
@@ -111,19 +115,8 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		 * @param string className - needs a better solution! callback?
 		 */
 		foreach($this->childJobs as $jobId => $child) {
-			if (!empty($child->getConfig()['recursionParams'])) {
-				try {
-					$recursionParams = Utils::json_decode($child->getConfig()['recursionParams']);
-				} catch(JsonDecodeException $e) {
-					throw new UserException("Error decoding recursionParams JSON:: " . $e->getMessage(), 400, $e, [
-						'recursionParams' => $child->getConfig()['recursionParams'],
-						'jobId' => $child->getJobId()
-					]);
-				}
-
-				if (!empty($recursionParams->filter)) {
-					$filter = Filter::create($recursionParams->filter);
-				}
+			if (!empty($child->getConfig()['recursionFilter'])) {
+				$filter = Filter::create($child->getConfig()['recursionFilter']);
 			}
 
 			foreach($data as $result) {
@@ -131,53 +124,8 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 					continue;
 				}
 
-				$childJob = $this->createChild($child);
+				$childJob = $this->createChild($child, $result);
 
-				$params = [];
-				foreach($child->getConfig()['parentFields'] as $placeholder => $field) {
-					if (substr($field, 0, 7) == "parent_") {
-						$parentField = substr($field, 7);
-						if (!empty($this->parentParams[$parentField])) {
-							// Search in parameters from parent call (obsoleted by the next?)
-							$value = $this->parentParams[$parentField]['value'];
-						} elseif (!empty($this->parentResult[$parentField])) {
-							// Search in parent result
-							// MUST be string TODO
-							$value = $this->parentResult[$parentField];
-						} else {
-							$e = new UserException("{$field} used by {$placeholder} in config {$jobId} was not set in the parent configuration, nor found in the parent response.");
-							$e->setData(['parent_data' => $this->parentResult]);
-							throw $e;
-						}
-					} else {
-						$value = Utils::getDataFromPath($field, $result, ".");
-						if (empty($value)) {
-							// Throw an UserException instead?
-							Logger::log(
-								"WARNING", "No value found for {$placeholder} in parent result.",
-								[
-									'result' => $result,
-									'response' => $response,
-									'data' => $data
-								]
-							);
-						}
-					}
-
-					$params[$field] = [
-						'placeholder' => $placeholder,
-						'field' => $field,
-						'value' => $value
-					];
-				}
-
-				// add parent params as well
-				if (!empty($this->parentParams)) {
-					$params = array_replace($this->parentParams, $params);
-				}
-
-				$childJob->setParams($params);
-				$childJob->setParentResult($result, $this->parentResult);
 				$childJob->run();
 			}
 		}
@@ -190,8 +138,54 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	 * @param JobConfig $config
 	 * @return static
 	 */
-	protected function createChild(JobConfig $config)
+	protected function createChild(JobConfig $config, $result)
 	{
-		return new static($config, $this->client, $this->parser);
+		$job = new static($config, $this->client, $this->parser);
+
+		$params = [];
+		foreach($config->getConfig()['placeholders'] as $placeholder => $field) {
+			if (substr($field, 0, 7) == "parent_") {
+				$parentField = substr($field, 7);
+
+				if (!empty($this->parentResult[$parentField])) {
+					// Search in parent result
+					// MUST be string TODO
+					$value = $this->parentResult[$parentField];
+				} else {
+					$e = new UserException("{$field} used by {$placeholder} in config {$jobId} was not set in the parent configuration, nor found in the parent response.");
+					$e->setData(['parent_data' => $this->parentResult]);
+					throw $e;
+				}
+			} else {
+				$value = Utils::getDataFromPath($field, $result, ".");
+				if (empty($value)) {
+					// Throw an UserException instead?
+					Logger::log(
+						"WARNING", "No value found for {$placeholder} in parent result.",
+						[
+							'result' => $result,
+// 							'response' => $response,
+// 							'data' => $data
+						]
+					);
+				}
+			}
+
+			$params[$field] = [
+				'placeholder' => $placeholder,
+				'field' => $field,
+				'value' => $value
+			];
+		}
+
+		// add parent params as well
+		if (!empty($this->parentParams)) {
+			$params = array_replace($this->parentParams, $params);
+		}
+
+		$job->setParams($params);
+		$job->setParentResult($result, $this->parentResult);
+
+		return $job;
 	}
 }
