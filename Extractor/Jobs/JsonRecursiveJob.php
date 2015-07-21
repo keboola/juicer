@@ -25,14 +25,11 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	/** @var JobConfig[] */
 	protected $childJobs = [];
 
-// 	/**
-// 	 * @var array
-// 	 * @obsolete
-// 	 */
-// 	protected $parentParams = [];
-
-// 	/** @var mixed */
-// 	protected $parentResult = [];
+	/**
+	 * Used to save necessary parents' data to child's output
+	 * @var array
+	 */
+	protected $parentParams = [];
 
 	/**
 	 * @var array
@@ -67,21 +64,6 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		$this->parentParams = $params;
 	}
 
-// 	/**
-// 	 * @param mixed $result
-// 	 * @param mixed $previousParent
-// 	 */
-// 	public function setParentResult($result, array $previousParent)
-// 	{
-// 		$previous = [];
-// 		foreach($previousParent as $key => $value) {
-// 			$parentKey = $this->prependParent($key);
-// 			$previous[$parentKey] = $value;
-// 		}
-//
-// 		$this->parentResult = array_replace($previous, (array) $result);
-// 	}
-
 	/**
 	 * @param string $string
 	 * @return string
@@ -111,13 +93,6 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 
 		/**
 		 * @todo separate from JsonJob
-		 * @param array $data The response data
-		 * @param array $childJobs $this->childJobs
-		 * @param // parentParams
-		 * @param // parentResult
-		 * @param // parentPrefix (?) to prefix & substr from $parentField
-		 * 				...OR set it & prependParent() method to go with it
-		 * @param string className - needs a better solution! callback?
 		 */
 		foreach($this->childJobs as $jobId => $child) {
 			if (!empty($child->getConfig()['recursionFilter'])) {
@@ -129,10 +104,10 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 					continue;
 				}
 
-				// TODO add result to the beginning of an array, containing all parent results
+				// Add current result to the beginning of an array, containing all parent results
 				array_unshift($this->parentResults, $result);
-				$childJob = $this->createChild($child);
 
+				$childJob = $this->createChild($child);
 				$childJob->run();
 			}
 		}
@@ -151,35 +126,11 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 
 		$params = [];
 		foreach($config->getConfig()['placeholders'] as $placeholder => $field) {
-// 			if (substr($field, 0, 7) == "parent_") {
-// 				$parentField = substr($field, 7);
-//
-// 				if (!empty($this->parentResult[$parentField])) {
-// 					// Search in parent result
-// 					// MUST be string TODO
-// 					$value = $this->parentResult[$parentField];
-// 				} else {
-// 					$e = new UserException("{$field} used by {$placeholder} was not set in the parent configuration, nor found in the parent response.");
-// 					$e->setData(['parent_data' => $this->parentResult]);
-// 					throw $e;
-// 				}
-// 			} else {
-// 				$value = Utils::getDataFromPath($field, $result, ".");
-// 				if (empty($value)) {
-// 					// Throw an UserException instead?
-// 					Logger::log(
-// 						"WARNING", "No value found for {$placeholder} in parent result.",
-// 						[
-// 							'result' => $result,
-// // 							'response' => $response,
-// // 							'data' => $data
-// 						]
-// 					);
-// 				}
-// 			}
-
+			// TODO allow using a descriptive ID by storing the result by `task id` in $parentResults
 			if (strpos($placeholder, ':') !== false) {
 				list($level, $ph) = explode(':', $placeholder, 2);
+				// Make the direct parent a 1 instead of 0 for a better user friendship
+				$level -= 1;
 			} else {
 				$ph = $placeholder;
 				$level = 0;
@@ -190,11 +141,7 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 				// Throw an UserException instead?
 				Logger::log(
 					"WARNING", "No value found for {$placeholder} in parent result.",
-					[
-						'result' => $this->parentResults,
-// 							'response' => $response,
-// 							'data' => $data
-					]
+					['result' => $this->parentResults]
 				);
 			}
 
@@ -205,10 +152,10 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 			];
 		}
 
-		// add parent params as well
-// 		if (!empty($this->parentParams)) {
-// 			$params = array_replace($this->parentParams, $params);
-// 		}
+		// Add parent params as well
+		if (!empty($this->parentParams)) {
+			$params = array_replace($this->parentParams, $params);
+		}
 //
 		$job->setParams($params);
 		$job->setParentResults($this->parentResults);
