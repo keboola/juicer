@@ -125,7 +125,9 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		$job = new static($config, $this->client, $this->parser);
 
 		$params = [];
-		foreach($config->getConfig()['placeholders'] as $placeholder => $field) {
+		$placeholders = !empty($config->getConfig()['placeholders']) ? $config->getConfig()['placeholders'] : [];
+
+		foreach($placeholders as $placeholder => $field) {
 			// TODO allow using a descriptive ID by storing the result by `task id` in $parentResults
 			if (strpos($placeholder, ':') !== false) {
 				list($level, $ph) = explode(':', $placeholder, 2);
