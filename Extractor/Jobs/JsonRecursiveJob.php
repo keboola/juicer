@@ -35,6 +35,11 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	protected $parentResult = [];
 
 	/**
+	 * @var array
+	 */
+	protected $parentResults = [];
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function __construct(JobConfig $config, $client, $parser = null)
@@ -62,20 +67,20 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		$this->parentParams = $params;
 	}
 
-	/**
-	 * @param mixed $result
-	 * @param mixed $previousParent
-	 */
-	public function setParentResult($result, array $previousParent)
-	{
-		$previous = [];
-		foreach($previousParent as $key => $value) {
-			$parentKey = $this->prependParent($key);
-			$previous[$parentKey] = $value;
-		}
-
-		$this->parentResult = array_replace($previous, (array) $result);
-	}
+// 	/**
+// 	 * @param mixed $result
+// 	 * @param mixed $previousParent
+// 	 */
+// 	public function setParentResult($result, array $previousParent)
+// 	{
+// 		$previous = [];
+// 		foreach($previousParent as $key => $value) {
+// 			$parentKey = $this->prependParent($key);
+// 			$previous[$parentKey] = $value;
+// 		}
+//
+// 		$this->parentResult = array_replace($previous, (array) $result);
+// 	}
 
 	/**
 	 * @param string $string
@@ -124,7 +129,9 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 					continue;
 				}
 
-				$childJob = $this->createChild($child, $result);
+				// TODO add result to the beginning of an array, containing all parent results
+				array_unshift($this->parentResults, $result);
+				$childJob = $this->createChild($child);
 
 				$childJob->run();
 			}
@@ -138,37 +145,57 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	 * @param JobConfig $config
 	 * @return static
 	 */
-	protected function createChild(JobConfig $config, $result)
+	protected function createChild(JobConfig $config)
 	{
 		$job = new static($config, $this->client, $this->parser);
 
 		$params = [];
 		foreach($config->getConfig()['placeholders'] as $placeholder => $field) {
-			if (substr($field, 0, 7) == "parent_") {
-				$parentField = substr($field, 7);
+// 			if (substr($field, 0, 7) == "parent_") {
+// 				$parentField = substr($field, 7);
+//
+// 				if (!empty($this->parentResult[$parentField])) {
+// 					// Search in parent result
+// 					// MUST be string TODO
+// 					$value = $this->parentResult[$parentField];
+// 				} else {
+// 					$e = new UserException("{$field} used by {$placeholder} was not set in the parent configuration, nor found in the parent response.");
+// 					$e->setData(['parent_data' => $this->parentResult]);
+// 					throw $e;
+// 				}
+// 			} else {
+// 				$value = Utils::getDataFromPath($field, $result, ".");
+// 				if (empty($value)) {
+// 					// Throw an UserException instead?
+// 					Logger::log(
+// 						"WARNING", "No value found for {$placeholder} in parent result.",
+// 						[
+// 							'result' => $result,
+// // 							'response' => $response,
+// // 							'data' => $data
+// 						]
+// 					);
+// 				}
+// 			}
 
-				if (!empty($this->parentResult[$parentField])) {
-					// Search in parent result
-					// MUST be string TODO
-					$value = $this->parentResult[$parentField];
-				} else {
-					$e = new UserException("{$field} used by {$placeholder} in config {$jobId} was not set in the parent configuration, nor found in the parent response.");
-					$e->setData(['parent_data' => $this->parentResult]);
-					throw $e;
-				}
+			if (strpos($placeholder, ':') !== false) {
+				list($level, $ph) = explode(':', $placeholder, 2);
 			} else {
-				$value = Utils::getDataFromPath($field, $result, ".");
-				if (empty($value)) {
-					// Throw an UserException instead?
-					Logger::log(
-						"WARNING", "No value found for {$placeholder} in parent result.",
-						[
-							'result' => $result,
+				$ph = $placeholder;
+				$level = 0;
+			}
+
+			$value = Utils::getDataFromPath($field, $this->parentResults[$level], ".");
+			if (empty($value)) {
+				// Throw an UserException instead?
+				Logger::log(
+					"WARNING", "No value found for {$placeholder} in parent result.",
+					[
+						'result' => $this->parentResults,
 // 							'response' => $response,
 // 							'data' => $data
-						]
-					);
-				}
+					]
+				);
 			}
 
 			$params[$field] = [
@@ -179,13 +206,18 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		}
 
 		// add parent params as well
-		if (!empty($this->parentParams)) {
-			$params = array_replace($this->parentParams, $params);
-		}
-
+// 		if (!empty($this->parentParams)) {
+// 			$params = array_replace($this->parentParams, $params);
+// 		}
+//
 		$job->setParams($params);
-		$job->setParentResult($result, $this->parentResult);
+		$job->setParentResults($this->parentResults);
 
 		return $job;
+	}
+
+	public function setParentResults(array $results)
+	{
+		$this->parentResults = $results;
 	}
 }
