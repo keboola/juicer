@@ -126,6 +126,9 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 
 		$params = [];
 		$placeholders = !empty($config->getConfig()['placeholders']) ? $config->getConfig()['placeholders'] : [];
+		if (empty($placeholders)) {
+			Logger::log("WARNING", "No 'placeholders' set for '" . $config->getConfig()['endpoint'] . "'");
+		}
 
 		foreach($placeholders as $placeholder => $field) {
 			// TODO allow using a descriptive ID by storing the result by `task id` in $parentResults

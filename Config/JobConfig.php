@@ -9,7 +9,8 @@ use	Keboola\Juicer\Exception\UserException;
 /**
  * Carries a job configuration
  */
-class JobConfig {
+class JobConfig
+{
 	/** @var string */
 	protected $jobId;
 
