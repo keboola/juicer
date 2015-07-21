@@ -25,14 +25,14 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 	/** @var JobConfig[] */
 	protected $childJobs = [];
 
-	/**
-	 * @var array
-	 * @obsolete
-	 */
-	protected $parentParams = [];
+// 	/**
+// 	 * @var array
+// 	 * @obsolete
+// 	 */
+// 	protected $parentParams = [];
 
-	/** @var mixed */
-	protected $parentResult = [];
+// 	/** @var mixed */
+// 	protected $parentResult = [];
 
 	/**
 	 * @var array

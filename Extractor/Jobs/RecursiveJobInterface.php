@@ -17,9 +17,8 @@ interface RecursiveJobInterface
 
 	/**
 	 * Pass "down" the result to enable its use in subsequent calls.
-	 * @param mixed $result
-	 * @param mixed $previousParent
+	 * @param array $result Array of previous results
 	 * @return void
 	 */
-	public function setParentResult($result, array $previousParent);
+	public function setParentResults(array $result);
 }
