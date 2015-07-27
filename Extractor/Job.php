@@ -153,14 +153,14 @@ abstract class Job
 				$data = $arrays[$arrayNames[0]];
 			} elseif (count($arrays) == 0) {
 				Logger::log('warning', "No data array found in response! (endpoint: {$config['endpoint']})", [
-					'response' => $response,
+					'response' => json_encode($response),
 					'config row ID' => $this->getJobId()
 				]);
 				$data = [];
 			} else {
 				$e = new UserException("More than one array found in response! Use 'dataField' parameter to specify a key to the data array. (endpoint: {$config['endpoint']}, arrays in response root: " . join(", ", $arrayNames) . ")");
 				$e->setData([
-					'response' => $response,
+					'response' => json_encode($response),
 					'config row ID' => $this->getJobId(),
 					'arrays found' => $arrayNames
 				]);
@@ -169,7 +169,7 @@ abstract class Job
 		} else {
 			$e = new UserException('Unknown response from API.');
 			$e->setData([
-				'response' => $response,
+				'response' => json_encode($response),
 				'config row ID' => $this->getJobId()
 			]);
 			throw $e;
