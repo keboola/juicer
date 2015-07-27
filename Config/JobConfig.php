@@ -26,7 +26,6 @@ class JobConfig
 	 * 	example:
 	 * 		[
 	 *			'id' => 'id',
-	 * 			'recursive' => [{"id" => 2, "params": {"accountId": "account_id"}}],
 	 *			'endpoint' => ...
 	 *		]
 	 * where accountId is a placeholder used as {accountId} in child job's endpoint
@@ -39,6 +38,10 @@ class JobConfig
 		if (empty($config['id'])) {
 			// This'll change if the job settings change FIXME
 			$config['id'] = md5(serialize($config));
+		}
+
+		if (empty($config['endpoint'])) {
+			throw new UserException("'endpoint' must be set in each job!", 0, [$config]);
 		}
 
 		$job = new self($config['id'], $config);

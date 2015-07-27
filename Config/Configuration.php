@@ -48,6 +48,7 @@ class Configuration
 	{
 		$configYml = $this->getYmlConfig()['parameters']['config'];
 
+		// TODO allow this missing with outputBucket in place
 		if (empty($configYml['id'])) {
 			throw new UserException("Missing config parameter 'id'!");
 		}

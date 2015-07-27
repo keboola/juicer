@@ -148,20 +148,21 @@ abstract class Job
 				} // TODO else {$this->metadata[$key] = json_encode($value);} ? return [$data,$metadata];
 			}
 
+			$arrayNames = array_keys($arrays);
 			if (count($arrays) == 1) {
-				$data = $arrays[array_keys($arrays)[0]];
+				$data = $arrays[$arrayNames[0]];
 			} elseif (count($arrays) == 0) {
-				Logger::log('warning', "No data array found in response!", [
+				Logger::log('warning', "No data array found in response! (endpoint: {$config['endpoint']})", [
 					'response' => $response,
 					'config row ID' => $this->getJobId()
 				]);
 				$data = [];
 			} else {
-				$e = new UserException('More than one array found in response! Use "dataField" column to specify a key to the data array.');
+				$e = new UserException("More than one array found in response! Use 'dataField' parameter to specify a key to the data array. (endpoint: {$config['endpoint']}, arrays in response root: " . join(", ", $arrayNames) . ")");
 				$e->setData([
 					'response' => $response,
 					'config row ID' => $this->getJobId(),
-					'arrays found' => array_keys($arrays)
+					'arrays found' => $arrayNames
 				]);
 				throw $e;
 			}
