@@ -54,7 +54,8 @@ abstract class RestJob extends Job
 	 * @param string $format Format of source data to decode, OR 'raw' to return the response body as is
 	 * @return object - json_decoded response body
 	 */
-	protected function download($request, $format = self::JSON) {
+	protected function download($request, $format = self::JSON)
+	{
 		try {
 			$response = $this->client->send($request);
 		} catch (BadResponseException $e) {
@@ -72,6 +73,7 @@ abstract class RestJob extends Job
 			);
 		}
 
+		// Format the response
 		switch ($format) {
 			case self::JSON:
 				// TODO this should be configurable in services.yml or where? Perhaps SAPI config, just not available in UI. Ever.

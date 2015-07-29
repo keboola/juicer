@@ -42,11 +42,15 @@ class Logger
 
 	/**
 	 * @param string $name
+	 * @param bool $debug true|false|null where null uses the default behavior (--debug cli parameter)
 	 */
-	public static function initLogger($name = '')
+	public static function initLogger($name = '', $debug = null)
 	{
 		$options = getopt("", ['debug']);
-		$level = isset($options['debug']) ? Monolog::DEBUG : Monolog::INFO;
+		if (is_null($debug)) {
+			$debug = isset($options['debug']);
+		}
+		$level = $debug ? Monolog::DEBUG : Monolog::INFO;
 
 		$handler = new StreamHandler('php://stdout', $level);
 		// Print out less verbose messages out of debug

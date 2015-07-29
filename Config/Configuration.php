@@ -121,19 +121,18 @@ class Configuration
 
 	/**
 	 * @param Table[] $csvFiles
-	 * @param string $configName
-	 * @param string $appName
+	 * @param string $bucketName
 	 */
-	public function storeResults(array $csvFiles, $configName, $appName = null)
+	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
 	{
 		$path = $this->dataDir . '/out/tables/';
-		$apiName = is_null($appName) ? $this->getAppName() : $appName;
+		$bucketName .= $sapiPrefix ? "in.c-" : "";
+
 		foreach($csvFiles as $key => $file) {
 			file_put_contents($path . $key . '.manifest', Yaml::dump([
-				'destination' => "in.c-{$apiName}-{$configName}.{$key}"
+				'destination' => "in.c-{$bucketName}.{$key}"
 			]));
 			copy($file->getPathname(), $path . $key);
 		}
 	}
-
 }
