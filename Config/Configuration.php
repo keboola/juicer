@@ -50,7 +50,11 @@ class Configuration
 
 		// TODO allow this missing with outputBucket in place
 		if (empty($configYml['id'])) {
-			throw new UserException("Missing config parameter 'id'!");
+			if (empty($configYml['outputBucket'])) {
+				throw new UserException("Missing config parameter 'id' or 'outputBucket'!");
+			} else {
+				$configYml['id'] = "";
+			}
 		}
 
 		$configName = $configYml['id'];
@@ -122,6 +126,7 @@ class Configuration
 	/**
 	 * @param Table[] $csvFiles
 	 * @param string $bucketName
+	 * @param bool $sapiPrefix whether to prefix the output bucket with "in.c-"
 	 */
 	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
 	{
