@@ -131,11 +131,11 @@ class Configuration
 	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
 	{
 		$path = $this->dataDir . '/out/tables/';
-		$bucketName .= $sapiPrefix ? "in.c-" : "";
+		$bucketName = $sapiPrefix ? "in.c-" . $bucketName : $bucketName;
 
 		foreach($csvFiles as $key => $file) {
 			file_put_contents($path . $key . '.manifest', Yaml::dump([
-				'destination' => "in.c-{$bucketName}.{$key}"
+				'destination' => "{$bucketName}.{$key}"
 			]));
 			copy($file->getPathname(), $path . $key);
 		}
