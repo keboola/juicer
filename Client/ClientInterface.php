@@ -20,4 +20,9 @@ interface ClientInterface
 	 * Create a request from a jobConfig
 	 */
 	public function getRequest(JobConfig $config);
+
+	/**
+	 *
+	 */
+	public function getClient();
 }

@@ -2,7 +2,8 @@
 
 use	Keboola\Juicer\Client\RestRequest,
 	Keboola\Juicer\Client\RestClient,
-	Keboola\Juicer\Config\JobConfig;
+	Keboola\Juicer\Config\JobConfig,
+	Keboola\Juicer\Common\Logger;
 use	GuzzleHttp\Client,
 	GuzzleHttp\Message\Response,
 	GuzzleHttp\Stream\Stream,
@@ -71,7 +72,6 @@ class RestClientTest extends ExtractorTestCase
 		$restClient = new RestClient($guzzle);
 
 		$request = new RestRequest('ep', ['a' => 1]);
-// 		var_dump((string) $restClient->download($request)->getBody());
 
 		$this->assertEquals($body, $restClient->download($request)->getBody());
 		$this->assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
@@ -82,6 +82,29 @@ class RestClientTest extends ExtractorTestCase
 		);
 	}
 
-	// TODO testBackoff with Response(429, ['Retry-After' => 1])
-// 			new Response(429),
+	public function testBackoff()
+	{
+		Logger::setLogger($this->getLogger('test', true));
+
+		$body = '[
+				{"field": "data"},
+				{"field": "more"}
+		]';
+
+		$restClient = RestClient::create();
+
+		$mock = new Mock([
+			new Response(429, ['Retry-After' => 1]),
+			new Response(200, [], Stream::factory($body))
+		]);
+		$restClient->getClient()->getEmitter()->attach($mock);
+
+		$history = new History();
+		$restClient->getClient()->getEmitter()->attach($history);
+
+
+		$request = new RestRequest('ep', ['a' => 1]);
+
+		$this->assertEquals($body, $restClient->download($request)->getBody());
+	}
 }

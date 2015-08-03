@@ -85,6 +85,11 @@ class SoapRequest extends Request
 	 */
 	public static function create(array $config)
 	{
-// TODO
+		return new static(
+			$config['endpoint'],
+			empty($config['params']) ? [] : $config['params'],
+			empty($config['options']) ? null : $config['options'],
+			empty($config['inputHeader']) ? null : $config['inputHeader']
+		);
 	}
 }

@@ -44,6 +44,14 @@ class RestClient
 	}
 
 	/**
+	 * @return client
+	 */
+	public function getClient()
+	{
+		return $this->client;
+	}
+
+	/**
 	 * @param Request $request
 	 * @return \GuzzleHttp\Message\Response
 	 */
@@ -137,9 +145,9 @@ class RestClient
 				}
 
 				$errData = [
-					"http_code" => $event->getTransferInfo()['http_code'],
+					"http_code" => !empty($event->getTransferInfo()['http_code']) ? $event->getTransferInfo()['http_code'] : null,
 					"body" => is_null($event->getResponse()) ? null : (string) $event->getResponse()->getBody(),
-					"url" =>  $event->getTransferInfo()['url'],
+					"url" =>  !empty($event->getTransferInfo()['url']) ? $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
 				];
 				if ($event instanceof ErrorEvent) {
 					$errData["message"] = $event->getException()->getMessage();
