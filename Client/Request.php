@@ -6,13 +6,37 @@ use	Keboola\Juicer\Exception\ApplicationException as Exception;
 /**
  *
  */
-class Request
+abstract class Request
 {
-	protected $type;
+	protected $endpoint;
 
-	public function getType() {
-		return $this->type();
+	protected $params;
+
+	public function __construct($endpoint, array $params = [])
+	{
+		$this->endpoint = $endpoint;
+		$this->params = $params;
 	}
 
-	public function getRequest() {}
+	/**
+	 * @todo Actually use the request object?
+	 * Should perhaps return the response straight away (call it self::call() or so)
+	 * @param string $endpoint REST endpoint or SOAP function
+	 * @param array parameters
+	 * @param array REST method or SOAP options+inputHeader
+	 * @return RequestInterface
+	 */
+	public static function create(array $config) {}
+
+	public function getEndpoint()
+	{
+		return $this->endpoint;
+	}
+
+	public function getParams()
+	{
+		return $this->params;
+	}
+
+
 }

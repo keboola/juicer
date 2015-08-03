@@ -24,7 +24,8 @@ abstract class SoapJob extends Job
 	 * @param \Keboola\Juicer\Client\SoapRequest $request
 	 * @return object response
 	 */
-	protected function download($request) {
+	protected function download($request)
+	{
 		$backoffMaxTry = 8;
 		$backoffTry = 0;
 		$response = null;

@@ -3,7 +3,8 @@
 use	Keboola\Juicer\Parser\JsonMap;
 use	Keboola\Csv\CsvFile;
 
-class JsonMapTest extends ExtractorTestCase {
+class JsonMapTest extends ExtractorTestCase
+{
 	private $parser;
 	private $expected;
 

@@ -4,7 +4,8 @@ use	Keboola\Juicer\Parser\Parser;
 use	Keboola\Csv\CsvFile;
 use	Keboola\Temp\Temp;
 
-class ParserTest extends ExtractorTestCase {
+class ParserTest extends ExtractorTestCase
+{
 	public function testGetTemp()
 	{
 		$parser = new Parser();

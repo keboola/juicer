@@ -6,7 +6,8 @@ use	Keboola\Juicer\Exception\ApplicationException,
 	Keboola\Juicer\Exception\UserException;
 use	Keboola\Juicer\Extractor\Job,
 	Keboola\Juicer\Config\JobConfig,
-	Keboola\Juicer\Common\Logger;
+	Keboola\Juicer\Common\Logger,
+	Keboola\Juicer\Client\RestClient;
 use	Keboola\Utils\Utils;
 use	GuzzleHttp\Client as GuzzleClient,
 	GuzzleHttp\Exception\BadResponseException,
@@ -56,22 +57,8 @@ abstract class RestJob extends Job
 	 */
 	protected function download($request, $format = self::JSON)
 	{
-		try {
-			$response = $this->client->send($request);
-		} catch (BadResponseException $e) {
-			// TODO try XML if JSON fails
-			$data = json_decode($e->getResponse()->getBody(), true);
-			if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-				$data = (string) $e->getResponse()->getBody();
-			}
-
-			throw new UserException(
-				"The API request failed: [" . $e->getResponse()->getStatusCode() . "] " . $e->getMessage(),
-				400,
-				$e,
-				['body' => $data]
-			);
-		}
+		$downloader = new RestClient($this->client, 'GET');
+		$response = $downloader->download($request);
 
 		// Format the response
 		switch ($format) {

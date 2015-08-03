@@ -54,6 +54,7 @@ class Logger
 
 		$handler = new StreamHandler('php://stdout', $level);
 		// Print out less verbose messages out of debug
+		// TODO if debug is enabled by user, output the default message format BUT without date
 		if ($level != Monolog::DEBUG) {
 			$handler->setFormatter(new LineFormatter("%message%\n"));
 		}
