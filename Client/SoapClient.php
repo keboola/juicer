@@ -39,7 +39,7 @@ class SoapClient
 	 * @param Request $request
 	 * @return mixed
 	 */
-	public function download(Request $request)
+	public function download(RequestInterface $request)
 	{
 		$backoffTry = 0;
 		$response = null;

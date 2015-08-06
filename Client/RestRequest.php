@@ -5,7 +5,7 @@ namespace Keboola\Juicer\Client;
 /**
  *
  */
-class RestRequest extends Request
+class RestRequest extends Request implements RequestInterface
 {
 	protected $method;
 
@@ -21,14 +21,11 @@ class RestRequest extends Request
 	}
 
 	/**
-	 * @todo Actually use the request object?
-	 * Should perhaps return the response straight away (call it self::call() or so)
 	 * @param string $endpoint REST endpoint or SOAP function
 	 * @param array parameters
 	 * @param array REST method or SOAP options+inputHeader
 	 * @return RequestInterface
 	 */
-// 	public static function create($endpoint, $params = [], $options = [])
 	public static function create(array $config)
 	{
 		return new static(

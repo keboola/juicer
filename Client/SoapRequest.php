@@ -5,7 +5,7 @@ namespace Keboola\Juicer\Client;
 /**
  *
  */
-class SoapRequest extends Request
+class SoapRequest extends Request implements RequestInterface
 {
 	protected $type = "soap";
 

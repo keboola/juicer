@@ -7,6 +7,7 @@ use	Keboola\Utils\Utils;
 use	Keboola\Juicer\Common\Logger,
 	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Client\ClientInterface,
+	Keboola\Juicer\Client\RequestInterface,
 	Keboola\Juicer\Parser\ParserInterface;
 use	Keboola\Juicer\Exception\UserException;
 /**
@@ -14,7 +15,7 @@ use	Keboola\Juicer\Exception\UserException;
  */
 abstract class Job
 {
-	/** @var array */
+	/** @var JobConfig */
 	protected $config;
 	protected $client;
 	protected $parser;
@@ -30,7 +31,7 @@ abstract class Job
 	 */
 	public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
 	{
-		$this->config = $config->getConfig();
+		$this->config = $config;
 		$this->client = $client;
 		$this->parser = $parser;
 		$this->jobId = $config->getJobId();
@@ -54,11 +55,11 @@ abstract class Job
 	 */
 	public function run()
 	{
-		$request = $this->firstPage();
+		$request = $this->firstPage($this->config);
 		while ($request !== false) { // TODO !empty sounds better, doesn't it? Perhaps it's lazy?
 			$response = $this->download($request);
 			$data = $this->parse($response);
-			$request = $this->nextPage($response, $data);
+			$request = $this->nextPage($this->config, $response, $data);
 		}
 	}
 
@@ -66,10 +67,13 @@ abstract class Job
 	 *  Download an URL from REST or SOAP API and return its body as an object.
 	 * should handle the API call, backoff and response decoding
 	 *
-	 * @param \GuzzleHttp\Message\Request|\Keboola\Juicer\Client\SoapRequest|... $request
+	 * @param RequestInterface $request
 	 * @return \StdClass $response
 	 */
-	abstract protected function download($request);
+	protected function download(RequestInterface $request)
+	{
+		$this->client->download($request);
+	}
 
 	/**
 	 * Parse the result into a CSV (either using any of built-in parsers, or using own methods).
@@ -77,18 +81,24 @@ abstract class Job
 	 * @param object $response
 	 * @return array|mixed the unparsed data array
 	 */
-	abstract protected function parse($response);
+	protected function parse($response)
+	{
+		$data = $this->findDataInResponse($response, $this->config->getConfig());
+		$this->parser->process($data);
+	}
 
 	/**
 	 * Create subsequent requests for pagination (usually based on $response from previous request)
 	 * Return a download request OR false if no next page exists
 	 *
+	 * @param JobConfig $config
 	 * @param mixed $response
 	 * @param array|null $data
 	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
 	 */
-	protected function nextPage($response, $data)
+	protected function nextPage(JobConfig $config, $response, $data)
 	{
+
 		return false;
 	}
 
@@ -96,13 +106,13 @@ abstract class Job
 	 * Create the first download request.
 	 * Return a download request
 	 *
-	 * @param $response
+	 * @param JobConfig $config
 	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
 	 * @todo abstract?
 	 */
-	protected function firstPage()
+	protected function firstPage(JobConfig $config)
 	{
-		return false;
+		return $this->client->getRequest($config);
 	}
 
 	/**

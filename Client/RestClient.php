@@ -55,7 +55,7 @@ class RestClient
 	 * @param Request $request
 	 * @return \GuzzleHttp\Message\Response
 	 */
-	public function download(Request $request)
+	public function download(RequestInterface $request)
 	{
 		try {
 			$response = $this->client->send($this->getGuzzleRequest($request));

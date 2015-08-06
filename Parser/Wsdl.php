@@ -64,7 +64,7 @@ class Wsdl extends Parser implements ParserInterface
 	 * Parse the data
 	 * @param array $data shall be the response body
 	 * @param string $type is a WSDL data type (has to be obtained from the WSDL definition)
-	 * @todo Ensure the SOAP client returns an array, and cast it THERE if it doesn't
+	 * @todo Ensure the SOAP client returns an array DATA, and cast it THERE if it doesn't (or in Job?)
 	 */
 	public function process(array $data, $type, $parentId = null)
 	{
