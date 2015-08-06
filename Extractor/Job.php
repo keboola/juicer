@@ -5,7 +5,9 @@ namespace Keboola\Juicer\Extractor;
 use	GuzzleHttp\Client as GuzzleClient;
 use	Keboola\Utils\Utils;
 use	Keboola\Juicer\Common\Logger,
-	Keboola\Juicer\Config\JobConfig;
+	Keboola\Juicer\Config\JobConfig,
+	Keboola\Juicer\Client\ClientInterface,
+	Keboola\Juicer\Parser\ParserInterface;
 use	Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
@@ -23,10 +25,10 @@ abstract class Job
 
 	/**
 	 * @param JobConfig $config
-	 * @param mixed $client A client used to communicate with the API (Guzzle, SoapClient, ...)
-	 * @param mixed $parser A parser to handle the result and convert it into CSV file(s)
+	 * @param ClientInterface $client A client used to communicate with the API (wrapper for Guzzle, SoapClient, ...)
+	 * @param ParserInterface $parser A parser to handle the result and convert it into CSV file(s)
 	 */
-	public function __construct(JobConfig $config, $client, $parser = null)
+	public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
 	{
 		$this->config = $config->getConfig();
 		$this->client = $client;
@@ -35,13 +37,6 @@ abstract class Job
 
 		$this->startTime = microtime(true);
 	}
-
-	/**
-	 *  Initialize the job (if needed).
-	 * @return void
-	 * @deprecated Define whichever methods are needed to initialize the job @ call them from Extractor
-	 */
-	public function init() {}
 
 	/**
 	 *  Usually handles the standard procedure.

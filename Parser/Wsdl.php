@@ -2,24 +2,33 @@
 
 namespace Keboola\Juicer\Parser;
 
+use	Keboola\Juicer\Parser\Parser;
 use	Keboola\Juicer\Exception\ApplicationException as Exception;
 use	Keboola\Utils\Utils;
 use	Keboola\CsvTable\Table;
-use	Keboola\Juicer\Parser\Parser;
 
 /**
  * Parse XML results from SOAP API to CSV
  */
-class Wsdl extends Parser
+class Wsdl extends Parser implements ParserInterface
 {
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $types;
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $struct;
-	/** @var Table[] */
-	protected $csvFiles = array();
-	// Generic data types to avoid parsing as WSDL "arrays"
-	protected $stdTypes = array(
+	/**
+	 * @var Table[]
+	 */
+	protected $csvFiles = [];
+	/**
+	 * Generic data types to avoid parsing as WSDL "arrays"
+	 * @var array
+	 */
+	protected $stdTypes = [
 		"QName",
 		"anySimpleType",
 		"anyURI",
@@ -40,7 +49,7 @@ class Wsdl extends Parser
 		"integer",
 		"string",
 		"time"
-	);
+	];
 
 	/**
 	 * @param array $types is generally a WSDL definition, obtained by \SoapClient::__getTypes() (upon a properly initialized client, obviously)
@@ -50,16 +59,28 @@ class Wsdl extends Parser
 		$this->struct = $this->createStruct();
 	}
 
+
+	/**
+	 * Parse the data
+	 * @param array $data shall be the response body
+	 * @param string $type is a WSDL data type (has to be obtained from the WSDL definition)
+	 * @todo Ensure the SOAP client returns an array, and cast it THERE if it doesn't
+	 */
+	public function process(array $data, $type, $parentId = null)
+	{
+		$this->parse($data, $type, null, null, $parentId);
+	}
+
 	/**
 	 * Create structure from a WSDL
 	 * @param array $types
 	 * @param int $maxDepth defines how many levels of the response should be parsed (unlimited by default)
 	 */
-	protected function createStruct(array $types = array(), $maxDepth = -1)
+	protected function createStruct(array $types = [], $maxDepth = -1)
 	{
 		$types = !empty($types) ? $types : $this->types;
 
-		$columns = array();
+		$columns = [];
 		foreach ($types as $type) {
 			$typeArr = preg_split("/ /", $type, 3);
 
@@ -98,9 +119,8 @@ class Wsdl extends Parser
 	 * @param array|object $data shall be the response body
 	 * @param string $type is a WSDL data type (has to be obtained from the WSDL definition)
 	 * @param string $path a path to the results list(the array containing each record) within the response
-	 * @param string $parent: used internally for naming child arrays/columns
-	 * @param string $parentId: used internally to link child objects to parent
-	 * @return Table[]
+	 * @param string $parent used internally for naming child arrays/columns
+	 * @param string $parentId used internally to link child objects to parent
 	 */
 	public function parse($data, $type, $path = null, $parent = null, $parentId = null) {
 		if (!empty($path)) {
@@ -121,7 +141,7 @@ class Wsdl extends Parser
 		$struct = $this->struct[$type];
 
 		foreach(Utils::to_assoc($data) as $record) {
-			$row = array();
+			$row = [];
 
 			foreach($struct as $key => $valueType) {
 				if (empty($record[$key])) {
@@ -147,15 +167,22 @@ class Wsdl extends Parser
 
 			$handle->writeRow($row);
 		}
+	}
 
-		return $this->getCsvFiles();
+	/**
+	 * Return the results list
+	 * @return Table[]
+	 * @deprecated
+	 */
+	public function getCsvFiles() {
+		return $this->getResults();
 	}
 
 	/**
 	 * Return the results list
 	 * @return Table[]
 	 */
-	public function getCsvFiles() {
+	public function getResults() {
 		return $this->csvFiles;
 	}
 }
