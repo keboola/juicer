@@ -34,9 +34,6 @@ class ResponseUrlScrollerTest extends ExtractorTestCase
 
 		$last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
 		$this->assertEquals(false, $last);
-
-
-
 	}
 
 	public function testGetNextRequestParams()

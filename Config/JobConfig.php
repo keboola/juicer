@@ -27,6 +27,16 @@ class JobConfig
 	protected $config;
 
 	/**
+	 * @param string $jobId
+	 * @param array $config
+	 */
+	public function __construct($jobId, array $config)
+	{
+		$this->jobId = $jobId;
+		$this->config = $config;
+	}
+
+	/**
 	 * Create an instance of config from config assoc. array
 	 * @param array $config
 	 * 	example:
@@ -58,16 +68,6 @@ class JobConfig
 		}
 
 		return $job;
-	}
-
-	/**
-	 * @param string $jobId
-	 * @param array $config
-	 */
-	public function __construct($jobId, array $config)
-	{
-		$this->jobId = $jobId;
-		$this->config = $config;
 	}
 
 	/**

@@ -10,14 +10,6 @@ class NoScroller implements ScrollerInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getNextPageUrl($response, $data, $endpoint, array $params = null)
-	{
-		return false;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
 	{
 		return false;

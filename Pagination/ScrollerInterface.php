@@ -9,10 +9,9 @@ interface ScrollerInterface
 {
 	/**
 	 * @param ClientInterface $client
+	 * @param $jobConfig $jobConfig
 	 * @param object $response
 	 * @param array $data
-	 * @param string $endpoint
-	 * @param array $params
 	 * @return RequestInterface|false
 	 */
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data);

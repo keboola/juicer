@@ -8,20 +8,34 @@ use	Keboola\Juicer\Common\Logger,
 	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Client\ClientInterface,
 	Keboola\Juicer\Client\RequestInterface,
-	Keboola\Juicer\Parser\ParserInterface;
+	Keboola\Juicer\Parser\ParserInterface,
+	Keboola\Juicer\Pagination\ScrollerInterface,
+	Keboola\Juicer\Pagination\NoScroller;
 use	Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */
 abstract class Job
 {
-	/** @var JobConfig */
+	/**
+	 * @var JobConfig
+	 */
 	protected $config;
+	/**
+	 * @var ClientInterface
+	 */
 	protected $client;
+	/**
+	 * @var ParserInterface
+	 */
 	protected $parser;
-	/** @var double */
-	protected $startTime;
-	/** @var string */
+	/**
+	 * @var ScrollerInterface
+	 */
+	protected $scroller;
+	/**
+	 * @var string
+	 */
 	protected $jobId;
 
 	/**
@@ -35,8 +49,6 @@ abstract class Job
 		$this->client = $client;
 		$this->parser = $parser;
 		$this->jobId = $config->getJobId();
-
-		$this->startTime = microtime(true);
 	}
 
 	/**
@@ -110,8 +122,7 @@ abstract class Job
 	 */
 	protected function nextPage(JobConfig $config, $response, $data)
 	{
-
-		return false;
+		return $this->getScroller()->getNextRequest($this->client, $config, $response, $data);
 	}
 
 	/**
@@ -196,30 +207,30 @@ abstract class Job
 	}
 
 	/**
-	 *  Return an array of generated files to upload to Sapi after the job is finished: array(table_name => CsvFile).
-	 *
-	 * @return \Keboola\Csv\CsvFile[]
-	 * @deprecated DYI!
-	 */
-	public function getCsvList()
-	{
-		return array();
-	}
-
-	/**
-	 * Returns time elapsed since initializing the Job.
-	 * @return double
-	 */
-	public function getRunTime()
-	{
-		return microtime(true) - $this->startTime;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getJobId()
 	{
 		return $this->jobId;
+	}
+
+	/**
+	 * @return ScrollerInterface
+	 */
+	protected function getScroller()
+	{
+		if (empty($this->scroller)) {
+			$this->scroller = new NoScroller;
+		}
+
+		return $this->scroller;
+	}
+
+	/**
+	 * @param ScrollerInterface $scroller
+	 */
+	public function setScroller(ScrollerInterface $scroller)
+	{
+		$this->scroller = $scroller;
 	}
 }
