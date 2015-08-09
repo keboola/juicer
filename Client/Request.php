@@ -18,15 +18,15 @@ abstract class Request
 		$this->params = $params;
 	}
 
-	/**
-	 * @todo Actually use the request object?
-	 * Should perhaps return the response straight away (call it self::call() or so)
-	 * @param string $endpoint REST endpoint or SOAP function
-	 * @param array parameters
-	 * @param array REST method or SOAP options+inputHeader
-	 * @return RequestInterface
-	 */
-	public static function create(array $config) {}
+// 	/**
+// 	 * @todo Actually use the request object?
+// 	 * Should perhaps return the response straight away (call it self::call() or so)
+// 	 * @param string $endpoint REST endpoint or SOAP function
+// 	 * @param array parameters
+// 	 * @param array REST method or SOAP options+inputHeader
+// 	 * @return RequestInterface
+// 	 */
+// 	public static function create(array $config) {}
 
 	public function getEndpoint()
 	{

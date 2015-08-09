@@ -18,7 +18,7 @@ use	Keboola\Utils\Utils;
 /**
  *
  */
-class RestClient
+class RestClient implements ClientInterface
 {
 	/**
 	 * @var Client
@@ -108,11 +108,10 @@ class RestClient
 		return $this->client->createRequest($method, $endpoint, $options);
 	}
 
-	public function getRequest(JobConfig $jobConfig)
+	public function createRequest(array $config)
 	{
-		return RestRequest::create($jobConfig->getConfig());
+		return RestRequest::create($config);
 	}
-
 
 	/**
 	 * Returns an exponential backoff (prefers Retry-After header) for GuzzleClient (4.*).

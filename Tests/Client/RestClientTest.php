@@ -13,7 +13,7 @@ use	GuzzleHttp\Client,
 class RestClientTest extends ExtractorTestCase
 {
 
-	public function testGetRequest()
+	public function testCreateRequest()
 	{
 		$arr = [
 			'first' => 1,
@@ -25,7 +25,7 @@ class RestClientTest extends ExtractorTestCase
 		]);
 
 		$client = new RestClient(new Client);
-		$request = $client->getRequest($jobConfig);
+		$request = $client->createRequest($jobConfig->getConfig());
 
 		$expected = new RestRequest('ep', $arr);
 

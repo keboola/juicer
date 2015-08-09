@@ -131,7 +131,7 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		}
 
 		foreach($placeholders as $placeholder => $field) {
-			// TODO allow using a descriptive ID by storing the result by `task id` in $parentResults
+			// TODO allow using a descriptive ID by storing the result by `task(job) id` in $parentResults
 			if (strpos($placeholder, ':') !== false) {
 				list($level, $ph) = explode(':', $placeholder, 2);
 				// Make the direct parent a 1 instead of 0 for a better user friendship
@@ -161,7 +161,7 @@ abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
 		if (!empty($this->parentParams)) {
 			$params = array_replace($this->parentParams, $params);
 		}
-//
+
 		$job->setParams($params);
 		$job->setParentResults($this->parentResults);
 

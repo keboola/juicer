@@ -9,7 +9,7 @@ class JsonTest extends ExtractorTestCase
 {
 	public function testProcess()
 	{
-		$parser = new Json(new Parser($this->getLogger()));
+		$parser = new Json(new Parser($this->getLogger('test', true)));
 
 		$data = json_decode('[
 			{

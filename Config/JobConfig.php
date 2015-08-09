@@ -11,13 +11,19 @@ use	Keboola\Juicer\Exception\UserException;
  */
 class JobConfig
 {
-	/** @var string */
+	/**
+	 * @var string
+	 */
 	protected $jobId;
 
-	/** @var JobConfig[] */
+	/**
+	 * @var JobConfig[]
+	 */
 	protected $childJobs = [];
 
-	/** @var array */
+	/**
+	 * @var array
+	 */
 	protected $config;
 
 	/**
@@ -94,5 +100,22 @@ class JobConfig
 	public function getConfig()
 	{
 		return $this->config;
+	}
+
+	/**
+	 * @return string
+	 * @todo should JobConfig store endpoint and params separately?
+	 */
+	public function getEndpoint()
+	{
+		return $this->config['endpoint'];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getParams()
+	{
+		return empty($this->config['params']) ? [] : $this->config['params'];
 	}
 }

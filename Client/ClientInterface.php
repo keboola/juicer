@@ -10,16 +10,27 @@ use	Keboola\Juicer\Config\JobConfig;
 interface ClientInterface
 {
 	/**
-	 * @param Request $request
+	 * @param RequestInterface $request
 	 * @return mixed Raw response as it comes from the client
 	 */
-	public function download(Request $request);
+	public function download(RequestInterface $request);
 
 
 	/**
-	 * Create a request from a jobConfig
+	 * Create a request from a JobConfig->getConfig() array
+	 * [
+	 *	'endpoint' => 'resource', // Required
+	 *	'params' => [
+	 *		'some' => 'parameter'
+	 *	],
+	 *	'method' => 'GET', // REST only
+	 *	'options' => [], // SOAP only
+	 *	'inputHeader' => '' // SOAP only
+	 * ]
+	 * @param array $config
+	 * @return RequestInterface
 	 */
-	public function getRequest(JobConfig $config);
+	public function createRequest(array $config);
 
 	/**
 	 *

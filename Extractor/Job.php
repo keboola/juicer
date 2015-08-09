@@ -79,12 +79,24 @@ abstract class Job
 	 * Parse the result into a CSV (either using any of built-in parsers, or using own methods).
 	 *
 	 * @param object $response
+	 * @param array|string $parentId ID (or list thereof) to be passed to parser
 	 * @return array|mixed the unparsed data array
 	 */
-	protected function parse($response)
+	protected function parse($response, $parentId = null)
 	{
 		$data = $this->findDataInResponse($response, $this->config->getConfig());
-		$this->parser->process($data);
+		$this->parser->process($data, $this->getDataType(), $parentId);
+
+		return $data;
+	}
+
+	protected function getDataType()
+	{
+		$config = $this->config->getConfig();
+		$type = !empty($config['dataType'])
+			? $config['dataType']
+			: $config['endpoint'];
+		return $type;
 	}
 
 	/**
@@ -112,7 +124,7 @@ abstract class Job
 	 */
 	protected function firstPage(JobConfig $config)
 	{
-		return $this->client->getRequest($config);
+		return $this->client->getRequest($config->getConfig());
 	}
 
 	/**

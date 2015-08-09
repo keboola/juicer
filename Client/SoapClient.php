@@ -12,7 +12,7 @@ use	SoapClient;
 /**
  *
  */
-class SoapClient
+class SoapClient implements ClientInterface
 {
 	/**
 	 * @var SoapClient
@@ -74,9 +74,9 @@ class SoapClient
 		return $response;
 	}
 
-	public function getRequest(JobConfig $jobConfig)
+	public function createRequest(array $config)
 	{
-		return SoapRequest::create($jobConfig->getConfig());
+		return SoapRequest::create($config);
 	}
 
 	/**
