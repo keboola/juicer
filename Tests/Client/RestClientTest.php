@@ -60,6 +60,7 @@ class RestClientTest extends ExtractorTestCase
 		]';
 
 		$guzzle = new Client();
+		$guzzle->setDefaultOption('headers', ['X-Test' => '1234']);
 
 		$mock = new Mock([
 			new Response(200, [], Stream::factory($body))
@@ -77,8 +78,8 @@ class RestClientTest extends ExtractorTestCase
 		$this->assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
 		$this->assertEquals('GET', $history->getLastRequest()->getMethod());
 		$this->assertEquals(
-			['User-Agent' => ['Guzzle/4.2.3 curl/7.42.1 PHP/5.6.9']],
-			$history->getLastRequest()->getHeaders()
+			[1234],
+			$history->getLastRequest()->getHeaders()['X-Test']
 		);
 	}
 
