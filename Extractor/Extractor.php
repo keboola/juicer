@@ -85,6 +85,7 @@ abstract class Extractor implements ExtractorInterface
 
 	/**
 	 * @param Encryptor $encryptor
+	 * @deprecated
 	 */
 	public function setEncryptor(Encryptor $encryptor)
 	{

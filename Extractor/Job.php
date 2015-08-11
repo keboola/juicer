@@ -195,7 +195,6 @@ class Job
 				throw $e;
 			}
 		} else {
-// var_dump($response);
 			$e = new UserException('Unknown response from API.');
 			$e->setData([
 				'response' => json_encode($response),

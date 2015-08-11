@@ -90,7 +90,7 @@ class RestClient implements ClientInterface
 				['body' => $data]
 			);
 		}
-// var_dump(json_decode($response->getBody()), $this->getObjectFromResponse($response));
+
 		return $this->getObjectFromResponse($response);
 	}
 
