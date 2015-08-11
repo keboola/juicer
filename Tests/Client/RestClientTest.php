@@ -73,7 +73,7 @@ class RestClientTest extends ExtractorTestCase
 
 		$request = new RestRequest('ep', ['a' => 1]);
 
-		$this->assertEquals($body, $restClient->download($request)->getBody());
+		$this->assertEquals(json_decode($body), $restClient->download($request));
 		$this->assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
 		$this->assertEquals('GET', $history->getLastRequest()->getMethod());
 		$this->assertEquals(
@@ -105,6 +105,6 @@ class RestClientTest extends ExtractorTestCase
 
 		$request = new RestRequest('ep', ['a' => 1]);
 
-		$this->assertEquals($body, $restClient->download($request)->getBody());
+		$this->assertEquals(json_decode($body), $restClient->download($request));
 	}
 }

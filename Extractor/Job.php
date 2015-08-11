@@ -15,7 +15,7 @@ use	Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */
-abstract class Job
+class Job
 {
 	/**
 	 * @var JobConfig
@@ -68,7 +68,7 @@ abstract class Job
 	public function run()
 	{
 		$request = $this->firstPage($this->config);
-		while ($request !== false) { // TODO !empty sounds better, doesn't it? Perhaps it's lazy?
+		while ($request !== false) {
 			$response = $this->download($request);
 			$data = $this->parse($response);
 			$request = $this->nextPage($this->config, $response, $data);
@@ -84,7 +84,7 @@ abstract class Job
 	 */
 	protected function download(RequestInterface $request)
 	{
-		$this->client->download($request);
+		return $this->client->download($request);
 	}
 
 	/**
@@ -135,7 +135,7 @@ abstract class Job
 	 */
 	protected function firstPage(JobConfig $config)
 	{
-		return $this->client->getRequest($config->getConfig());
+		return $this->client->createRequest($config->getConfig());
 	}
 
 	/**
@@ -195,6 +195,7 @@ abstract class Job
 				throw $e;
 			}
 		} else {
+// var_dump($response);
 			$e = new UserException('Unknown response from API.');
 			$e->setData([
 				'response' => json_encode($response),

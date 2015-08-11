@@ -48,6 +48,8 @@ class SoapClient implements ClientInterface
 				sleep(pow(2, $backoffTry));
 			}
 
+			// TODO refresh request may come here
+
 			try {
 				$response = $this->client->__soapCall($request->getFunction(), $request->getParams(), $request->getOptions(), $request->getInputHeader(), $outputHeaders);
 			} catch(\SoapFault $e) {

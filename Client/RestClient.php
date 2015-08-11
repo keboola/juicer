@@ -10,6 +10,7 @@ use	GuzzleHttp\Client,
 	GuzzleHttp\Exception\BadResponseException,
 	GuzzleHttp\Exception\ClientException,
 	GuzzleHttp\Message\Request as GuzzleRequest,
+	GuzzleHttp\Message\Response,
 	GuzzleHttp\Subscriber\Retry\RetrySubscriber,
 	GuzzleHttp\Event\AbstractTransferEvent,
 	GuzzleHttp\Event\ErrorEvent;
@@ -31,6 +32,22 @@ class RestClient implements ClientInterface
 	 */
 	protected $method;
 
+
+	/**
+	 * override if the server response isn't UTF-8
+	 * @var string
+	 */
+	protected $responseEncoding = 'UTF-8';
+
+	const JSON = 'json';
+	const XML = 'xml';
+	const RAW = 'raw';
+
+	/**
+	 * @var string
+	 */
+	protected $responseFormat = self::JSON;
+
 	public function __construct(Client $guzzle)
 	{
 		$this->client = $guzzle;
@@ -44,7 +61,7 @@ class RestClient implements ClientInterface
 	}
 
 	/**
-	 * @return client
+	 * @return Client
 	 */
 	public function getClient()
 	{
@@ -53,7 +70,7 @@ class RestClient implements ClientInterface
 
 	/**
 	 * @param Request $request
-	 * @return \GuzzleHttp\Message\Response
+	 * @return object|array
 	 */
 	public function download(RequestInterface $request)
 	{
@@ -73,11 +90,51 @@ class RestClient implements ClientInterface
 				['body' => $data]
 			);
 		}
-
-		return $response;
+// var_dump(json_decode($response->getBody()), $this->getObjectFromResponse($response));
+		return $this->getObjectFromResponse($response);
 	}
 
-	protected function getGuzzleRequest(Request $request)
+	/**
+	 * @param Response $response
+	 * @return object|array Should be anything that can result from json_decode
+	 */
+	protected function getObjectFromResponse(Response $response)
+	{
+		// Format the response
+		switch ($this->responseFormat) {
+			case self::JSON:
+				// Sanitize the JSON
+				$body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
+				return Utils::json_decode($body);
+			case self::XML:
+				try {
+					$xml = new \SimpleXMLElement($response->getBody());
+				} catch(\Exception $e) {
+					throw new UserException(
+						"Error decoding the XML response: " . $e->getMessage(),
+						400,
+						$e,
+						['body' => (string) $response->getBody()]
+					);
+				}
+				// TODO must be a \stdClass
+				return $xml;
+			case self::RAW:
+				// Or could this be a string?
+				$object = new \stdClass;
+				$object->body = (string) $response->getBody();
+				return $object;
+// 				return (string) $response->getBody();
+			default:
+				throw new ApplicationException("Data format {$this->responseFormat} not supported.");
+		}
+	}
+
+	/**
+	 * @param RequestInterface $request
+	 * @return GuzzleRequest
+	 */
+	protected function getGuzzleRequest(RequestInterface $request)
 	{
 		if (!$request instanceof RestRequest) {
 			throw new ApplicationException("RestClient requires a RestRequest!");
@@ -102,12 +159,17 @@ class RestClient implements ClientInterface
 			default:
 				throw new UserException("Unknown request method '" . $request->getMethod() . "' for '" . $request->getEndpoint() . "'");
 				break;
-
 		}
+
+		// TODO refresh request here?
 
 		return $this->client->createRequest($method, $endpoint, $options);
 	}
 
+	/**
+	 * @param array $config
+	 * @return RestRequest
+	 */
 	public function createRequest(array $config)
 	{
 		return RestRequest::create($config);
@@ -117,6 +179,7 @@ class RestClient implements ClientInterface
 	 * Returns an exponential backoff (prefers Retry-After header) for GuzzleClient (4.*).
 	 * Use: `$client->getEmitter()->attach($this->getBackoff());`
 	 * @param int $max
+	 * @param array $retryCodes
 	 * @return RetrySubscriber
 	 */
 	public static function getBackoff($max = 8, $retryCodes = [500, 502, 503, 504, 408, 420, 429])
@@ -157,5 +220,21 @@ class RestClient implements ClientInterface
 				return 1000 * $delay;
 			}
 		]);
+	}
+
+	/**
+	 * @param string $format
+	 */
+	public function setResponseFormat($format)
+	{
+		$this->responseFormat = $format;
+	}
+
+	/**
+	 * @param string $format
+	 */
+	public function setResponseEncoding($encoding)
+	{
+		$this->responseEncoding = $encoding;
 	}
 }
