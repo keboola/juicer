@@ -56,15 +56,26 @@ class RecursiveJobTest extends ExtractorTestCase
 		]);
 		$client->getClient()->getEmitter()->attach($mock);
 
-// 		$history = new History();
-// 		$client->getClient()->getEmitter()->attach($history);
+		$history = new History();
+		$client->getClient()->getEmitter()->attach($history);
 
 		$job = new RecursiveJob($jobConfig, $client, $parser);
 
 		$job->run();
 
-// 		echo $history;
+		$urls = [];
+		foreach($history as $item) {
+			$urls[] = $item['request']->getUrl();
+		}
 
+		$this->assertEquals(
+			[
+				"exports/tickets.json",
+				"tickets/1/comments.json",
+				"tickets/2/comments.json"
+			],
+			$urls
+		);
 		$this->assertEquals(['tickets_export', 'comments'], array_keys($parser->getResults()));
 	}
 }
