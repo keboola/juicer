@@ -22,7 +22,7 @@ use	Keboola\Juicer\Exception\UserException;
  * @todo Separate from JsonJob using an interface to get the
  * 		job and pass to the recursion
  */
-abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
+class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 {
 	/** @var JobConfig[] */
 	protected $childJobs = [];
@@ -47,8 +47,8 @@ abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 
 		parent::__construct($config, $client, $parser);
 		// If no dataType is set, save endpoint as dataType before replacing placeholders
-		if (empty($this->config['dataType']) && !empty($this->config['endpoint'])) {
-			$this->config['dataType'] = $this->getDataType();
+		if (empty($this->config->getConfig()['dataType']) && !empty($this->config->getConfig()['endpoint'])) {
+			$this->config->getConfig()['dataType'] = $this->getDataType();
 		}
 	}
 
@@ -60,7 +60,7 @@ abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	public function setParams(array $params)
 	{
 		foreach($params as $param) {
-			$this->config['endpoint'] = str_replace('{' . $param['placeholder'] . '}', $param['value'], $this->config['endpoint']);
+			$this->config->setEndpoint(str_replace('{' . $param['placeholder'] . '}', $param['value'], $this->config->getConfig()['endpoint']));
 		}
 
 		$this->parentParams = $params;
@@ -122,7 +122,8 @@ abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	 */
 	protected function createChild(JobConfig $config)
 	{
-		$job = new static($config, $this->client, $this->parser);
+		// Clone the config to prevent overwriting the placeholder(s) in endpoint
+		$job = new static(clone $config, $this->client, $this->parser);
 
 		$params = [];
 		$placeholders = !empty($config->getConfig()['placeholders']) ? $config->getConfig()['placeholders'] : [];

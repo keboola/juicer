@@ -52,7 +52,7 @@ class Json implements ParserInterface
 	}
 
 	/**
-	 * @param Config $config
+	 * @param Config $config // not used anywhere in real aps (yet? - analyze)
 	 * @param Logger $logger
 	 * @param Temp $temp
 	 * @param array $metadata

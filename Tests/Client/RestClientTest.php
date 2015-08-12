@@ -103,7 +103,6 @@ class RestClientTest extends ExtractorTestCase
 		$history = new History();
 		$restClient->getClient()->getEmitter()->attach($history);
 
-
 		$request = new RestRequest('ep', ['a' => 1]);
 
 		$this->assertEquals(json_decode($body), $restClient->download($request));

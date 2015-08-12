@@ -112,6 +112,14 @@ class JobConfig
 	}
 
 	/**
+	 * @param string $endpoint
+	 */
+	public function setEndpoint($endpoint)
+	{
+		$this->config['endpoint'] = $endpoint;
+	}
+
+	/**
 	 * @return array
 	 * @todo Builder? Extend JobConfig in app and override this with builder (injected by setter)
 	 * OR in configuration, which is accessed in run.php
