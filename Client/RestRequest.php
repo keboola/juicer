@@ -34,4 +34,15 @@ class RestRequest extends Request implements RequestInterface
 			empty($config['method']) ? 'GET' : $config['method']
 		);
 	}
+
+	public function __toString()
+	{
+		return join(' ', [
+			$this->getMethod(),
+			$this->getEndpoint(),
+			'GET' == $this->getMethod()
+				? http_build_query($this->getParams())
+				: json_encode($this->getParams(), JSON_PRETTY_PRINT)
+		]);
+	}
 }

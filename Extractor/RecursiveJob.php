@@ -3,7 +3,9 @@
 namespace Keboola\Juicer\Extractor;
 
 use	Keboola\Juicer\Config\JobConfig,
-	Keboola\Juicer\Common\Logger;
+	Keboola\Juicer\Common\Logger,
+	Keboola\Juicer\Client\ClientInterface,
+	Keboola\Juicer\Parser\ParserInterface;
 use	Keboola\Filter\Filter;
 use	Keboola\Utils\Utils;
 use	Keboola\Juicer\Exception\UserException;
