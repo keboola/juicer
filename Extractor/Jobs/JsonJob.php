@@ -12,6 +12,7 @@ use	Keboola\Juicer\Common\Logger;
  * Expects the config table to contain following columns
  * "dataType": optional, type of data in the response
  * "dataField": optional, to override array lookup within the response
+ * @deprecated
  */
 abstract class JsonJob extends RestJob
 {

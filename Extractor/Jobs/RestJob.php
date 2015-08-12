@@ -18,6 +18,7 @@ use	GuzzleHttp\Client as GuzzleClient,
  * describe the request:
  * "endpoint": the API endpoint
  * "params": JSON encoded list of parameters such as query
+ * @deprecated
  */
 abstract class RestJob extends Job
 {

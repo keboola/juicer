@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\Juicer\Extractor\Jobs;
+namespace Keboola\Juicer\Extractor;
 
 use	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Common\Logger;
@@ -19,9 +19,8 @@ use	Keboola\Juicer\Exception\UserException;
  * the API endpoint
  * @todo Separate from JsonJob using an interface to get the
  * 		job and pass to the recursion
- * @deprecated
  */
-abstract class JsonRecursiveJob extends JsonJob implements RecursiveJobInterface
+abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 {
 	/** @var JobConfig[] */
 	protected $childJobs = [];

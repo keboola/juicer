@@ -8,6 +8,7 @@ use	Keboola\Juicer\Extractor\Job,
 /**
  * {@inheritdoc}
  * This class handles download from SOAP APIs
+ * @deprecated
  */
 abstract class SoapJob extends Job
 {

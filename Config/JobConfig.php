@@ -113,6 +113,8 @@ class JobConfig
 
 	/**
 	 * @return array
+	 * @todo Builder? Extend JobConfig in app and override this with builder (injected by setter)
+	 * OR in configuration, which is accessed in run.php
 	 */
 	public function getParams()
 	{
