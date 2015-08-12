@@ -39,14 +39,14 @@ abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct(JobConfig $config, $client, $parser = null)
+	public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
 	{
 		$this->childJobs = $config->getChildJobs();
 
 		parent::__construct($config, $client, $parser);
 		// If no dataType is set, save endpoint as dataType before replacing placeholders
 		if (empty($this->config['dataType']) && !empty($this->config['endpoint'])) {
-			$this->config['dataType'] = $this->config['endpoint'];
+			$this->config['dataType'] = $this->getDataType();
 		}
 	}
 
@@ -74,13 +74,11 @@ abstract class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	}
 
 	/**
-	 * {@inheritdoc}
 	 * Create subsequent jobs for recursive endpoints
-	 * Uses "recursive" column of the config table
-	 * @param mixed $response
-	 * @return array
+	 * Uses "children" section of the job config
+	 * {@inheritdoc}
 	 */
-	protected function parse($response)
+	protected function parse($response, $parentId = null)
 	{
 		// Add parent values to the result
 		$parentCols = [];

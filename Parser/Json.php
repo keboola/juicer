@@ -44,6 +44,14 @@ class Json implements ParserInterface
 	}
 
 	/**
+	 * @return JsonParser
+	 */
+	public function getParser()
+	{
+		return $this->parser;
+	}
+
+	/**
 	 * @param Config $config
 	 * @param Logger $logger
 	 * @param Temp $temp
