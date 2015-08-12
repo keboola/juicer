@@ -2,8 +2,10 @@
 
 namespace Keboola\Juicer\Parser;
 
-use	Keboola\Juicer\Parser\Parser;
 use	Keboola\Json\Parser as JsonParser;
+use	Keboola\Juicer\Config\Config;
+use	Keboola\Temp\Temp;
+use	Monolog\Logger;
 
 /**
  * Parse XML results from SOAP API to CSV
@@ -39,5 +41,34 @@ class Json implements ParserInterface
 	 */
 	public function getResults() {
 		return $this->parser->getCsvFiles();
+	}
+
+	/**
+	 * @param Config $config
+	 * @param Logger $logger
+	 * @param Temp $temp
+	 * @param array $metadata
+	 * @return static
+	 */
+	public static function create(Config $config, Logger $logger, Temp $temp, array $metadata = [])
+	{
+		if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
+			$struct = $metadata['json_parser.struct'];
+		} else {
+			$struct = [];
+		}
+
+		$rowsToAnalyze = null != $config && !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
+		$parser = new JsonParser($logger, $struct, $rowsToAnalyze);
+		$parser->setTemp($temp);
+		return new static($parser);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMetadata()
+	{
+		return ['json_parser.struct' => $this->parser->getStruct()];
 	}
 }

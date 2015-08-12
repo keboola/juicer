@@ -4,13 +4,13 @@ namespace Keboola\Juicer\Extractor\Extractors;
 
 use	Keboola\Json\Parser as JsonParser;
 use	Keboola\Juicer\Config\Config;
-use	Monolog\Registry as Monolog;
 
 /**
  * Prepare and store JsonParser's data.
  * Extends the Extractor by setting **$this->parser** to a **Keboola\Json\Parser** object, initialized with $struct stored in configuration bucket attributes (json.struct, serialized).
  *
  * @TODO: Instead of "extending" the process(), a getParser() should be here - but the run() doesn't have $config["json"] - error in storage of the struct?
+ * @deprecated
  */
 abstract class JsonExtractor extends RestExtractor
 {
@@ -21,7 +21,7 @@ abstract class JsonExtractor extends RestExtractor
 	 */
 	public function getParser(Config $config = null)
 	{
-		if (!empty($this->metadata['json_parser.struct']) && is_string($this->metadata['json_parser.struct'])) {
+		if (!empty($this->metadata['json_parser.struct']) && is_array($this->metadata['json_parser.struct'])) {
 			$struct = $this->metadata['json_parser.struct'];
 		} else {
 			$struct = [];
