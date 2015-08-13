@@ -46,7 +46,7 @@ class PageScrollerTest extends ExtractorTestCase
 
 		// Empty response
 		$responseUnderLimit = new \stdClass();
-		$responseUnderLimit->data = array_fill(0, 0, (object) ['key' => 'value']);
+		$responseUnderLimit->data = [];
 		$next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
 		$this->assertEquals(false, $next3);
 
