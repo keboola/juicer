@@ -121,11 +121,30 @@ class JobConfig
 
 	/**
 	 * @return array
-	 * @todo Builder? Extend JobConfig in app and override this with builder (injected by setter)
-	 * OR in configuration, which is accessed in run.php
 	 */
 	public function getParams()
 	{
 		return empty($this->config['params']) ? [] : $this->config['params'];
+	}
+
+	/**
+	 * @param array $params
+	 */
+	public function setParams(array $params)
+	{
+		$this->config['params'] = $params;
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function setParam($name, $value)
+	{
+		if (!isset($this->config['params'])) {
+			$this->config['params'] = [];
+		}
+
+		$this->config['params'][$name] = $value;
 	}
 }
