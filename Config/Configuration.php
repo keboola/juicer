@@ -41,7 +41,6 @@ class Configuration
 	}
 
 	/**
-	 * @param string $dataDir Path to folder containing config.yml
 	 * @return Config
 	 */
 	public function getConfig()

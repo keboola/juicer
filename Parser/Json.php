@@ -2,8 +2,10 @@
 
 namespace Keboola\Juicer\Parser;
 
-use	Keboola\Json\Parser as JsonParser;
-use	Keboola\Juicer\Config\Config;
+use	Keboola\Json\Parser as JsonParser,
+	Keboola\Json\Exception\JsonParserException;
+use	Keboola\Juicer\Config\Config,
+	Keboola\Juicer\Exception\UserException;
 use	Keboola\Temp\Temp;
 use	Monolog\Logger;
 
@@ -32,7 +34,16 @@ class Json implements ParserInterface
 	 */
 	public function process(array $data, $type, $parentId = null)
 	{
-		$this->parser->process($data, $type, $parentId);
+		try {
+			$this->parser->process($data, $type, $parentId);
+		} catch(JsonParserException $e) {
+			throw new UserException(
+				"Error parsing response JSON: " . $e->getMessage(),
+				500,
+				$e,
+				$e->getData()
+			);
+		}
 	}
 
 	/**

@@ -3,7 +3,6 @@
 namespace Keboola\Juicer\Parser;
 
 use	Keboola\Juicer\Parser\Parser;
-use	Keboola\Juicer\Exception\ApplicationException as Exception;
 use	Keboola\Utils\Utils;
 use	Keboola\CsvTable\Table;
 
