@@ -7,3 +7,5 @@ php:
 - hhvm
 before_install:
 - composer install
+after_success:
+- ./vendor/bin/test-reporter

@@ -7,3 +7,5 @@ vendor
 *~
 .idea
 parameters.yml
+/build
+
