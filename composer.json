@@ -1,7 +1,7 @@
 {
     "name": "keboola/juicer",
     "description": "Keboola Extractor Development Bundle",
-    "keywords": ["keboola", "syrup", "extractor", "development"],
+    "keywords": ["keboola", "extractor", "development"],
     "authors": [
         {
             "name": "Ondrej Vana",
