@@ -98,7 +98,13 @@ class Configuration
 
 	public function saveConfigMetadata(array $data)
 	{
-		file_put_contents($this->dataDir . "/out/state.yml", Yaml::dump($data));
+		$dirPath = $this->dataDir . '/out';
+
+		if (!is_dir($dirPath)) {
+			mkdir($dirPath, 0700, true);
+		}
+
+		file_put_contents($dirPath . '/state.yml', Yaml::dump($data));
 	}
 
 	/**
@@ -130,7 +136,11 @@ class Configuration
 	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
 	{
 		$path = $this->dataDir . '/out/tables/';
-		$bucketName = $sapiPrefix ? "in.c-" . $bucketName : $bucketName;
+		$bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
+
+		if (!is_dir($path)) {
+			mkdir($path, 0700, true);
+		}
 
 		foreach($csvFiles as $key => $file) {
 			file_put_contents($path . $key . '.manifest', Yaml::dump([

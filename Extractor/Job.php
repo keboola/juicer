@@ -118,7 +118,7 @@ class Job
 	 * @param JobConfig $config
 	 * @param mixed $response
 	 * @param array|null $data
-	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
+	 * @return RequestInterface | false
 	 */
 	protected function nextPage(JobConfig $config, $response, $data)
 	{
@@ -130,7 +130,7 @@ class Job
 	 * Return a download request
 	 *
 	 * @param JobConfig $config
-	 * @return \Keboola\Juicer\Client\SoapRequest | \GuzzleHttp\Message\Request | ... | false
+	 * @return RequestInterface | false
 	 * @todo abstract?
 	 */
 	protected function firstPage(JobConfig $config)
