@@ -27,12 +27,6 @@ class Config
 	 */
 	protected $attributes = [];
 
-// 	/**
-// 	 * Use to carry data between sessions
-// 	 * @var array
-// 	 */
-// 	protected $metadata = [];
-//
 	/**
 	 * @var array
 	 */
@@ -50,61 +44,81 @@ class Config
 		$this->runtimeParams = $runtimeParams;
 	}
 
+	/**
+	 * @param string $runId
+	 */
 	public function setRunId($runId)
 	{
 		$this->runId = $runId;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getRunId()
 	{
 		return $this->runId;
 	}
 
-	public function setAttributes($attributes)
+	/**
+	 * @param array $attributes
+	 */
+	public function setAttributes(array $attributes)
 	{
 		$this->attributes = $attributes;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getAttributes()
 	{
 		return $this->attributes;
 	}
 
-	public function setJobs($jobs)
+	/**
+	 * @param string $name
+	 */
+	public function getAttribute($name)
+	{
+		return empty($this->attributes[$name]) ? false : $this->attributes[$name];
+	}
+
+	/**
+	 * @param JobConfig[] $jobs
+	 */
+	public function setJobs(array $jobs)
 	{
 		$this->jobs = $jobs;
 	}
 
+	/**
+	 * @return JobConfig[]
+	 */
 	public function getJobs()
 	{
 		return $this->jobs;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getAppName()
 	{
 		return $this->appName;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getConfigName()
 	{
 		return $this->configName;
 	}
 
-// 	public function setMetadata(array $data)
-// 	{
-// 		$this->metadata = $data;
-// 	}
-//
-// 	public function updateMetadata(array $data)
-// 	{
-// 		$this->metadata = array_replace($this->metadata, $data);
-// 	}
-//
-// 	public function getMetadata()
-// 	{
-// 		return $this->metadata;
-// 	}
-//
+	/**
+	 * @return array
+	 */
 	public function getRuntimeParams()
 	{
 		return $this->runtimeParams;
