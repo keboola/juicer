@@ -47,17 +47,23 @@ class Logger
 	public static function initLogger($name = '', $debug = null)
 	{
 		$options = getopt("", ['debug']);
-		if (is_null($debug)) {
-			$debug = isset($options['debug']);
+		if (isset($options['debug'])) {
+			// Default format with all the info for dev debug
+			$formatter = new LineFormatter();
+			$debug = true;
+		} elseif (!empty($debug)) {
+			// Set user debug mode
+			$formatter = new LineFormatter("%level_name%: %message% %context% %extra%\n");
+		} else {
+			// Simple message (TODO add user readable $context)
+			$formatter = new LineFormatter("%message%\n");
 		}
+
 		$level = $debug ? Monolog::DEBUG : Monolog::INFO;
 
 		$handler = new StreamHandler('php://stdout', $level);
-		// Print out less verbose messages out of debug
-		// TODO if debug is enabled by user, output the default message format BUT without date
-		if ($level != Monolog::DEBUG) {
-			$handler->setFormatter(new LineFormatter("%message%\n"));
-		}
+		$handler->setFormatter($formatter);
+
 		self::$logger = new Monolog($name, [$handler]);
 	}
 
