@@ -59,12 +59,14 @@ class Logger
 			$formatter = new LineFormatter("%message%\n");
 		}
 
+		$errHandler = new StreamHandler('php://stderr', Monolog::NOTICE, false);
+
 		$level = $debug ? Monolog::DEBUG : Monolog::INFO;
 
 		$handler = new StreamHandler('php://stdout', $level);
 		$handler->setFormatter($formatter);
 
-		self::$logger = new Monolog($name, [$handler]);
+		self::$logger = new Monolog($name, [$errHandler, $handler]);
 	}
 
 	/**
