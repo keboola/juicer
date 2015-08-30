@@ -76,6 +76,29 @@ class RecursiveJobTest extends ExtractorTestCase
 
 		// Assert all three levels were parsed to their respective tables
 		$this->assertEquals(['tickets_export', 'comments', 'subd'], array_keys($parser->getResults()));
+
+		$this->assertEquals(
+			'"field","id"' . PHP_EOL .
+			'"data","1"' . PHP_EOL .
+			'"more","2"' . PHP_EOL,
+			file_get_contents($parser->getResults()['tickets_export'])
+		);
+
+		$this->assertEquals(
+			'"detail","subId","parent_id"' . PHP_EOL .
+			'"something","1","1"' . PHP_EOL .
+			'"somethingElse","1","2"' . PHP_EOL .
+			'"another","2","2"' . PHP_EOL,
+			file_get_contents($parser->getResults()['comments'])
+		);
+
+		$this->assertEquals(
+			'"grand","parent_id","parent_subId"' . PHP_EOL .
+			'"child","1","1"' . PHP_EOL .
+			'"child","2","1"' . PHP_EOL .
+			'"child","2","2"' . PHP_EOL,
+			file_get_contents($parser->getResults()['subd'])
+		);
 	}
 
 	/**

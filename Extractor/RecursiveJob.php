@@ -79,9 +79,9 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	{
 		// Add parent values to the result
 		$parentCols = [];
-		foreach($this->parentParams as $k => $v) {
-			$k = $this->prependParent($k);
-			$parentCols[$k] = $v['value'];
+		foreach($this->parentParams as $v) {
+			$key = $this->prependParent($v['field']);
+			$parentCols[$key] = $v['value'];
 		}
 
 		$data = parent::parse($response, $parentCols);
