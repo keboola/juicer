@@ -9,8 +9,15 @@ parameters:
                 dataType: tickets_export
                 children:
                     -
-                        endpoint: tickets/{id}/comments.json
+                        endpoint: tickets/{1:id}/comments.json
                         recursionFilter: "status!=Deleted"
                         dataType: comments
                         placeholders:
-                            id: id
+                            1:id: id
+                        children:
+                            -
+                                endpoint: third/level/{2:id}/{id}.json
+                                dataType: subd
+                                placeholders:
+                                    2:id: id
+                                    id: subId # Look ma no prefix!

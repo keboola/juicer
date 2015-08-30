@@ -5,7 +5,8 @@ use	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Client\RestClient,
 	Keboola\Juicer\Parser\Json,
 	Keboola\Juicer\Pagination\ResponseUrlScroller,
-	Keboola\Juicer\Extractor\RecursiveJob;
+	Keboola\Juicer\Extractor\RecursiveJob,
+	Keboola\Juicer\Common\Logger;
 
 use	Keboola\Json\Parser;
 use	Keboola\Temp\Temp;
@@ -19,10 +20,10 @@ use	GuzzleHttp\Client,
 // recursivejobtest too w/ scroller reset
 class RecursiveJobTest extends ExtractorTestCase
 {
-	public function testCreateChild()
-	{
-
-	}
+// 	public function testCreateChild()
+// 	{
+//
+// 	}
 
 	/**
 	 * Initializes a parent job and runs the child
@@ -30,10 +31,11 @@ class RecursiveJobTest extends ExtractorTestCase
 	 */
 	public function testParse()
 	{
+// 		Logger::initLogger('', true);
+
 		$temp = new Temp('recursion');
 		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
 
-// 		var_dump(array_values($configuration->getConfig()->getJobs())[0]);
 		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
 
 		$parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
@@ -44,15 +46,23 @@ class RecursiveJobTest extends ExtractorTestCase
 				{"field": "data", "id": 1},
 				{"field": "more", "id": 2}
 		]';
-
-		$detail = '[
-				{"detail": "something"}
+		$detail1 = '[
+				{"detail": "something", "subId": 1}
 		]';
+		$detail2 = '[
+				{"detail": "somethingElse", "subId": 1},
+				{"detail": "another", "subId": 2}
+		]';
+
+		$subDetail = '[{"grand": "child"}]';
 
 		$mock = new Mock([
 			new Response(200, [], Stream::factory($parentBody)),
-			new Response(200, [], Stream::factory($detail)),
-			new Response(200, [], Stream::factory($detail))
+			new Response(200, [], Stream::factory($detail1)),
+			new Response(200, [], Stream::factory($subDetail)),
+			new Response(200, [], Stream::factory($detail2)),
+			new Response(200, [], Stream::factory($subDetail)),
+			new Response(200, [], Stream::factory($subDetail))
 		]);
 		$client->getClient()->getEmitter()->attach($mock);
 
@@ -72,10 +82,65 @@ class RecursiveJobTest extends ExtractorTestCase
 			[
 				"exports/tickets.json",
 				"tickets/1/comments.json",
-				"tickets/2/comments.json"
+				"third/level/1/1.json",
+				"tickets/2/comments.json",
+				"third/level/2/1.json",
+				"third/level/2/2.json"
 			],
 			$urls
 		);
-		$this->assertEquals(['tickets_export', 'comments'], array_keys($parser->getResults()));
+
+		$this->assertEquals(['tickets_export', 'comments', 'subd'], array_keys($parser->getResults()));
+	}
+
+	/**
+	 * @expectedException \Keboola\Juicer\Exception\UserException
+	 * @expectedExceptionMessage No value found for 1:id in parent result. (level: 1)
+	 */
+	public function testWrongResponse()
+	{
+		Logger::initLogger('', true);
+
+		$temp = new Temp('recursion');
+		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
+
+		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
+
+		$parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
+
+		$client = RestClient::create();
+		$parentBody = '[
+				{"field": "data", "id": 1},
+				{"field": "more"}
+		]';
+		$detail1 = '[
+				{"detail": "something", "subId": 1}
+		]';
+		$detail2 = '[
+				{"detail": "somethingElse", "subId": 1},
+				{"detail": "another", "subId": 2}
+		]';
+
+		$subDetail = '[{"grand": "child"}]';
+
+		$mock = new Mock([
+			new Response(200, [], Stream::factory($parentBody)),
+			new Response(200, [], Stream::factory($detail1)),
+			new Response(200, [], Stream::factory($subDetail)),
+// 			new Response(200, [], Stream::factory($detail2)),
+		]);
+		$client->getClient()->getEmitter()->attach($mock);
+
+		$history = new History();
+		$client->getClient()->getEmitter()->attach($history);
+
+		$job = new RecursiveJob($jobConfig, $client, $parser);
+
+		$job->run();
+
+// 		$urls = [];
+// 		foreach($history as $item) {
+// 			$urls[] = $item['request']->getUrl();
+// 		}
 	}
 }

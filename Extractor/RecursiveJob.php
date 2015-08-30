@@ -24,9 +24,6 @@ use	Keboola\Juicer\Exception\UserException;
  */
 class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 {
-	/** @var JobConfig[] */
-	protected $childJobs = [];
-
 	/**
 	 * Used to save necessary parents' data to child's output
 	 * @var array
@@ -43,8 +40,6 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	 */
 	public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
 	{
-		$this->childJobs = $config->getChildJobs();
-
 		parent::__construct($config, $client, $parser);
 		// If no dataType is set, save endpoint as dataType before replacing placeholders
 		if (empty($this->config->getConfig()['dataType']) && !empty($this->config->getConfig()['endpoint'])) {
@@ -91,10 +86,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 
 		$data = parent::parse($response, $parentCols);
 
-		/**
-		 * @todo separate from JsonJob
-		 */
-		foreach($this->childJobs as $jobId => $child) {
+		foreach($this->config->getChildJobs() as $jobId => $child) {
 			if (!empty($child->getConfig()['recursionFilter'])) {
 				$filter = Filter::create($child->getConfig()['recursionFilter']);
 			}
@@ -105,9 +97,10 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 				}
 
 				// Add current result to the beginning of an array, containing all parent results
-				array_unshift($this->parentResults, $result);
+				$parentResults = $this->parentResults;
+				array_unshift($parentResults, $result);
 
-				$childJob = $this->createChild($child);
+				$childJob = $this->createChild($child, $parentResults);
 				$childJob->run();
 			}
 		}
@@ -120,7 +113,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	 * @param JobConfig $config
 	 * @return static
 	 */
-	protected function createChild(JobConfig $config)
+	protected function createChild(JobConfig $config, array $parentResults)
 	{
 		// Clone the config to prevent overwriting the placeholder(s) in endpoint
 		$job = new static(clone $config, $this->client, $this->parser);
@@ -142,12 +135,16 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 				$level = 0;
 			}
 
-			$value = Utils::getDataFromPath($field, $this->parentResults[$level], ".");
+			$value = Utils::getDataFromPath($field, $parentResults[$level], ".");
 			if (empty($value)) {
-				// Throw an UserException instead?
-				Logger::log(
-					"WARNING", "No value found for {$placeholder} in parent result.",
-					['result' => $this->parentResults]
+				throw new UserException(
+					"No value found for {$placeholder} in parent result. (level: " . ++$level . ")",
+					0,
+					null,
+					[
+						'parents' => $parentResults,
+						'config' => $config->getConfig()
+					]
 				);
 			}
 
@@ -164,7 +161,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 		}
 
 		$job->setParams($params);
-		$job->setParentResults($this->parentResults);
+		$job->setParentResults($parentResults);
 
 		return $job;
 	}
