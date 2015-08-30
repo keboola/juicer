@@ -148,14 +148,14 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 				);
 			}
 
-			$params[$field] = [
+			$params[$placeholder] = [
 				'placeholder' => $placeholder,
 				'field' => $field,
 				'value' => $value
 			];
 		}
 
-		// Add parent params as well
+		// Add parent params as well (for 'tagging' child-parent data)
 		if (!empty($this->parentParams)) {
 			$params = array_replace($this->parentParams, $params);
 		}

@@ -110,14 +110,80 @@ class RecursiveJobTest extends ExtractorTestCase
 		$job->run();
 	}
 
+	public function testSamePlaceholder()
+	{
+		list($job, $client, $parser, $history) = $this->getJob('recursive2');
+
+		$cubes = '{
+			"@odata.context": "$metadata#Cubes",
+			"value": [
+				{
+					"Name": "plan_BudgetPlan",
+					"Rules": "tl;dr"
+				},
+				{
+					"Name": "SDK.SampleCube",
+					"Rules": ""
+				}
+			]
+		}';
+
+		$views = '{
+			"@odata.context": "../$metadata#Cubes(\'plan_BudgetPlan\')/Views",
+			"value": [
+				{
+					"Name": "budget_placeholder",
+					"SuppressEmptyRows": false
+				},
+				{
+					"Name": "Budget Input Detailed",
+					"SuppressEmptyRows": false
+				}
+			]
+		}';
+
+		$results = '{}';
+
+		$mock = new Mock([
+			new Response(200, [], Stream::factory($cubes)),
+			new Response(200, [], Stream::factory($views)),
+			new Response(200, [], Stream::factory($results)),
+			new Response(200, [], Stream::factory($results)),
+			new Response(200, [], Stream::factory($views)),
+			new Response(200, [], Stream::factory($results)),
+			new Response(200, [], Stream::factory($results)),
+		]);
+		$client->getClient()->getEmitter()->attach($mock);
+
+		$job->run();
+
+		$urls = [];
+		foreach($history as $item) {
+			$urls[] = $item['request']->getUrl();
+		}
+
+		$this->assertEquals(
+			[
+				'Cubes',
+				'Cubes(\'plan_BudgetPlan\')/Views',
+				'Cubes(\'plan_BudgetPlan\')/Views(\'budget_placeholder\')/tm1.Execute?%24expand=Cells',
+				'Cubes(\'plan_BudgetPlan\')/Views(\'Budget%20Input%20Detailed\')/tm1.Execute?%24expand=Cells',
+				'Cubes(\'SDK.SampleCube\')/Views',
+				'Cubes(\'SDK.SampleCube\')/Views(\'budget_placeholder\')/tm1.Execute?%24expand=Cells',
+				'Cubes(\'SDK.SampleCube\')/Views(\'Budget%20Input%20Detailed\')/tm1.Execute?%24expand=Cells',
+			],
+			$urls
+		);
+	}
+
 	/**
 	 * I'm not too sure this is optimal!
 	 * If it looks stupid, but works, it ain't stupid!
 	 */
-	public function getJob()
+	public function getJob($dir = 'recursive')
 	{
 		$temp = new Temp('recursion');
-		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
+		$configuration = new Configuration(__DIR__ . '/../data/' . $dir, 'test', $temp);
 
 		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
 
