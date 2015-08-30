@@ -16,31 +16,20 @@ use	GuzzleHttp\Client,
 	GuzzleHttp\Stream\Stream,
 	GuzzleHttp\Subscriber\Mock,
 	GuzzleHttp\Subscriber\History;
-// mock guzzle, do 2 pages with run, check output
-// recursivejobtest too w/ scroller reset
+
+/**
+ * @todo testCreateChild
+ * @todo scroll (w/ reset)
+ */
 class RecursiveJobTest extends ExtractorTestCase
 {
-// 	public function testCreateChild()
-// 	{
-//
-// 	}
-
 	/**
 	 * Initializes a parent job and runs the child
 	 * This is a pretty awkward test! Useful to rework it for better testing though!
 	 */
 	public function testParse()
 	{
-// 		Logger::initLogger('', true);
-
-		$temp = new Temp('recursion');
-		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
-
-		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
-
-		$parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
-
-		$client = RestClient::create();
+		list($job, $client, $parser, $history) = $this->getJob();
 
 		$parentBody = '[
 				{"field": "data", "id": 1},
@@ -53,7 +42,6 @@ class RecursiveJobTest extends ExtractorTestCase
 				{"detail": "somethingElse", "subId": 1},
 				{"detail": "another", "subId": 2}
 		]';
-
 		$subDetail = '[{"grand": "child"}]';
 
 		$mock = new Mock([
@@ -66,10 +54,6 @@ class RecursiveJobTest extends ExtractorTestCase
 		]);
 		$client->getClient()->getEmitter()->attach($mock);
 
-		$history = new History();
-		$client->getClient()->getEmitter()->attach($history);
-
-		$job = new RecursiveJob($jobConfig, $client, $parser);
 
 		$job->run();
 
@@ -90,6 +74,7 @@ class RecursiveJobTest extends ExtractorTestCase
 			$urls
 		);
 
+		// Assert all three levels were parsed to their respective tables
 		$this->assertEquals(['tickets_export', 'comments', 'subd'], array_keys($parser->getResults()));
 	}
 
@@ -99,16 +84,8 @@ class RecursiveJobTest extends ExtractorTestCase
 	 */
 	public function testWrongResponse()
 	{
-		Logger::initLogger('', true);
+		list($job, $client) = $this->getJob();
 
-		$temp = new Temp('recursion');
-		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
-
-		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
-
-		$parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
-
-		$client = RestClient::create();
 		$parentBody = '[
 				{"field": "data", "id": 1},
 				{"field": "more"}
@@ -120,7 +97,6 @@ class RecursiveJobTest extends ExtractorTestCase
 				{"detail": "somethingElse", "subId": 1},
 				{"detail": "another", "subId": 2}
 		]';
-
 		$subDetail = '[{"grand": "child"}]';
 
 		$mock = new Mock([
@@ -131,16 +107,35 @@ class RecursiveJobTest extends ExtractorTestCase
 		]);
 		$client->getClient()->getEmitter()->attach($mock);
 
+		$job->run();
+	}
+
+	/**
+	 * I'm not too sure this is optimal!
+	 * If it looks stupid, but works, it ain't stupid!
+	 */
+	public function getJob()
+	{
+		$temp = new Temp('recursion');
+		$configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', $temp);
+
+		$jobConfig = array_values($configuration->getConfig()->getJobs())[0];
+
+		$parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
+
+		$client = RestClient::create();
+
 		$history = new History();
 		$client->getClient()->getEmitter()->attach($history);
 
 		$job = new RecursiveJob($jobConfig, $client, $parser);
 
-		$job->run();
-
-// 		$urls = [];
-// 		foreach($history as $item) {
-// 			$urls[] = $item['request']->getUrl();
-// 		}
+		return [
+			$job,
+			$client,
+			$parser,
+			$history,
+			$jobConfig
+		];
 	}
 }
