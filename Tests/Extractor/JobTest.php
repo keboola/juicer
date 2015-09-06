@@ -48,6 +48,7 @@ class JobTest extends ExtractorTestCase
 			new Response(200, [], Stream::factory($second))
 		]);
 
+		// FIXME not used
 		$history = new History();
 
 		$client = RestClient::create();
@@ -70,5 +71,81 @@ class JobTest extends ExtractorTestCase
 ',
 			file_get_contents($parser->getResults()['api_ep'])
 		);
+	}
+
+	public function testFindDataInResponse()
+	{
+		$cfg = JobConfig::create([
+			'endpoint' => 'a',
+			'dataField' => 'results'
+		]);
+		$job = new Job(
+			$cfg,
+			RestClient::create(),
+			new Json(new Parser($this->getLogger('job', true)))
+		);
+
+		$response = (object) [
+			'results' => [
+				(object) ['id' => 1],
+				(object) ['id' => 2]
+			],
+			'otherArray' => ['a','b']
+		];
+
+		$data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
+		$this->assertEquals($data, $response->{$cfg->getConfig()['dataField']});
+	}
+
+	public function testFindDataInResponseNested()
+	{
+		$cfg = JobConfig::create([
+			'endpoint' => 'a',
+			'dataField' => 'data.results'
+		]);
+		$job = new Job(
+			$cfg,
+			RestClient::create(),
+			new Json(new Parser($this->getLogger('job', true)))
+		);
+
+		$response = (object) [
+			'data' => (object) [
+				'results' => [
+					(object) ['id' => 1],
+					(object) ['id' => 2]
+				]
+			],
+			'otherArray' => ['a','b']
+		];
+
+		$data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
+		$this->assertEquals($data, $response->data->results);
+	}
+
+	/**
+	 * @expectedException \Keboola\Juicer\Exception\UserException
+	 * @expectedExceptionMessage More than one array found in response! Use 'dataField' parameter to specify a key to the data array. (endpoint: a, arrays in response root: results, otherArray)
+	 */
+	public function testFindDataInResponseException()
+	{
+		$cfg = JobConfig::create([
+			'endpoint' => 'a'
+		]);
+		$job = new Job(
+			$cfg,
+			RestClient::create(),
+			new Json(new Parser($this->getLogger('job', true)))
+		);
+
+		$response = (object) [
+			'results' => [
+				(object) ['id' => 1],
+				(object) ['id' => 2]
+			],
+			'otherArray' => ['a','b']
+		];
+
+		$data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
 	}
 }

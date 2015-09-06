@@ -12,6 +12,14 @@ class NoScroller implements ScrollerInterface
 	/**
 	 * {@inheritdoc}
 	 */
+	public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+	{
+		return $client->createRequest($jobConfig->getConfig());
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
 	{
 		return false;

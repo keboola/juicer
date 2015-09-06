@@ -4,8 +4,51 @@ use	Keboola\Juicer\Client\RestClient,
 	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Pagination\PageScroller;
 
+/**
+ * @todo test with no limit until empty response
+ */
 class PageScrollerTest extends ExtractorTestCase
 {
+	public function testGetFirstRequest()
+	{
+		$client = RestClient::create();
+		$config = new JobConfig('test', [
+			'endpoint' => 'test',
+			'params' => [
+				'a' => 1,
+				'b' => 2
+			]
+		]);
+
+		$scroller = PageScroller::create(['limit' => 500]);
+
+		$req = $scroller->getFirstRequest($client, $config);
+
+		$expectedCfg = $config->getConfig();
+		$expectedCfg['params']['page'] = 1;
+		$expectedCfg['params']['limit'] = 500;
+		$this->assertEquals($client->createRequest($expectedCfg), $req);
+	}
+
+	public function testGetFirstRequestNoParams()
+	{
+		$client = RestClient::create();
+		$config = new JobConfig('test', [
+			'endpoint' => 'test',
+			'params' => [
+				'a' => 1,
+				'b' => 2
+			]
+		]);
+
+		$scroller = PageScroller::create([
+			'firstPageParams' => false
+		]);
+
+		$req = $scroller->getFirstRequest($client, $config);
+		$this->assertEquals($client->createRequest($config->getConfig()), $req);
+	}
+
 	public function testGetNextRequest()
 	{
 		$client = RestClient::create();
@@ -56,9 +99,8 @@ class PageScrollerTest extends ExtractorTestCase
 		$this->assertEquals(false, $next4);
 	}
 
-	public function getNextRequestPost()
+	public function testGetNextRequestPost()
 	{
-
 		$client = RestClient::create();
 		$config = new JobConfig('test', [
 			'endpoint' => 'test',

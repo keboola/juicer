@@ -56,4 +56,36 @@ class OffsetScrollerTest extends ExtractorTestCase
 		$next4 = $scroller->getNextRequest($client, $config, $response, $response->data);
 		$this->assertEquals($expected, $next4);
 	}
+
+	public function testGetFirstRequest()
+	{
+		$client = RestClient::create();
+		$config = new JobConfig('test', [
+			'endpoint' => 'test',
+			'params' => [
+				'a' => 1,
+				'b' => 2
+			]
+		]);
+		$limit = 10;
+
+		$scroller = new OffsetScroller($limit);
+		$req = $scroller->getFirstRequest($client, $config);
+		$expected = $client->createRequest([
+			'endpoint' => 'test',
+			'params' => array_merge(
+				$config->getParams(),
+				[
+					OffsetScroller::DEFAULT_LIMIT_PARAM => $limit,
+					OffsetScroller::DEFAULT_OFFSET_PARAM => 0
+				]
+			)
+		]);
+		$this->assertEquals($expected, $req);
+
+		$noParamsScroller = new OffsetScroller($limit, 'count', 'first', false);
+		$noParamsRequest = $noParamsScroller->getFirstRequest($client, $config);
+		$noParamsExpected = $client->createRequest($config->getConfig());
+		$this->assertEquals($noParamsExpected, $noParamsRequest);
+	}
 }

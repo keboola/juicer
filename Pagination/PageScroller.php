@@ -15,6 +15,12 @@ use	Keboola\Juicer\Client\ClientInterface,
  */
 class PageScroller implements ScrollerInterface
 {
+	const DEFAULT_PAGE_PARAM = 'page';
+	const DEFAULT_LIMIT = null;
+	const DEFAULT_LIMIT_PARAM = 'limit';
+	const DEFAULT_FIRST_PAGE = 1;
+	const FIRST_PAGE_PARAMS = true;
+
 	/**
 	 * @var int
 	 */
@@ -30,58 +36,106 @@ class PageScroller implements ScrollerInterface
 	/**
 	 * @var int
 	 */
-	protected $page;
+	protected $firstPage;
+	/**
+	 * @var bool
+	 */
+	protected $firstPageParams;
 	/**
 	 * @var int
 	 */
-	protected $firstPage;
+	protected $page;
 
 
-	public function __construct($pageParam = 'page', $limit = null, $limitParam = 'limit', $firstPage = 1)
-	{
+	public function __construct(
+		$pageParam = self::DEFAULT_PAGE_PARAM,
+		$limit = self::DEFAULT_LIMIT,
+		$limitParam = self::DEFAULT_LIMIT_PARAM,
+		$firstPage = self::DEFAULT_FIRST_PAGE,
+		$firstPageParams = self::FIRST_PAGE_PARAMS
+	) {
 		$this->pageParam = $pageParam;
 		$this->limit = $limit;
 		$this->limitParam = $limitParam;
 		$this->firstPage = $this->page = $firstPage;
+		$this->firstPageParams = $firstPageParams;
 	}
 
 	public static function create(array $config)
 	{
 		return new self(
-			!empty($config['pageParam']) ? $config['pageParam'] : 'page',
-			!empty($config['limit']) ? $config['limit'] : null,
-			!empty($config['limitParam']) ? $config['limitParam'] : 'limit',
-			!empty($config['firstPage']) ? $config['firstPage'] : 1
+			!empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM,
+			!empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT,
+			!empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM,
+			!empty($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE,
+			isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS
 		);
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+	{
+		if ($this->firstPageParams) {
+			$config = $this->getParams($jobConfig);
+		} else {
+			$config = $jobConfig->getConfig();
+		}
+
+		return $client->createRequest($config);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
 	{
-		$params = $jobConfig->getParams();
-		$limit = empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];
-
-		if ((is_null($limit) && empty($data)) || (count($data) < $limit)) {
+		if (
+			(is_null($this->getLimit($jobConfig)) && empty($data))
+			|| (count($data) < $this->getLimit($jobConfig))
+		) {
 			$this->reset();
 			return false;
 		} else {
 			$this->page++;
 
-			if (!empty($this->limitParam) && !is_null($limit)) {
-				$params[$this->limitParam] = $limit;
-			}
-
-			$config = $jobConfig->getConfig();
-			$config['params'] = array_replace(
-				$jobConfig->getParams(),
-				[$this->pageParam => $this->page]
-			);
-
-			return $client->createRequest($config);
+			return $client->createRequest($this->getParams($jobConfig));
 		}
 	}
 
 	public function reset()
 	{
 		$this->page = $this->firstPage;
+	}
+
+	/**
+	 * Returns a config with scroller params
+	 * @param JobConfig $jobConfig
+	 * @return array
+	 */
+	protected function getParams(JobConfig $jobConfig)
+	{
+		$params = [$this->pageParam => $this->page];
+		if (!empty($this->limitParam) && !is_null($this->getLimit($jobConfig))) {
+			$params[$this->limitParam] = $this->getLimit($jobConfig);
+		}
+
+		$config = $jobConfig->getConfig();
+		$config['params'] = array_replace(
+			$jobConfig->getParams(),
+			$params
+		);
+		return $config;
+	}
+
+	/**
+	 * @param JobConfig $jobConfig
+	 * @return int
+	 */
+	protected function getLimit(JobConfig $jobConfig)
+	{
+		$params = $jobConfig->getParams();
+		return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];
 	}
 }

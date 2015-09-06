@@ -131,11 +131,10 @@ class Job
 	 *
 	 * @param JobConfig $config
 	 * @return RequestInterface | false
-	 * @todo abstract?
 	 */
 	protected function firstPage(JobConfig $config)
 	{
-		return $this->client->createRequest($config->getConfig());
+		return $this->getScroller()->getFirstRequest($this->client, $config);
 	}
 
 	/**
@@ -154,6 +153,10 @@ class Job
 	 * @param array|object $response
 	 * @param array $config
 	 * @return array
+	 * @todo support array of dataFields
+	 * 	- would return object with results, changing the class' API
+	 * 	- parse would just have to loop through if it returns an object
+	 * 	- and append type with the dataField
 	 */
 	protected function findDataInResponse($response, array $config = [])
 	{

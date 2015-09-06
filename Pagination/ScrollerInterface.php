@@ -10,6 +10,13 @@ interface ScrollerInterface
 	/**
 	 * @param ClientInterface $client
 	 * @param $jobConfig $jobConfig
+	 * @return RequestInterface|false
+	 */
+	public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig);
+
+	/**
+	 * @param ClientInterface $client
+	 * @param $jobConfig $jobConfig
 	 * @param object $response
 	 * @param array $data
 	 * @return RequestInterface|false
@@ -17,7 +24,7 @@ interface ScrollerInterface
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data);
 
 	/**
-	 * Reset the pageination pointer
+	 * Reset the pagination pointer
 	 */
 	public function reset();
 
