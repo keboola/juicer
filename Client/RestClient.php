@@ -14,7 +14,8 @@ use	GuzzleHttp\Client,
 	GuzzleHttp\Subscriber\Retry\RetrySubscriber,
 	GuzzleHttp\Event\AbstractTransferEvent,
 	GuzzleHttp\Event\ErrorEvent;
-use	Keboola\Utils\Utils;
+use	Keboola\Utils\Utils,
+	Keboola\Utils\Exception\JsonDecodeException;
 
 /**
  *
@@ -105,7 +106,13 @@ class RestClient implements ClientInterface
 			case self::JSON:
 				// Sanitize the JSON
 				$body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
-				return Utils::json_decode($body);
+				try {
+					$decoded = Utils::json_decode($body);
+				} catch(JsonDecodeException $e) {
+					throw new UserException("Invalid JSON response from API: " . $e->getMessage());
+				}
+
+				return $decoded;
 			case self::XML:
 				try {
 					$xml = new \SimpleXMLElement($response->getBody());
