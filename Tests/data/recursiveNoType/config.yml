@@ -1,0 +1,20 @@
+parameters:
+    api:
+        baseUrl: 'test'
+    config:
+        outputBucket: 'rec'
+        jobs:
+            -
+                endpoint: exports/tickets.json
+                children:
+                    -
+                        endpoint: tickets/{1:id}/comments.json
+                        recursionFilter: "status!=Deleted"
+                        placeholders:
+                            1:id: id
+                        children:
+                            -
+                                endpoint: third/level/{2:id}/{id}.json
+                                placeholders:
+                                    2:id: id
+                                    id: subId # Look ma no prefix!

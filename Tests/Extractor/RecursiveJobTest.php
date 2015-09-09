@@ -199,6 +199,44 @@ class RecursiveJobTest extends ExtractorTestCase
 		);
 	}
 
+	public function testDataTypeWithId()
+	{
+		list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursiveNoType');
+
+		$parentBody = '[
+				{"field": "data", "id": 1},
+				{"field": "more", "id": 2}
+		]';
+		$detail1 = '[
+				{"detail": "something", "subId": 1}
+		]';
+		$detail2 = '[
+				{"detail": "somethingElse", "subId": 1},
+				{"detail": "another", "subId": 2}
+		]';
+		$subDetail = '[{"grand": "child"}]';
+
+		$mock = new Mock([
+			new Response(200, [], Stream::factory($parentBody)),
+			new Response(200, [], Stream::factory($detail1)),
+			new Response(200, [], Stream::factory($subDetail)),
+			new Response(200, [], Stream::factory($detail2)),
+			new Response(200, [], Stream::factory($subDetail)),
+			new Response(200, [], Stream::factory($subDetail))
+		]);
+		$client->getClient()->getEmitter()->attach($mock);
+
+
+		$job->run();
+
+// 		$children = $jobConfig->getChildJobs();
+// 		var_dump(reset($children)->getDataType());
+		$this->assertEquals(
+			['exports_tickets_json', 'tickets__1_id__comments_json', 'third_level__2_id___id__json'],
+			array_keys($parser->getResults())
+		);
+	}
+
 	/**
 	 * I'm not too sure this is optimal!
 	 * If it looks stupid, but works, it ain't stupid!

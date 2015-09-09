@@ -13,14 +13,12 @@ use	Keboola\Juicer\Exception\UserException;
  * {@inheritdoc}
  * Adds a capability to process recursive calls based on
  * responses.
- * If a endpoint column in config table contains {} enclosed
+ * If an endpoint column in config table contains {} enclosed
  * parameter, it'll be replaced by a value from a parent call
  * based on the values from its response and "mapping" set in
- * "recursive"->params column
+ * child's "placeholders" object
  * Expects the configuration to use 'endpoint' column to store
  * the API endpoint
- * @todo Separate from JsonJob using an interface to get the
- * 		job and pass to the recursion
  */
 class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 {
@@ -43,7 +41,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 		parent::__construct($config, $client, $parser);
 		// If no dataType is set, save endpoint as dataType before replacing placeholders
 		if (empty($this->config->getConfig()['dataType']) && !empty($this->config->getConfig()['endpoint'])) {
-			$this->config->getConfig()['dataType'] = $this->getDataType();
+			$this->config->setDataType($this->getDataType());
 		}
 	}
 

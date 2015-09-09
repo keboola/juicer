@@ -147,4 +147,20 @@ class JobConfig
 
 		$this->config['params'][$name] = $value;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getDataType()
+	{
+		return empty($this->config['dataType']) ? '' : $this->config['dataType'];
+	}
+
+	/**
+	 * @param string $type
+	 */
+	public function setDataType($type)
+	{
+		$this->config['dataType'] = $type;
+	}
 }
