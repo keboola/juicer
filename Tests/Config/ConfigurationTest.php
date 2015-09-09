@@ -1,8 +1,10 @@
 <?php
 
-use	Keboola\Juicer\Config\Configuration;
+use	Keboola\Juicer\Config\Configuration,
+	Keboola\Juicer\Config\JobConfig;
 use	Keboola\Temp\Temp;
 use	Keboola\CsvTable\Table;
+use	Symfony\Component\Yaml\Yaml;
 
 class ConfigurationTest extends ExtractorTestCase
 {
@@ -45,6 +47,34 @@ class ConfigurationTest extends ExtractorTestCase
 		$this->assertFileEquals('./Tests/data/saveMetadataTest/out/state.yml', $resultsPath . '/out/state.yml');
 
 		$this->rmDir($resultsPath);
+	}
+
+	public function testGetConfig()
+	{
+		$configuration = new Configuration('./Tests/data/recursive', 'test', new Temp('test'));
+
+		$config = $configuration->getConfig();
+
+		$yml = Yaml::parse(file_get_contents('./Tests/data/recursive/config.yml'));
+
+		$jobs = $config->getJobs();
+		$this->assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
+
+		$this->assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
+	}
+
+	public function testGetMultipleConfigs()
+	{
+		$configuration = new Configuration('./Tests/data/iterations', 'test', new Temp('test'));
+
+		$configs = $configuration->getMultipleConfigs();
+
+		$yml = Yaml::parse(file_get_contents('./Tests/data/iterations/config.yml'));
+
+		foreach($yml['parameters']['iterations'] as $i => $params) {
+			$this->assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
+		}
+		$this->assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
 	}
 
 	protected function rmDir($dirPath)

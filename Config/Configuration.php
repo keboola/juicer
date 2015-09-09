@@ -41,13 +41,36 @@ class Configuration
 	}
 
 	/**
+	 * @return Config[]
+	 */
+	public function getMultipleConfigs()
+	{
+		if (empty($this->getYmlConfig()['parameters']['iterations'])) {
+			$iterations = [null];
+		} else {
+			$iterations = $this->getYmlConfig()['parameters']['iterations'];
+		}
+
+		$configs = [];
+		foreach($iterations as $params) {
+			$configs[] = $this->getConfig($params);
+		}
+
+		return $configs;
+	}
+
+	/**
+	 * @param array $params Values to override in the config
 	 * @return Config
 	 */
-	public function getConfig()
+	public function getConfig(array $params = null)
 	{
 		$configYml = $this->getYmlConfig()['parameters']['config'];
 
-		// TODO allow this missing with outputBucket in place
+		if (!is_null($params)) {
+			$configYml = array_replace($configYml, $params);
+		}
+
 		if (empty($configYml['id'])) {
 			if (empty($configYml['outputBucket'])) {
 				throw new UserException("Missing config parameter 'id' or 'outputBucket'!");
@@ -57,7 +80,7 @@ class Configuration
 		}
 
 		$configName = $configYml['id'];
-		$params = []; // TODO get runtime params from console
+		$runtimeParams = []; // TODO get runtime params from console
 
 		$jobs = $configYml['jobs'];
 		$jobConfigs = [];
@@ -67,10 +90,9 @@ class Configuration
 		}
 		unset($configYml['jobs']); // weird
 
-		$config = new Config($this->appName, $configName, $params);
+		$config = new Config($this->appName, $configName, $runtimeParams);
 		$config->setJobs($jobConfigs);
 		$config->setAttributes($configYml);
-// 		$config->setMetadata($this->getConfigMetadata($configName));
 
 		return $config;
 	}
