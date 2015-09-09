@@ -57,7 +57,7 @@ class JobConfig
 		}
 
 		if (empty($config['endpoint'])) {
-			throw new UserException("'endpoint' must be set in each job!", 0, [$config]);
+			throw new UserException("'endpoint' must be set in each job!", 0, null, [$config]);
 		}
 
 		$job = new self($config['id'], $config);
