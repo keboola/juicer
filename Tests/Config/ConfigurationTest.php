@@ -75,6 +75,23 @@ class ConfigurationTest extends ExtractorTestCase
 			$this->assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
 		}
 		$this->assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
+		$this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+		$this->assertCount(count($yml['parameters']['iterations']), $configs);
+	}
+
+	public function testGetMultipleConfigsSingle()
+	{
+		$configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
+
+		$configs = $configuration->getMultipleConfigs();
+
+		$yml = Yaml::parse(file_get_contents('./Tests/data/iteration/config.yml'));
+
+
+		$this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+		$this->assertCount(1, $configs);
+
+		$this->assertEquals($configuration->getConfig(), $configs[0]);
 	}
 
 	protected function rmDir($dirPath)
