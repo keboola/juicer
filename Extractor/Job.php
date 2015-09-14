@@ -163,6 +163,10 @@ class Job
 		// If dataField doesn't say where the data is in a response, try to find it!
 		if (!empty($config['dataField'])) {
 			$data = Utils::getDataFromPath($config['dataField'], $response, ".");
+			if (empty($data)) {
+				Logger::log('warning', "dataField '{$config['dataField']}' contains no data!");
+			}
+
 			// In case of a single object being returned
 			if (!is_array($data)) {
 				$data = [$data];

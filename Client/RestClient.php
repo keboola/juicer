@@ -33,7 +33,6 @@ class RestClient implements ClientInterface
 	 */
 	protected $method;
 
-
 	/**
 	 * override if the server response isn't UTF-8
 	 * @var string

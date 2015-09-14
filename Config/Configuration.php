@@ -62,6 +62,7 @@ class Configuration
 	/**
 	 * @param array $params Values to override in the config
 	 * @return Config
+	 * @todo separate the loading of YML and pass it as an argument
 	 */
 	public function getConfig(array $params = null)
 	{
