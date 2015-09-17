@@ -73,10 +73,10 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	 * Uses "children" section of the job config
 	 * {@inheritdoc}
 	 */
-	protected function parse($response, $parentId = null)
+	protected function parse($response, array $parentId = null)
 	{
 		// Add parent values to the result
-		$parentCols = [];
+		$parentCols = is_null($parentId) ? [] : $parentId;
 		foreach($this->parentParams as $v) {
 			$key = $this->prependParent($v['field']);
 			$parentCols[$key] = $v['value'];

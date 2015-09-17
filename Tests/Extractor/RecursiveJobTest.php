@@ -27,7 +27,7 @@ class RecursiveJobTest extends ExtractorTestCase
 	 * Initializes a parent job and runs the child
 	 * This is a pretty awkward test! Useful to rework it for better testing though!
 	 */
-	public function testParse()
+	public function testParseByRun()
 	{
 		list($job, $client, $parser, $history) = $this->getJob();
 
@@ -98,6 +98,42 @@ class RecursiveJobTest extends ExtractorTestCase
 			'"child","2","1"' . PHP_EOL .
 			'"child","2","2"' . PHP_EOL,
 			file_get_contents($parser->getResults()['subd'])
+		);
+	}
+
+	public function testParse()
+	{
+		list($job, $client, $parser) = $this->getJob('iteration');
+
+		$response = json_decode('{
+			"data": [
+				{
+					"a": "first",
+					"id": 1,
+					"c": ["jedna","one",1]
+				},
+				{
+					"a": "second",
+					"id": 2,
+					"c": ["dva","two",2]
+				}
+			]
+		}');
+
+		$this->callMethod($job, 'parse', [$response, ['userData' => 'hello']]);
+
+		$this->assertEquals(
+			['tickets_export', 'tickets_export_c'],
+			array_keys($parser->getResults())
+		);
+
+		$this->assertFileEquals(
+			__DIR__ . '/../data/recursiveJobParseResults/tickets_export',
+			$parser->getResults()['tickets_export']->getPathname()
+		);
+		$this->assertFileEquals(
+			__DIR__ . '/../data/recursiveJobParseResults/tickets_export_c',
+			$parser->getResults()['tickets_export_c']->getPathname()
 		);
 	}
 

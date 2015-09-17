@@ -91,10 +91,10 @@ class Job
 	 * Parse the result into a CSV (either using any of built-in parsers, or using own methods).
 	 *
 	 * @param object $response
-	 * @param array|string $parentId ID (or list thereof) to be passed to parser
+	 * @param array $parentId ID (or list thereof) to be passed to parser
 	 * @return array|mixed the unparsed data array
 	 */
-	protected function parse($response, $parentId = null)
+	protected function parse($response, array $parentId = null)
 	{
 		$data = $this->findDataInResponse($response, $this->config->getConfig());
 		$this->parser->process($data, $this->getDataType(), $parentId);
