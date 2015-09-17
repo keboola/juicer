@@ -158,7 +158,7 @@ class Configuration
 	 */
 	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
 	{
-		$path = $this->dataDir . '/out/tables/';
+		$path = "{$this->dataDir}/out/tables/{$bucketName}/";
 		$bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
 
 		if (!is_dir($path)) {

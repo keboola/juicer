@@ -24,8 +24,8 @@ class ConfigurationTest extends ExtractorTestCase
 
 		$configuration->storeResults($files, 'test');
 
-		foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables') as $file) {
-			$this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
+		foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/test') as $file) {
+			$this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/test/' . $file->getFilename());
 		}
 
 		$this->rmDir($resultsPath);
