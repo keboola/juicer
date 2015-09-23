@@ -162,7 +162,9 @@ class Configuration
 		$bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
 
 		if (!is_dir($path)) {
-			mkdir($path, 0755, true);
+			mkdir($path, 0775, true);
+			chown($path, fileowner("{$this->dataDir}/out/tables/"));
+			chgrp($path, filegroup("{$this->dataDir}/out/tables/"));
 		}
 
 		foreach($csvFiles as $key => $file) {
