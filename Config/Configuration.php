@@ -162,7 +162,7 @@ class Configuration
 		$bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
 
 		if (!is_dir($path)) {
-			mkdir($path, 0700, true);
+			mkdir($path, 0755, true);
 		}
 
 		foreach($csvFiles as $key => $file) {
