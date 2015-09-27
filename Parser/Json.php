@@ -3,7 +3,8 @@
 namespace Keboola\Juicer\Parser;
 
 use	Keboola\Json\Parser as JsonParser,
-	Keboola\Json\Exception\JsonParserException;
+	Keboola\Json\Exception\JsonParserException,
+	Keboola\Json\Struct;
 use	Keboola\Juicer\Config\Config,
 	Keboola\Juicer\Exception\UserException,
 	Keboola\Juicer\Exception\ApplicationException;
@@ -76,10 +77,10 @@ class Json implements ParserInterface
 		if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
 			if (
 				empty($metadata['json_parser.structVersion'])
-				|| $metadata['json_parser.structVersion'] != $this->parser->getStructVersion()
+				|| $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
 			) {
 				// temporary
-				$metadata['json_parser.struct'] = $this->updateStruct($metadata['json_parser.struct']);
+				$metadata['json_parser.struct'] = self::updateStruct($metadata['json_parser.struct']);
 			}
 
 			$struct = $metadata['json_parser.struct'];
@@ -104,7 +105,7 @@ class Json implements ParserInterface
 		];
 	}
 
-	protected function updateStruct(array $struct)
+	protected static function updateStruct(array $struct)
 	{
 		foreach($struct as $type => &$children) {
 			if (!is_array($children)) {
