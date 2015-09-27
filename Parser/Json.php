@@ -100,7 +100,7 @@ class Json implements ParserInterface
 	public function getMetadata()
 	{
 		return [
-			'json_parser.struct' => $this->parser->getStruct(),
+			'json_parser.struct' => $this->parser->getStruct()->getStruct(),
 			'json_parser.structVersion' => $this->parser->getStructVersion()
 		];
 	}

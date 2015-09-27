@@ -45,12 +45,25 @@ class JsonTest extends ExtractorTestCase
 		);
 	}
 
-	public function testColumnConsistency()
+	public function testGetMetadata()
 	{
-		// TODO load struct with 2+ columns
-		// parse data with just 1 column
-		// verify the result has all
-		// in Json Parser maybe?
+		$parser = new Json(Parser::create($this->getLogger('test', true)));
+
+		$data = [
+			(object) ['id' => 1]
+		];
+
+		$parser->process($data, 'metadataTest');
+
+		$this->assertEquals(
+			[
+				'json_parser.struct' => [
+					'metadataTest' => ['id' => 'scalar']
+				],
+				'json_parser.structVersion' => 2
+			],
+			$parser->getMetadata()
+		);
 	}
 
 	public function testUpdateStruct()
