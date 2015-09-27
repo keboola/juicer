@@ -55,7 +55,7 @@ class JobTest extends ExtractorTestCase
 		$client->getClient()->getEmitter()->attach($mock);
 		$client->getClient()->getEmitter()->attach($history);
 
-		$parser = new Json(new Parser($this->getLogger('job', true)));
+		$parser = new Json(Parser::create($this->getLogger('job', true)));
 
 		$job = new Job($config, $client, $parser);
 		$job->setScroller(ResponseUrlScroller::create([]));
@@ -82,7 +82,7 @@ class JobTest extends ExtractorTestCase
 		$job = new Job(
 			$cfg,
 			RestClient::create(),
-			new Json(new Parser($this->getLogger('job', true)))
+			new Json(Parser::create($this->getLogger('job', true)))
 		);
 
 		$response = (object) [
@@ -106,7 +106,7 @@ class JobTest extends ExtractorTestCase
 		$job = new Job(
 			$cfg,
 			RestClient::create(),
-			new Json(new Parser($this->getLogger('job', true)))
+			new Json(Parser::create($this->getLogger('job', true)))
 		);
 
 		$response = (object) [
@@ -135,7 +135,7 @@ class JobTest extends ExtractorTestCase
 		$job = new Job(
 			$cfg,
 			RestClient::create(),
-			new Json(new Parser($this->getLogger('job', true)))
+			new Json(Parser::create($this->getLogger('job', true)))
 		);
 
 		$response = (object) [

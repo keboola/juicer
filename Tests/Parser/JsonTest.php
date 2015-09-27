@@ -9,7 +9,7 @@ class JsonTest extends ExtractorTestCase
 {
 	public function testProcess()
 	{
-		$parser = new Json(new Parser($this->getLogger('test', true)));
+		$parser = new Json(Parser::create($this->getLogger('test', true)));
 
 		$data = json_decode('[
 			{
@@ -43,5 +43,73 @@ class JsonTest extends ExtractorTestCase
 ',
 			file_get_contents($parser->getResults()['test_arr'])
 		);
+	}
+
+	public function testColumnConsistency()
+	{
+		// TODO load struct with 2+ columns
+		// parse data with just 1 column
+		// verify the result has all
+		// in Json Parser maybe?
+	}
+
+	public function testUpdateStruct()
+	{
+		$parser = new Json(Parser::create($this->getLogger('test', true)));
+
+		$struct = \Symfony\Component\Yaml\Yaml::parse(file_get_contents('./Tests/data/outdatedStruct.yml'));
+
+		$updated = $this->callMethod($parser, 'updateStruct', [$struct]);
+
+		$parser->getParser()->getStruct()->load($updated);
+
+		$parser->process([
+			(object) [
+				'id' => 1,
+				'arr' => [
+					(object) [
+						'a' => "hello",
+						'b' => 1.1,
+						'arr1' => [(object) ['c' => 'd']],
+						'arr2' => [1,2]
+					]
+				]
+			]
+		], 'root');
+
+		$this->assertEquals(
+			[
+				'root.arr.arr1' => ['c' => 'scalar'],
+				'root.arr.arr2' => ['data' => 'scalar'],
+				'root.arr' => [
+					'a' => 'scalar',
+					'b' => 'scalar',
+					'arr1' => 'arrayOfobject',
+					'arr2' => 'arrayOfscalar'
+				],
+				'root' => [
+					'id' => 'scalar',
+					'arr' => 'arrayOfobject'
+				]
+			],
+			$parser->getParser()->getStruct()->getStruct()
+		);
+
+		$this->assertEquals('"id","arr"
+"1","root_a52f96d95586c8de1e8fa67b77597262"
+', file_get_contents($parser->getParser()->getCsvFiles()['root']));
+
+		$this->assertEquals('"a","b","arr1","arr2","JSON_parentId"
+"hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997","root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
+', file_get_contents($parser->getParser()->getCsvFiles()['root_arr']));
+
+		$this->assertEquals('"c","JSON_parentId"
+"d","root.arr_a75f0a3e0b848d52033929a761e6c997"
+', file_get_contents($parser->getParser()->getCsvFiles()['root_arr_arr1']));
+
+		$this->assertEquals('"data","JSON_parentId"
+"1","root.arr_a75f0a3e0b848d52033929a761e6c997"
+"2","root.arr_a75f0a3e0b848d52033929a761e6c997"
+', file_get_contents($parser->getParser()->getCsvFiles()['root_arr_arr2']));
 	}
 }

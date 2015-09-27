@@ -5,7 +5,8 @@ namespace Keboola\Juicer\Parser;
 use	Keboola\Json\Parser as JsonParser,
 	Keboola\Json\Exception\JsonParserException;
 use	Keboola\Juicer\Config\Config,
-	Keboola\Juicer\Exception\UserException;
+	Keboola\Juicer\Exception\UserException,
+	Keboola\Juicer\Exception\ApplicationException;
 use	Keboola\Temp\Temp;
 use	Monolog\Logger;
 
@@ -71,14 +72,23 @@ class Json implements ParserInterface
 	 */
 	public static function create(Config $config, Logger $logger, Temp $temp, array $metadata = [])
 	{
+		// TODO move this if to $this->validateStruct altogether
 		if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
+			if (
+				empty($metadata['json_parser.structVersion'])
+				|| $metadata['json_parser.structVersion'] != $this->parser->getStructVersion()
+			) {
+				// temporary
+				$metadata['json_parser.struct'] = $this->updateStruct($metadata['json_parser.struct']);
+			}
+
 			$struct = $metadata['json_parser.struct'];
 		} else {
 			$struct = [];
 		}
 
 		$rowsToAnalyze = null != $config && !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
-		$parser = new JsonParser($logger, $struct, $rowsToAnalyze);
+		$parser = JsonParser::create($logger, $struct, $rowsToAnalyze);
 		$parser->setTemp($temp);
 		return new static($parser);
 	}
@@ -88,6 +98,37 @@ class Json implements ParserInterface
 	 */
 	public function getMetadata()
 	{
-		return ['json_parser.struct' => $this->parser->getStruct()];
+		return [
+			'json_parser.struct' => $this->parser->getStruct(),
+			'json_parser.structVersion' => $this->parser->getStructVersion()
+		];
+	}
+
+	protected function updateStruct(array $struct)
+	{
+		foreach($struct as $type => &$children) {
+			if (!is_array($children)) {
+				throw new ApplicationException("Error updating struct at '{$type}', an array was expected");
+			}
+
+			foreach($children as $child => &$dataType) {
+				if (in_array($dataType, ['integer', 'double', 'string', 'boolean'])) {
+					// Make scalars non-strict
+					$dataType = 'scalar';
+				} elseif ($dataType == 'array') {
+					// Determine array types
+					if (!empty($struct["{$type}.{$child}"])) {
+						$childType = $struct["{$type}.{$child}"];
+						if (array_keys($childType) == ['data']) {
+							$dataType = 'arrayOfscalar';
+						} else {
+							$dataType = 'arrayOfobject';
+						}
+					}
+				}
+			}
+		}
+
+		return $struct;
 	}
 }

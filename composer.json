@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "keboola/json-parser": "~0.2.0",
+        "keboola/json-parser": "~1.0.0",
         "keboola/php-temp": "~0.1.0",
         "keboola/php-utils": "~0.1.8",
         "keboola/php-csvtable": "~0.1.3",
