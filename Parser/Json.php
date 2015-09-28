@@ -12,7 +12,7 @@ use	Keboola\Temp\Temp;
 use	Monolog\Logger;
 
 /**
- * Parse XML results from SOAP API to CSV
+ * Parse JSON results from REST API to CSV
  */
 class Json implements ParserInterface
 {
@@ -31,8 +31,7 @@ class Json implements ParserInterface
 	/**
 	 * Parse the data
 	 * @param array $data shall be the response body
-	 * @param string $type is a WSDL data type (has to be obtained from the WSDL definition)
-	 * @todo Ensure the SOAP client returns an array, and cast it THERE if it doesn't
+	 * @param string $type data type
 	 */
 	public function process(array $data, $type, $parentId = null)
 	{

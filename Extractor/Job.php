@@ -139,7 +139,7 @@ class Job
 
 	/**
 	 *  In case the request has ie. expiry time.
-	 * TODO use as a callback function instead?
+	 * TODO use as a callback function instead? in second parameter to download
 	 * FIXME no longer works in RestJob
 	 *
 	 * @param &$request
