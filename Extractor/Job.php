@@ -52,16 +52,8 @@ class Job
 	}
 
 	/**
-	 *  Usually handles the standard procedure.
-	 * @example:
-	 *	public function run() {
-	 *		$request = $this->firstPage();	// Obtain a request for the first API call
-	 *		while ($request !== false) {	// Fail if a request for another page hasn't been returned
-	 *			$response = $this->download($request);	// Download (and xml/json_decode by default - see RestJob/SoapJob::download())
-	 *			$this->parse($response);	// Use the parser/handle on your own
-	 *			$request = $this->nextPage($response);	// Generate a new request OR false if finished
-	 *		}
-	 *	}
+	 * Manages cycling through the requests as long as
+	 * scroller provides next page
 	 *
 	 * @return void
 	 */

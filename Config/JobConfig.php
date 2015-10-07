@@ -124,7 +124,7 @@ class JobConfig
 	 */
 	public function getParams()
 	{
-		return empty($this->config['params']) ? [] : $this->config['params'];
+		return empty($this->config['params']) ? [] : (array) $this->config['params'];
 	}
 
 	/**
