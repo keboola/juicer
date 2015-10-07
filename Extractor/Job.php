@@ -70,7 +70,8 @@ class Job
 		$request = $this->firstPage($this->config);
 		while ($request !== false) {
 			$response = $this->download($request);
-			$data = $this->parse($response);
+			$data = $this->findDataInResponse($response, $this->config->getConfig());
+			$this->parse($data);
 			$request = $this->nextPage($this->config, $response, $data);
 		}
 	}
@@ -92,14 +93,10 @@ class Job
 	 *
 	 * @param object $response
 	 * @param array $parentId ID (or list thereof) to be passed to parser
-	 * @return array|mixed the unparsed data array
 	 */
-	protected function parse($response, array $parentId = null)
+	protected function parse(array $data, array $parentId = null)
 	{
-		$data = $this->findDataInResponse($response, $this->config->getConfig());
 		$this->parser->process($data, $this->getDataType(), $parentId);
-
-		return $data;
 	}
 
 	protected function getDataType()

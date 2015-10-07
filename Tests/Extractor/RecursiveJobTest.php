@@ -120,7 +120,7 @@ class RecursiveJobTest extends ExtractorTestCase
 			]
 		}');
 
-		$this->callMethod($job, 'parse', [$response, ['userData' => 'hello']]);
+		$this->callMethod($job, 'parse', [$response->data, ['userData' => 'hello']]);
 
 		$this->assertEquals(
 			['tickets_export', 'tickets_export_c'],

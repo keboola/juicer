@@ -73,7 +73,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 	 * Uses "children" section of the job config
 	 * {@inheritdoc}
 	 */
-	protected function parse($response, array $parentId = null)
+	protected function parse(array $data, array $parentId = null)
 	{
 		// Add parent values to the result
 		$parentCols = is_null($parentId) ? [] : $parentId;
@@ -82,7 +82,7 @@ class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
 			$parentCols[$key] = $v['value'];
 		}
 
-		$data = parent::parse($response, $parentCols);
+		parent::parse($data, $parentCols);
 
 		foreach($this->config->getChildJobs() as $jobId => $child) {
 			if (!empty($child->getConfig()['recursionFilter'])) {
