@@ -4,18 +4,12 @@ use	Keboola\Juicer\Client\RestClient,
 	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Pagination\ResponseUrlScroller;
 
-class ResponseUrlScrollerTest extends ExtractorTestCase
+class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
 	public function testGetNextRequest()
 	{
 		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+		$config = $this->getConfig();
 
 		$scroller = new ResponseUrlScroller('next');
 
@@ -39,13 +33,7 @@ class ResponseUrlScrollerTest extends ExtractorTestCase
 	public function testGetNextRequestParams()
 	{
 		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+		$config = $this->getConfig();
 
 		$response = new \stdClass();
 		$response->data = array_fill(0, 10, (object) ['key' => 'value']);

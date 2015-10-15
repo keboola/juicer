@@ -9,7 +9,7 @@ use	Keboola\Juicer\Client\ClientInterface,
 /**
  * Scrolls using a parameter within page's response.
  *
- *
+ * @todo scollRequest could be in endpoint's configuration
  */
 class ResponseParamScroller extends AbstractResponseScroller implements ScrollerInterface
 {

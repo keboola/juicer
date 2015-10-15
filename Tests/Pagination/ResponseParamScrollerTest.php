@@ -4,18 +4,12 @@ use	Keboola\Juicer\Client\RestClient,
 	Keboola\Juicer\Config\JobConfig,
 	Keboola\Juicer\Pagination\ResponseParamScroller;
 
-class ResponseParamScrollerTest extends ExtractorTestCase
+class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {
 	public function testGetNextRequest()
 	{
 		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+		$config = $this->getConfig();
 
 		$scroller = new ResponseParamScroller('_scroll_id', 'scroll_id');
 
@@ -42,13 +36,7 @@ class ResponseParamScrollerTest extends ExtractorTestCase
 	public function testGetNextRequestOverride()
 	{
         $client = RestClient::create();
-        $config = new JobConfig('test', [
-            'endpoint' => 'test',
-            'params' => [
-                'a' => 1,
-                'b' => 2
-            ],
-        ]);
+        $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller('_scroll_id', 'scroll_id', false, [
             'endpoint' => '_search/scroll',
@@ -77,13 +65,7 @@ class ResponseParamScrollerTest extends ExtractorTestCase
 	public function testGetNextRequestParams()
 	{
 		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+		$config = $this->getConfig();
 
 		$response = new \stdClass();
 		$response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -110,15 +92,8 @@ class ResponseParamScrollerTest extends ExtractorTestCase
 
 	public function testGetFirstRequest()
 	{
-        $cfg = [
-            'endpoint' => 'test',
-            'params' => [
-                'a' => 1,
-                'b' => 2
-            ],
-        ];
         $client = RestClient::create();
-        $config = new JobConfig('test', $cfg);
+        $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller('_scroll_id', 'scroll_id', false, [
             'endpoint' => '_search/scroll',
@@ -128,7 +103,7 @@ class ResponseParamScrollerTest extends ExtractorTestCase
             ]
         ]);
 
-        $expected = $client->createRequest($cfg);
+        $expected = $client->createRequest($config->getConfig());
         $this->assertEquals($expected, $scroller->getFirstRequest($client, $config));
 	}
 }

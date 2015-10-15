@@ -28,3 +28,4 @@ defined('STORAGE_API_MAINTENANCE_URL')
 
 require_once ROOT_PATH . '/vendor/autoload.php';
 require_once 'Tests/ExtractorTestCase.php';
+require_once 'Tests/Pagination/ResponseScrollerTestCase.php';
