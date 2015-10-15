@@ -10,7 +10,7 @@ use	Keboola\Juicer\Client\ClientInterface,
  *
  *
  */
-class ResponseUrlScroller implements ScrollerInterface
+class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {
 	/**
 	 * @var string
@@ -39,14 +39,6 @@ class ResponseUrlScroller implements ScrollerInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
-	{
-		return $client->createRequest($jobConfig->getConfig());
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
 	{
 		if (empty($response->{$this->urlParam})) {
@@ -61,6 +53,4 @@ class ResponseUrlScroller implements ScrollerInterface
 			return $client->createRequest($config);
 		}
 	}
-
-	public function reset() {}
 }
