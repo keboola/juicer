@@ -4,7 +4,9 @@ namespace Keboola\Juicer\Config;
 
 use	Symfony\Component\Yaml\Yaml;
 use	Keboola\Juicer\Exception\ApplicationException,
-	Keboola\Juicer\Exception\UserException;
+	Keboola\Juicer\Exception\UserException,
+	Keboola\Juicer\Exception\FileNotFoundException,
+	Keboola\Juicer\Filesystem\YamlFile;
 use	Keboola\Temp\Temp;
 use	Keboola\CsvTable\Table;
 
@@ -108,15 +110,18 @@ class Configuration
 	}
 
 	/**
-	 * @return array
+	 * @return array|null
+	 * @deprecated BY NOTHING FIXME GET A CLASS THAT RETURNS YamlFile
 	 */
 	public function getConfigMetadata()
 	{
-		if (file_exists($this->dataDir . "/in/state.yml")) {
-			return $this->getYmlConfig("/in/state.yml");
-		} else {
-			return null;
-		}
+        try {
+            $yaml = new YamlFile($this->dataDir . "/in/state.yml");
+            $yaml->load();
+            return $yaml->getData();
+        } catch(FileNotFoundException $e) {
+            return null;
+        }
 	}
 
 	public function saveConfigMetadata(array $data)

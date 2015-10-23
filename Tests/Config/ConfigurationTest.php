@@ -31,23 +31,34 @@ class ConfigurationTest extends ExtractorTestCase
 		$this->rmDir($resultsPath);
 	}
 
-	public function testSaveConfigMetadata()
-	{
-		$resultsPath = './data/saveMetadataTest' . uniqid();
+    public function testGetConfigMetadata()
+    {
+        $path = __DIR__ . '/../data/metadataTest';
 
-		$configuration = new Configuration($resultsPath, 'test', new Temp('test'));
+        $configuration = new Configuration($path, 'test', new Temp('test'));
 
-		$configuration->saveConfigMetadata([
-			'some' => 'data',
-			'more' => [
-				'woah' => 'such recursive'
-			]
-		]);
+        $yml = $configuration->getConfigMetadata();
 
-		$this->assertFileEquals('./Tests/data/saveMetadataTest/out/state.yml', $resultsPath . '/out/state.yml');
+        $this->assertEquals(Yaml::parse("some: data\nmore:\n    woah: 'such recursive'"), $yml);
+    }
 
-		$this->rmDir($resultsPath);
-	}
+    public function testSaveConfigMetadata()
+    {
+        $resultsPath = './data/metadataTest' . uniqid();
+
+        $configuration = new Configuration($resultsPath, 'test', new Temp('test'));
+
+        $configuration->saveConfigMetadata([
+            'some' => 'data',
+            'more' => [
+                'woah' => 'such recursive'
+            ]
+        ]);
+
+        $this->assertFileEquals('./Tests/data/metadataTest/out/state.yml', $resultsPath . '/out/state.yml');
+
+        $this->rmDir($resultsPath);
+    }
 
 	public function testGetConfig()
 	{
