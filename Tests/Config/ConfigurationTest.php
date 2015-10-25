@@ -12,34 +12,49 @@ class ConfigurationTest extends ExtractorTestCase
 	{
 		$resultsPath = './data/storeResultsTest' . uniqid();
 
-		$configuration = new Configuration($resultsPath, 'test', new Temp('test'));
-
-		$files = [
-			Table::create('first', ['col1', 'col2']),
-			Table::create('second', ['col11', 'col12'])
-		];
-
-		$files[0]->writeRow(['a', 'b']);
-		$files[1]->writeRow(['c', 'd']);
-
-		$configuration->storeResults($files, 'test');
-
-		foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/test') as $file) {
-			$this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/test/' . $file->getFilename());
-		}
-
-		$this->rmDir($resultsPath);
+		$this->storeResults($resultsPath, 'full', false);
 	}
+
+	public function testIncrementalResults()
+	{
+
+        $resultsPath = './data/storeResultsTest' . uniqid();
+
+        $this->storeResults($resultsPath, 'incremental', true);
+    }
+
+    protected function storeResults($resultsPath, $name, $incremental)
+    {
+        $configuration = new Configuration($resultsPath, $name, new Temp('test'));
+
+        $files = [
+            Table::create('first', ['col1', 'col2']),
+            Table::create('second', ['col11', 'col12'])
+        ];
+
+        $files[0]->writeRow(['a', 'b']);
+        $files[1]->writeRow(['c', 'd']);
+
+        $configuration->storeResults($files, $name, true, $incremental);
+
+        foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/' . $name) as $file) {
+            $this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $name . '/' . $file->getFilename());
+        }
+
+        $this->rmDir($resultsPath);
+    }
 
     public function testGetConfigMetadata()
     {
         $path = __DIR__ . '/../data/metadataTest';
 
         $configuration = new Configuration($path, 'test', new Temp('test'));
-
         $yml = $configuration->getConfigMetadata();
 
         $this->assertEquals(Yaml::parse("some: data\nmore:\n    woah: 'such recursive'"), $yml);
+
+        $noConfiguration = new Configuration('asdf', 'test', new Temp('test'));
+        $this->assertEquals(null, $noConfiguration->getConfigMetadata());
     }
 
     public function testSaveConfigMetadata()

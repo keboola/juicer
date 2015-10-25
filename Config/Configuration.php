@@ -111,17 +111,27 @@ class Configuration
 
 	/**
 	 * @return array|null
-	 * @deprecated BY NOTHING FIXME GET A CLASS THAT RETURNS YamlFile
+	 * @deprecated by getMetadata
+	 * @todo once YamlFile defaults to object, override it!
 	 */
 	public function getConfigMetadata()
 	{
+        return $this->getMetadata()->getData();
+	}
+
+	/**
+	 * @todo bool $asArray = false
+	 * @return YamlFile
+	 */
+	public function getMetadata()
+	{
+        $yaml = new YamlFile($this->dataDir . "/in/state.yml");
         try {
-            $yaml = new YamlFile($this->dataDir . "/in/state.yml");
             $yaml->load();
-            return $yaml->getData();
         } catch(FileNotFoundException $e) {
-            return null;
+            // log?
         }
+        return $yaml;
 	}
 
 	public function saveConfigMetadata(array $data)
@@ -161,7 +171,7 @@ class Configuration
 	 * @param string $bucketName
 	 * @param bool $sapiPrefix whether to prefix the output bucket with "in.c-"
 	 */
-	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true)
+	public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true, $incremental = false)
 	{
 		$path = "{$this->dataDir}/out/tables/{$bucketName}/";
 		$bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
@@ -174,7 +184,10 @@ class Configuration
 
 		foreach($csvFiles as $key => $file) {
 			file_put_contents($path . $key . '.manifest', Yaml::dump([
-				'destination' => "{$bucketName}.{$key}"
+				'destination' => "{$bucketName}.{$key}",
+				'incremental' => is_null($file->getIncremental())
+                    ? $incremental
+                    : $file->getIncremental()
 			]));
 			copy($file->getPathname(), $path . $key);
 		}

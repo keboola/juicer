@@ -50,4 +50,10 @@ class YamlFile
     {
         $this->data = $data;
     }
+
+    public function update($data)
+    {
+        // FIXME what if it's not an array?
+        $this->data = array_replace_recursive($this->data, $data);
+    }
 }
