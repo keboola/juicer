@@ -2,13 +2,13 @@
 
 namespace Keboola\Juicer\Config;
 
-use    Symfony\Component\Yaml\Yaml;
-use    Keboola\Juicer\Exception\ApplicationException,
+use Symfony\Component\Yaml\Yaml;
+use Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
     Keboola\Juicer\Filesystem\YamlFile;
-use    Keboola\Temp\Temp;
-use    Keboola\CsvTable\Table;
+use Keboola\Temp\Temp;
+use Keboola\CsvTable\Table;
 
 /**
  *

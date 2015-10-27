@@ -1,9 +1,10 @@
 <?php
 
-use    Keboola\Juicer\Parser\Json;
-use    Keboola\Json\Parser;
-use    Keboola\Csv\CsvFile;
-use    Keboola\Temp\Temp;
+use Keboola\Juicer\Parser\Json,
+    Keboola\Juicer\Common\Logger;
+use Keboola\Json\Parser;
+use Keboola\Csv\CsvFile;
+use Keboola\Temp\Temp;
 
 class JsonTest extends ExtractorTestCase
 {
@@ -124,5 +125,16 @@ class JsonTest extends ExtractorTestCase
 "1","root.arr_a75f0a3e0b848d52033929a761e6c997"
 "2","root.arr_a75f0a3e0b848d52033929a761e6c997"
 ', file_get_contents($parser->getParser()->getCsvFiles()['root_arr_arr2']));
+    }
+
+    public function testProcessNoData()
+    {
+        $logHandler = new \Monolog\Handler\TestHandler();
+        $logger = new \Monolog\Logger('test', [$logHandler]);
+        Logger::setLogger($logger);
+        $parser = new Json(Parser::create($logger));
+
+        $parser->process([], 'empty');
+        $this->assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
     }
 }

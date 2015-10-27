@@ -1,14 +1,14 @@
 <?php
 
-use    Keboola\Juicer\Config\JobConfig,
+use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Client\RestClient,
     Keboola\Juicer\Parser\Json,
     Keboola\Juicer\Pagination\ResponseUrlScroller,
     Keboola\Juicer\Extractor\Job;
 
-use    Keboola\Json\Parser;
+use Keboola\Json\Parser;
 
-use    GuzzleHttp\Client,
+use GuzzleHttp\Client,
     GuzzleHttp\Message\Response,
     GuzzleHttp\Stream\Stream,
     GuzzleHttp\Subscriber\Mock,

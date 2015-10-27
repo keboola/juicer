@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Config;
 
-use    Keboola\Utils\Utils,
+use Keboola\Utils\Utils,
     Keboola\Utils\Exception\JsonDecodeException;
-use    Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Exception\UserException;
 
 /**
  * Carries a job configuration

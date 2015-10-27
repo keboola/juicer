@@ -1,6 +1,6 @@
 <?php
 
-use    Keboola\Juicer\Client\RestClient,
+use Keboola\Juicer\Client\RestClient,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Pagination\PageScroller;
 

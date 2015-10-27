@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Parser;
 
-use    Keboola\CsvTable\Table;
+use Keboola\CsvTable\Table;
 
 /**
  * A parser should be able to process an array of data and return results in a list of CSV files

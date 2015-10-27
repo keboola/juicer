@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use    Keboola\Juicer\Exception\UserException,
+use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Config\JobConfig;
 

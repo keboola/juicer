@@ -2,8 +2,8 @@
 
 namespace Keboola\Juicer\Common;
 
-use    Keboola\Juicer\Exception\ApplicationException as Exception;
-use    Monolog\Logger as Monolog,
+use Keboola\Juicer\Exception\ApplicationException as Exception;
+use Monolog\Logger as Monolog,
     Monolog\Handler\StreamHandler,
     Monolog\Formatter\LineFormatter;
 

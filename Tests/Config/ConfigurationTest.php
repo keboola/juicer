@@ -1,10 +1,10 @@
 <?php
 
-use    Keboola\Juicer\Config\Configuration,
+use Keboola\Juicer\Config\Configuration,
     Keboola\Juicer\Config\JobConfig;
-use    Keboola\Temp\Temp;
-use    Keboola\CsvTable\Table;
-use    Symfony\Component\Yaml\Yaml;
+use Keboola\Temp\Temp;
+use Keboola\CsvTable\Table;
+use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationTest extends ExtractorTestCase
 {

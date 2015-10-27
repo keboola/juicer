@@ -1,6 +1,6 @@
 <?php
 
-use    Keboola\Juicer\Config\JobConfig,
+use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Config\Configuration,
     Keboola\Juicer\Client\RestClient,
     Keboola\Juicer\Parser\Json,
@@ -8,10 +8,10 @@ use    Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Extractor\RecursiveJob,
     Keboola\Juicer\Common\Logger;
 
-use    Keboola\Json\Parser;
-use    Keboola\Temp\Temp;
+use Keboola\Json\Parser;
+use Keboola\Temp\Temp;
 
-use    GuzzleHttp\Client,
+use GuzzleHttp\Client,
     GuzzleHttp\Message\Response,
     GuzzleHttp\Stream\Stream,
     GuzzleHttp\Subscriber\Mock,

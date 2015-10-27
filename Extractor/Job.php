@@ -2,16 +2,16 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use    GuzzleHttp\Client as GuzzleClient;
-use    Keboola\Utils\Utils;
-use    Keboola\Juicer\Common\Logger,
+use GuzzleHttp\Client as GuzzleClient;
+use Keboola\Utils\Utils;
+use Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Client\RequestInterface,
     Keboola\Juicer\Parser\ParserInterface,
     Keboola\Juicer\Pagination\ScrollerInterface,
     Keboola\Juicer\Pagination\NoScroller;
-use    Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */

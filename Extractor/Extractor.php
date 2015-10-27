@@ -2,11 +2,11 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use    Keboola\Juicer\Exception\UserException;
-use    Keboola\Temp\Temp;
-use    Keboola\CsvTable\Table;
-use    Keboola\Juicer\Config\Config;
-use    Monolog\Logger;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Temp\Temp;
+use Keboola\CsvTable\Table;
+use Keboola\Juicer\Config\Config;
+use Monolog\Logger;
 
 /**
  * Base extractor class

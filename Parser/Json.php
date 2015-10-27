@@ -2,14 +2,16 @@
 
 namespace Keboola\Juicer\Parser;
 
-use    Keboola\Json\Parser as JsonParser,
+use Keboola\Json\Parser as JsonParser,
     Keboola\Json\Exception\JsonParserException,
+    Keboola\Json\Exception\NoDataException,
     Keboola\Json\Struct;
-use    Keboola\Juicer\Config\Config,
+use Keboola\Juicer\Config\Config,
     Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\ApplicationException;
-use    Keboola\Temp\Temp;
-use    Monolog\Logger;
+    Keboola\Juicer\Exception\ApplicationException,
+    Keboola\Juicer\Common\Logger;
+use Keboola\Temp\Temp;
+use Monolog\Logger as Monolog;
 
 /**
  * Parse JSON results from REST API to CSV
@@ -37,6 +39,8 @@ class Json implements ParserInterface
     {
         try {
             $this->parser->process($data, $type, $parentId);
+        } catch(NoDataException $e) {
+            Logger::log('debug', "No data returned in '{$type}'");
         } catch(JsonParserException $e) {
             throw new UserException(
                 "Error parsing response JSON: " . $e->getMessage(),
@@ -70,7 +74,7 @@ class Json implements ParserInterface
      * @param array $metadata
      * @return static
      */
-    public static function create(Config $config, Logger $logger, Temp $temp, array $metadata = [])
+    public static function create(Config $config, Monolog $logger, Temp $temp, array $metadata = [])
     {
         // TODO move this if to $this->validateStruct altogether
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {

@@ -2,13 +2,13 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use    Keboola\Juicer\Config\JobConfig,
+use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Parser\ParserInterface;
-use    Keboola\Filter\Filter;
-use    Keboola\Utils\Utils;
-use    Keboola\Juicer\Exception\UserException;
+use Keboola\Filter\Filter;
+use Keboola\Utils\Utils;
+use Keboola\Juicer\Exception\UserException;
 /**
  * {@inheritdoc}
  * Adds a capability to process recursive calls based on
@@ -20,7 +20,7 @@ use    Keboola\Juicer\Exception\UserException;
  * Expects the configuration to use 'endpoint' column to store
  * the API endpoint
  */
-class RecursiveJob extends Job implements Jobs\RecursiveJobInterface
+class RecursiveJob extends Job implements RecursiveJobInterface
 {
     /**
      * Used to save necessary parents' data to child's output

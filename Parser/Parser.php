@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Parser;
 
-use    Keboola\Temp\Temp;
+use Keboola\Temp\Temp;
 
 /**
  * Base Parser class

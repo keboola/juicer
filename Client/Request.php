@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Client;
 
-use    Keboola\Juicer\Exception\ApplicationException as Exception;
+use Keboola\Juicer\Exception\ApplicationException as Exception;
 /**
  *
  */

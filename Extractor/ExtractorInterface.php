@@ -2,7 +2,7 @@
 namespace Keboola\Juicer\Extractor;
 
 use Keboola\CsvTable\Table;
-use    Keboola\Juicer\Config\Config;
+use Keboola\Juicer\Config\Config;
 
 interface ExtractorInterface
 {

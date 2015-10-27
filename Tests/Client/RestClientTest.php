@@ -1,10 +1,10 @@
 <?php
 
-use    Keboola\Juicer\Client\RestRequest,
+use Keboola\Juicer\Client\RestRequest,
     Keboola\Juicer\Client\RestClient,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger;
-use    GuzzleHttp\Client,
+use GuzzleHttp\Client,
     GuzzleHttp\Message\Response,
     GuzzleHttp\Stream\Stream,
     GuzzleHttp\Subscriber\Mock,

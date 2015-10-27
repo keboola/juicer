@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Parser;
 
-use    Keboola\Juicer\Parser\Parser;
-use    Keboola\Utils\Utils;
-use    Keboola\CsvTable\Table;
+use Keboola\Juicer\Parser\Parser;
+use Keboola\Utils\Utils;
+use Keboola\CsvTable\Table;
 
 /**
  * Parse XML results from SOAP API to CSV

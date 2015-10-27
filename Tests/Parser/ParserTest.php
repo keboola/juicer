@@ -1,8 +1,8 @@
 <?php
 
-use    Keboola\Juicer\Parser\Parser;
-use    Keboola\Csv\CsvFile;
-use    Keboola\Temp\Temp;
+use Keboola\Juicer\Parser\Parser;
+use Keboola\Csv\CsvFile;
+use Keboola\Temp\Temp;
 
 class ParserTest extends ExtractorTestCase
 {

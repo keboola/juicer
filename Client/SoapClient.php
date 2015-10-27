@@ -2,12 +2,12 @@
 
 namespace Keboola\Juicer\Client;
 
-use    Keboola\Juicer\Exception\UserException,
+use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger;
-use    Keboola\Utils\Utils;
-use    SoapClient;
+use Keboola\Utils\Utils;
+use SoapClient;
 
 /**
  *

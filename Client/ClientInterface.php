@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Client;
 
-use    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Config\JobConfig;
 
 /**
  *

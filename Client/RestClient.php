@@ -2,11 +2,11 @@
 
 namespace Keboola\Juicer\Client;
 
-use    Keboola\Juicer\Exception\UserException,
+use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger;
-use    GuzzleHttp\Client,
+use GuzzleHttp\Client,
     GuzzleHttp\Exception\BadResponseException,
     GuzzleHttp\Exception\ClientException,
     GuzzleHttp\Message\Request as GuzzleRequest,
@@ -14,7 +14,7 @@ use    GuzzleHttp\Client,
     GuzzleHttp\Subscriber\Retry\RetrySubscriber,
     GuzzleHttp\Event\AbstractTransferEvent,
     GuzzleHttp\Event\ErrorEvent;
-use    Keboola\Utils\Utils,
+use Keboola\Utils\Utils,
     Keboola\Utils\Exception\JsonDecodeException;
 
 /**

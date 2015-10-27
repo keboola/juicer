@@ -1,7 +1,7 @@
 <?php
 namespace Keboola\Juicer\Pagination;
 
-use    Keboola\Juicer\Client\ClientInterface,
+use Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Client\RequestInterface,
     Keboola\Juicer\Config\JobConfig;
 

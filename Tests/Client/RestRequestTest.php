@@ -1,6 +1,6 @@
 <?php
 
-use    Keboola\Juicer\Client\RestRequest;
+use Keboola\Juicer\Client\RestRequest;
 
 class RestRequestTest extends ExtractorTestCase
 {
