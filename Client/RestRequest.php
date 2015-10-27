@@ -7,17 +7,37 @@ namespace Keboola\Juicer\Client;
  */
 class RestRequest extends Request implements RequestInterface
 {
+    /**
+     * @var string
+     */
 	protected $method;
 
-	public function __construct($endpoint, array $params = [], $method = 'GET')
+	/**
+	 * @var array
+	 */
+    protected $headers;
+
+	public function __construct($endpoint, array $params = [], $method = 'GET', array $headers = [])
 	{
 		parent::__construct($endpoint, $params);
 		$this->method = $method;
+		$this->headers = $headers;
 	}
 
+	/**
+     * @return string
+     */
 	public function getMethod()
 	{
 		return $this->method;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getHeaders()
+	{
+        return $this->headers;
 	}
 
 	/**
@@ -35,6 +55,9 @@ class RestRequest extends Request implements RequestInterface
 		);
 	}
 
+	/**
+	 * @return string METHOD endpoint query/JSON params
+	 */
 	public function __toString()
 	{
 		return join(' ', [

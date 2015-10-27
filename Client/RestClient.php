@@ -167,7 +167,9 @@ class RestClient implements ClientInterface
 				break;
 		}
 
-		// TODO refresh request here?
+		if (!empty($request->getHeaders())) {
+            $options['headers'] = $request->getHeaders();
+        }
 
 		return $this->client->createRequest($method, $endpoint, $options);
 	}

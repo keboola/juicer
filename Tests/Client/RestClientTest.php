@@ -83,6 +83,33 @@ class RestClientTest extends ExtractorTestCase
 		);
 	}
 
+	public function testRequestHeaders()
+	{
+        $guzzle = new Client();
+        $guzzle->setDefaultOption('headers', ['X-Test' => '1234']);
+
+        $mock = new Mock([
+            new Response(200, [], Stream::factory('{}'))
+        ]);
+        $guzzle->getEmitter()->attach($mock);
+
+        $history = new History();
+        $guzzle->getEmitter()->attach($history);
+
+        $restClient = new RestClient($guzzle);
+
+        $request = new RestRequest('ep', [], 'GET', ['X-RTest' => 'requestHeader']);
+        $restClient->download($request);
+
+        $this->assertEquals(
+            [
+                'X-RTest' => ['requestHeader'],
+                'X-Test' => ['1234']
+            ],
+            $history->getLastRequest()->getHeaders()
+        );
+	}
+
 	public function testBackoff()
 	{
 		Logger::setLogger($this->getLogger('test', true));
