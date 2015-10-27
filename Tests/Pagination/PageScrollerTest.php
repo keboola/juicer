@@ -1,130 +1,130 @@
 <?php
 
-use	Keboola\Juicer\Client\RestClient,
-	Keboola\Juicer\Config\JobConfig,
-	Keboola\Juicer\Pagination\PageScroller;
+use    Keboola\Juicer\Client\RestClient,
+    Keboola\Juicer\Config\JobConfig,
+    Keboola\Juicer\Pagination\PageScroller;
 
 /**
  * @todo test with no limit until empty response
  */
 class PageScrollerTest extends ExtractorTestCase
 {
-	public function testGetFirstRequest()
-	{
-		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+    public function testGetFirstRequest()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2
+            ]
+        ]);
 
-		$scroller = PageScroller::create(['limit' => 500]);
+        $scroller = PageScroller::create(['limit' => 500]);
 
-		$req = $scroller->getFirstRequest($client, $config);
+        $req = $scroller->getFirstRequest($client, $config);
 
-		$expectedCfg = $config->getConfig();
-		$expectedCfg['params']['page'] = 1;
-		$expectedCfg['params']['limit'] = 500;
-		$this->assertEquals($client->createRequest($expectedCfg), $req);
-	}
+        $expectedCfg = $config->getConfig();
+        $expectedCfg['params']['page'] = 1;
+        $expectedCfg['params']['limit'] = 500;
+        $this->assertEquals($client->createRequest($expectedCfg), $req);
+    }
 
-	public function testGetFirstRequestNoParams()
-	{
-		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+    public function testGetFirstRequestNoParams()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2
+            ]
+        ]);
 
-		$scroller = PageScroller::create([
-			'firstPageParams' => false
-		]);
+        $scroller = PageScroller::create([
+            'firstPageParams' => false
+        ]);
 
-		$req = $scroller->getFirstRequest($client, $config);
-		$this->assertEquals($client->createRequest($config->getConfig()), $req);
-	}
+        $req = $scroller->getFirstRequest($client, $config);
+        $this->assertEquals($client->createRequest($config->getConfig()), $req);
+    }
 
-	public function testGetNextRequest()
-	{
-		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			]
-		]);
+    public function testGetNextRequest()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2
+            ]
+        ]);
 
-		$scroller = new PageScroller();
+        $scroller = new PageScroller();
 
-		$response = new \stdClass();
-		$response->data = array_fill(0, 10, (object) ['key' => 'value']);
+        $response = new \stdClass();
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
-		$next = $scroller->getNextRequest($client, $config, $response, $response->data);
-		$expected = $client->createRequest([
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2,
-				'page' => 2
-			]
-		]);
-		$this->assertEquals($expected, $next);
+        $next = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2,
+                'page' => 2
+            ]
+        ]);
+        $this->assertEquals($expected, $next);
 
-		$next2 = $scroller->getNextRequest($client, $config, $response, $response->data);
-		$expected2 = $client->createRequest([
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2,
-				'page' => 3
-			]
-		]);
-		$this->assertEquals($expected2, $next2);
+        $next2 = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected2 = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2,
+                'page' => 3
+            ]
+        ]);
+        $this->assertEquals($expected2, $next2);
 
-		// Empty response
-		$responseUnderLimit = new \stdClass();
-		$responseUnderLimit->data = [];
-		$next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
-		$this->assertEquals(false, $next3);
+        // Empty response
+        $responseUnderLimit = new \stdClass();
+        $responseUnderLimit->data = [];
+        $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
+        $this->assertEquals(false, $next3);
 
-		// Scroller limit higher than response size
-		$scrollerLimit = new PageScroller('page', 100);
-		$next4 = $scrollerLimit->getNextRequest($client, $config, $response, $response->data);
-		$this->assertEquals(false, $next4);
-	}
+        // Scroller limit higher than response size
+        $scrollerLimit = new PageScroller('page', 100);
+        $next4 = $scrollerLimit->getNextRequest($client, $config, $response, $response->data);
+        $this->assertEquals(false, $next4);
+    }
 
-	public function testGetNextRequestPost()
-	{
-		$client = RestClient::create();
-		$config = new JobConfig('test', [
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2
-			],
-			'method' => 'POST'
-		]);
+    public function testGetNextRequestPost()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2
+            ],
+            'method' => 'POST'
+        ]);
 
-		$scroller = new PageScroller();
+        $scroller = new PageScroller();
 
-		$response = new \stdClass();
-		$response->data = array_fill(0, 10, (object) ['key' => 'value']);
-		$next = $scroller->getNextRequest($client, $config, $response, $response->data);
-		$expected = $client->createRequest([
-			'endpoint' => 'test',
-			'params' => [
-				'a' => 1,
-				'b' => 2,
-				'page' => 2
-			],
-			'method' => 'POST'
-		]);
-		$this->assertEquals($expected, $next);
-	}
+        $response = new \stdClass();
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
+        $next = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2,
+                'page' => 2
+            ],
+            'method' => 'POST'
+        ]);
+        $this->assertEquals($expected, $next);
+    }
 }

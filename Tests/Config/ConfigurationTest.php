@@ -1,22 +1,22 @@
 <?php
 
-use	Keboola\Juicer\Config\Configuration,
-	Keboola\Juicer\Config\JobConfig;
-use	Keboola\Temp\Temp;
-use	Keboola\CsvTable\Table;
-use	Symfony\Component\Yaml\Yaml;
+use    Keboola\Juicer\Config\Configuration,
+    Keboola\Juicer\Config\JobConfig;
+use    Keboola\Temp\Temp;
+use    Keboola\CsvTable\Table;
+use    Symfony\Component\Yaml\Yaml;
 
 class ConfigurationTest extends ExtractorTestCase
 {
-	public function testStoreResults()
-	{
-		$resultsPath = './data/storeResultsTest' . uniqid();
+    public function testStoreResults()
+    {
+        $resultsPath = './data/storeResultsTest' . uniqid();
 
-		$this->storeResults($resultsPath, 'full', false);
-	}
+        $this->storeResults($resultsPath, 'full', false);
+    }
 
-	public function testIncrementalResults()
-	{
+    public function testIncrementalResults()
+    {
 
         $resultsPath = './data/storeResultsTest' . uniqid();
 
@@ -75,56 +75,56 @@ class ConfigurationTest extends ExtractorTestCase
         $this->rmDir($resultsPath);
     }
 
-	public function testGetConfig()
-	{
-		$configuration = new Configuration('./Tests/data/recursive', 'test', new Temp('test'));
+    public function testGetConfig()
+    {
+        $configuration = new Configuration('./Tests/data/recursive', 'test', new Temp('test'));
 
-		$config = $configuration->getConfig();
+        $config = $configuration->getConfig();
 
-		$yml = Yaml::parse(file_get_contents('./Tests/data/recursive/config.yml'));
+        $yml = Yaml::parse(file_get_contents('./Tests/data/recursive/config.yml'));
 
-		$jobs = $config->getJobs();
-		$this->assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
+        $jobs = $config->getJobs();
+        $this->assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
 
-		$this->assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
-	}
+        $this->assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
+    }
 
-	public function testGetMultipleConfigs()
-	{
-		$configuration = new Configuration('./Tests/data/iterations', 'test', new Temp('test'));
+    public function testGetMultipleConfigs()
+    {
+        $configuration = new Configuration('./Tests/data/iterations', 'test', new Temp('test'));
 
-		$configs = $configuration->getMultipleConfigs();
+        $configs = $configuration->getMultipleConfigs();
 
-		$yml = Yaml::parse(file_get_contents('./Tests/data/iterations/config.yml'));
+        $yml = Yaml::parse(file_get_contents('./Tests/data/iterations/config.yml'));
 
-		foreach($yml['parameters']['iterations'] as $i => $params) {
-			$this->assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
-		}
-		$this->assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
-		$this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
-		$this->assertCount(count($yml['parameters']['iterations']), $configs);
-	}
+        foreach($yml['parameters']['iterations'] as $i => $params) {
+            $this->assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
+        }
+        $this->assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
+        $this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        $this->assertCount(count($yml['parameters']['iterations']), $configs);
+    }
 
-	public function testGetMultipleConfigsSingle()
-	{
-		$configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
+    public function testGetMultipleConfigsSingle()
+    {
+        $configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
 
-		$configs = $configuration->getMultipleConfigs();
+        $configs = $configuration->getMultipleConfigs();
 
-		$yml = Yaml::parse(file_get_contents('./Tests/data/iteration/config.yml'));
+        $yml = Yaml::parse(file_get_contents('./Tests/data/iteration/config.yml'));
 
 
-		$this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
-		$this->assertCount(1, $configs);
+        $this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        $this->assertCount(1, $configs);
 
-		$this->assertEquals($configuration->getConfig(), $configs[0]);
-	}
+        $this->assertEquals($configuration->getConfig(), $configs[0]);
+    }
 
-	protected function rmDir($dirPath)
-	{
-		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
-			$path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
-		}
-		return rmdir($dirPath);
-	}
+    protected function rmDir($dirPath)
+    {
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+            $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
+        }
+        return rmdir($dirPath);
+    }
 }

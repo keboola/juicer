@@ -12,56 +12,56 @@ class RestRequest extends Request implements RequestInterface
     /**
      * @var string
      */
-	protected $method;
+    protected $method;
 
-	/**
-	 * @var array
-	 */
+    /**
+     * @var array
+     */
     protected $headers;
 
-	public function __construct($endpoint, array $params = [], $method = 'GET', array $headers = [])
-	{
-		parent::__construct($endpoint, $params);
-		$this->method = $method;
-		$this->headers = $headers;
-	}
+    public function __construct($endpoint, array $params = [], $method = 'GET', array $headers = [])
+    {
+        parent::__construct($endpoint, $params);
+        $this->method = $method;
+        $this->headers = $headers;
+    }
 
-	/**
+    /**
      * @return string
      */
-	public function getMethod()
-	{
-		return $this->method;
-	}
+    public function getMethod()
+    {
+        return $this->method;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getHeaders()
-	{
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
         return $this->headers;
-	}
+    }
 
-	/**
-	 * @param string $endpoint REST endpoint or SOAP function
-	 * @param array parameters
-	 * @param array REST method or SOAP options+inputHeader
-	 * @return RequestInterface
-	 */
-	public static function create(array $config)
-	{
+    /**
+     * @param string $endpoint REST endpoint or SOAP function
+     * @param array parameters
+     * @param array REST method or SOAP options+inputHeader
+     * @return RequestInterface
+     */
+    public static function create(array $config)
+    {
         self::validateConfig($config);
 
-		return new static(
-			$config['endpoint'],
-			empty($config['params']) ? [] : $config['params'],
-			empty($config['method']) ? 'GET' : $config['method'],
-			empty($config['headers']) ? [] : $config['headers']
-		);
-	}
+        return new static(
+            $config['endpoint'],
+            empty($config['params']) ? [] : $config['params'],
+            empty($config['method']) ? 'GET' : $config['method'],
+            empty($config['headers']) ? [] : $config['headers']
+        );
+    }
 
-	protected static function validateConfig(array $config)
-	{
+    protected static function validateConfig(array $config)
+    {
         foreach([
             'params' => 'array',
             'headers' => 'array',
@@ -72,19 +72,19 @@ class RestRequest extends Request implements RequestInterface
                 throw new UserException("Request {$key} must be an {$type}");
             }
         }
-	}
+    }
 
-	/**
-	 * @return string METHOD endpoint query/JSON params
-	 */
-	public function __toString()
-	{
-		return join(' ', [
-			$this->getMethod(),
-			$this->getEndpoint(),
-			'GET' == $this->getMethod()
-				? http_build_query($this->getParams())
-				: json_encode($this->getParams(), JSON_PRETTY_PRINT)
-		]);
-	}
+    /**
+     * @return string METHOD endpoint query/JSON params
+     */
+    public function __toString()
+    {
+        return join(' ', [
+            $this->getMethod(),
+            $this->getEndpoint(),
+            'GET' == $this->getMethod()
+                ? http_build_query($this->getParams())
+                : json_encode($this->getParams(), JSON_PRETTY_PRINT)
+        ]);
+    }
 }
