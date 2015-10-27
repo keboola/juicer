@@ -2,6 +2,8 @@
 
 namespace Keboola\Juicer\Client;
 
+use Keboola\Juicer\Exception\UserException;
+
 /**
  *
  */
@@ -48,11 +50,28 @@ class RestRequest extends Request implements RequestInterface
 	 */
 	public static function create(array $config)
 	{
+        self::validateConfig($config);
+
 		return new static(
 			$config['endpoint'],
 			empty($config['params']) ? [] : $config['params'],
-			empty($config['method']) ? 'GET' : $config['method']
+			empty($config['method']) ? 'GET' : $config['method'],
+			empty($config['headers']) ? [] : $config['headers']
 		);
+	}
+
+	protected static function validateConfig(array $config)
+	{
+        foreach([
+            'params' => 'array',
+            'headers' => 'array',
+            'endpoint' => 'string',
+            'method' => 'string'
+        ] as $key => $type) {
+            if (!empty($config[$key]) && gettype($config[$key]) != $type) {
+                throw new UserException("Request {$key} must be an {$type}");
+            }
+        }
 	}
 
 	/**

@@ -4,7 +4,6 @@ use	Keboola\Juicer\Client\RestRequest;
 
 class RestRequestTest extends ExtractorTestCase
 {
-
 	public function testCreate()
 	{
 		$arr = [
@@ -21,4 +20,12 @@ class RestRequestTest extends ExtractorTestCase
 		$this->assertEquals($expected, $request);
 	}
 
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Request params must be an array
+     */
+	public function testValidateConfig()
+	{
+        $request = RestRequest::create(['endpoint' => 'ep', 'params' => 'string']);
+	}
 }
