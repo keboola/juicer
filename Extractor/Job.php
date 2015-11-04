@@ -168,14 +168,6 @@ class Job
                 Logger::log('warning', "dataField '{$path}' contains no data!");
             }
 
-            if (!empty($config['dataField']['objectKey'])) {
-                if (!is_object($data)) {
-                    throw new UserException("'dataField.objectKey' can only be used on an object in response! '{$path}' is an " . gettype($data));
-                }
-
-                $data = $this->convertObjectWithKeys($data, $config['dataField']['objectKey']);
-            }
-
             // In case of a single object being returned
             if (!is_array($data)) {
                 $data = [$data];
@@ -220,34 +212,6 @@ class Job
         }
 
         return $data;
-    }
-
-    /**
-     * Convert an object to array, adding keys from the first level of the object
-     * to each first child's $key property
-     * @param \stdClass $data
-     * @param string $key
-     * @return array
-     * @todo Belongs to a dfifferent class!
-     */
-    protected function convertObjectWithKeys(\stdClass $data, $key)
-    {
-        $convertedData = [];
-        foreach($data as $id => $record) {
-            if (is_scalar($record)) {
-                $convertedData[] = (object) [
-                    'data' => $record,
-                    $key => $id
-                ];
-            } elseif (is_object($record)) {
-                $record->{$key} = $id;
-                $convertedData[] = $record;
-            } else {
-                throw new UserException("'dataField.objectKey' can only append keys to objects and scalars! '{$id}' is an " . gettype($record));
-            }
-        }
-
-        return $convertedData;
     }
 
     /**
