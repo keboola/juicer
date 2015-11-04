@@ -148,4 +148,56 @@ class JobTest extends ExtractorTestCase
 
         $data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
     }
+
+    public function testFindDataInResponseWithConversion()
+    {
+        $cfg = JobConfig::create([
+            'endpoint' => 'a',
+            'dataField' => [
+                'path' => 'data.results',
+                'objectKey' => 'rowId'
+            ]
+        ]);
+        $job = new Job(
+            $cfg,
+            RestClient::create(),
+            new Json(Parser::create($this->getLogger('job', true)))
+        );
+
+        $response = (object) [
+            'data' => (object) [
+                'results' => (object) [
+                    'a' => (object) ['val' => 1],
+                    'b' => (object) ['val' => 2]
+                ]
+            ]
+        ];
+
+        $data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
+        $this->assertEquals([
+            (object) ['rowId' => 'a', 'val' => 1],
+            (object) ['rowId' => 'b', 'val' => 2]
+        ], $data);
+    }
+
+    public function testConvertObjectWithKeys()
+    {
+        $data = (object) [
+            'a' => (object) ['val' => 1],
+            'b' => (object) ['val' => 2]
+        ];
+
+        $job = new Job(
+            JobConfig::create(['endpoint' => 'ep']),
+            RestClient::create(),
+            new Json(Parser::create($this->getLogger('job', true)))
+        );
+
+        $array = $this->callMethod($job, 'convertObjectWithKeys', [$data, 'rowId']);
+
+        $this->assertEquals([
+            (object) ['rowId' => 'a', 'val' => 1],
+            (object) ['rowId' => 'b', 'val' => 2]
+        ], $array);
+    }
 }

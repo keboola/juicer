@@ -43,10 +43,14 @@ class RestRequest extends Request implements RequestInterface
     }
 
     /**
-     * @param string $endpoint REST endpoint or SOAP function
-     * @param array parameters
-     * @param array REST method or SOAP options+inputHeader
-     * @return RequestInterface
+     * [
+     *   'endpoint' => string, required
+     *   'params' => array,
+     *   'method' => *GET*|POST|FORM
+     *   'headers' => array
+     * ]
+     * @param array $config
+     * @return static
      */
     public static function create(array $config)
     {

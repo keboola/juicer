@@ -145,15 +145,35 @@ class Job
      * @todo support array of dataFields
      *     - would return object with results, changing the class' API
      *     - parse would just have to loop through if it returns an object
-     *     - and append type with the dataField
+     *     - and append $type with the dataField
      */
     protected function findDataInResponse($response, array $config = [])
     {
         // If dataField doesn't say where the data is in a response, try to find it!
         if (!empty($config['dataField'])) {
-            $data = Utils::getDataFromPath($config['dataField'], $response, ".");
+            if (is_array($config['dataField'])) {
+                if (empty($config['dataField']['path'])) {
+                    throw new UserException("'dataField.path' must be set!");
+                }
+
+                $path = $config['dataField']['path'];
+            } elseif (is_scalar($config['dataField'])) {
+                $path = $config['dataField'];
+            } else {
+                throw new UserException("'dataField' must be either a path string or an object with 'path' attribute.");
+            }
+
+            $data = Utils::getDataFromPath($path, $response, ".");
             if (empty($data)) {
-                Logger::log('warning', "dataField '{$config['dataField']}' contains no data!");
+                Logger::log('warning', "dataField '{$path}' contains no data!");
+            }
+
+            if (!empty($config['dataField']['objectKey'])) {
+                if (!is_object($data)) {
+                    throw new UserException("'dataField.objectKey' can only be used on an object in response! '{$path}' is an " . gettype($data));
+                }
+
+                $data = $this->convertObjectWithKeys($data, $config['dataField']['objectKey']);
             }
 
             // In case of a single object being returned
@@ -200,6 +220,34 @@ class Job
         }
 
         return $data;
+    }
+
+    /**
+     * Convert an object to array, adding keys from the first level of the object
+     * to each first child's $key property
+     * @param \stdClass $data
+     * @param string $key
+     * @return array
+     * @todo Belongs to a dfifferent class!
+     */
+    protected function convertObjectWithKeys(\stdClass $data, $key)
+    {
+        $convertedData = [];
+        foreach($data as $id => $record) {
+            if (is_scalar($record)) {
+                $convertedData[] = (object) [
+                    'data' => $record,
+                    $key => $id
+                ];
+            } elseif (is_object($record)) {
+                $record->{$key} = $id;
+                $convertedData[] = $record;
+            } else {
+                throw new UserException("'dataField.objectKey' can only append keys to objects and scalars! '{$id}' is an " . gettype($record));
+            }
+        }
+
+        return $convertedData;
     }
 
     /**
