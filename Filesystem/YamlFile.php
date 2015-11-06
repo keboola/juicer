@@ -5,7 +5,8 @@ namespace Keboola\Juicer\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\FileNotFoundException;
+    Keboola\Juicer\Exception\FileNotFoundException,
+    Keboola\Juicer\Exception\NoDataException;
 
 /**
  * Reflects a YAML file in memory
@@ -44,6 +45,32 @@ class YamlFile
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @param string $path,... Nodes within the Yaml file. Each argument goes one level deeper.
+     */
+    public function get()
+    {
+        $path = func_get_args();
+
+        if (is_scalar($this->data) && func_num_args() > 0) {
+            throw new NoDataException("Cannot retrieve nested nodes from a scalar in the YAML.");
+        }
+
+        // TODO test to ensure a data object isn't changed
+        $data = $this->data;
+        foreach($path as $key) {
+            $data = (array) $data;
+            if (!isset($data[$key])) {
+                $pathString = join('.', $path);
+                throw new NoDataException("Path '{$key}' in '{$pathString}' not found in data!", 0, null, $data);
+            }
+
+            $data = $data[$key];
+        }
+
+        return $data;
     }
 
     public function setData($data)

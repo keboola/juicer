@@ -106,6 +106,10 @@ class Configuration
      */
     protected function createJob($job)
     {
+        if (!is_array($job)) {
+            throw new UserException("Invalid format for job configuration.", 0, null, ['job' => $job]);
+        }
+
         return JobConfig::create($job);
     }
 
