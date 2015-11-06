@@ -146,6 +146,7 @@ class Job
      *     - would return object with results, changing the class' API
      *     - parse would just have to loop through if it returns an object
      *     - and append $type with the dataField
+     * @deprecated Use response module
      */
     protected function findDataInResponse($response, array $config = [])
     {

@@ -73,6 +73,9 @@ class JobTest extends ExtractorTestCase
         );
     }
 
+    /**
+     * @deprecated
+     */
     public function testFindDataInResponse()
     {
         $cfg = JobConfig::create([

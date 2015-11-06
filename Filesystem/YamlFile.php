@@ -16,6 +16,9 @@ use Keboola\Juicer\Exception\ApplicationException,
  */
 class YamlFile
 {
+    const MODE_READ = 'r';
+    const MODE_WRITE = 'w';
+
     /**
      * @var string
      */
@@ -26,6 +29,28 @@ class YamlFile
     public function __construct($pathName)
     {
         $this->pathName = $pathName;
+    }
+
+    /**
+     * @param string $pathName
+     * @param string $mode [r,w]
+     * @return static
+     */
+    public static function create($pathName, $mode = self::MODE_READ)
+    {
+        $yaml = new self($pathName);
+
+        if ($mode == self::MODE_READ) {
+            $yaml->load();
+        } elseif ($mode == self::MODE_WRITE) {
+            try {
+                touch($pathName);
+            } catch(\ErrorException $e) {
+                throw new ApplicationException("Error creating file '{$pathName}'");
+            }
+        }
+
+        return $yaml;
     }
 
     public function load()
