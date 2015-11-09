@@ -48,6 +48,7 @@ class YamlFile
             } catch(\ErrorException $e) {
                 throw new ApplicationException("Error creating file '{$pathName}'");
             }
+            $yaml->load();
         }
 
         return $yaml;
