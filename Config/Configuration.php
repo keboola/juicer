@@ -6,6 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 use Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
+    Keboola\Juicer\Exception\NoDataException,
     Keboola\Juicer\Filesystem\YamlFile;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
@@ -52,10 +53,10 @@ class Configuration
      */
     public function getMultipleConfigs()
     {
-        if (empty($this->getYmlConfig()['parameters']['iterations'])) {
+        try {
+            $iterations = $this->getYaml('/config.yml', 'parameters', 'iterations');
+        } catch(NoDataException $e) {
             $iterations = [null];
-        } else {
-            $iterations = $this->getYmlConfig()['parameters']['iterations'];
         }
 
         $configs = [];
@@ -73,7 +74,7 @@ class Configuration
      */
     public function getConfig(array $params = null)
     {
-        $configYml = $this->getYmlConfig()['parameters']['config'];
+        $configYml = $this->getYaml('/config.yml', 'parameters', 'config');
 
         if (!is_null($params)) {
             $configYml = array_replace($configYml, $params);
@@ -89,6 +90,10 @@ class Configuration
 
         $configName = $configYml['id'];
         $runtimeParams = []; // TODO get runtime params from console
+
+        if (empty($configYml['jobs'])) {
+            throw new UserException("No 'jobs' specified in the config!");
+        }
 
         $jobs = $configYml['jobs'];
         $jobConfigs = [];
