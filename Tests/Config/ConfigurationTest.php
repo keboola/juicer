@@ -120,6 +120,15 @@ class ConfigurationTest extends ExtractorTestCase
         $this->assertEquals($configuration->getConfig(), $configs[0]);
     }
 
+    public function testGetYaml()
+    {
+        $configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
+
+        $result = self::callMethod($configuration, 'getYaml', ['/config.yml', 'parameters', 'config', 'id']);
+
+        self::assertEquals('multiCfg', $result);
+    }
+
     protected function rmDir($dirPath)
     {
         foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {

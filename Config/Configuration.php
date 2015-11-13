@@ -35,6 +35,11 @@ class Configuration
      */
     protected $dataDir;
 
+    /**
+     * @var YamlFile[]
+     */
+    protected $yamlFiles;
+
     public function __construct($dataDir, $appName, Temp $temp)
     {
         $this->appName = $appName;
@@ -153,6 +158,7 @@ class Configuration
      * @param string $path
      * @return array
      * @todo 2nd param to get part of the config with "not found" handling
+     * @deprecated
      */
     protected function getYmlConfig($path = '/config.yml')
     {
@@ -160,6 +166,22 @@ class Configuration
             $this->ymlConfig[$path] = Yaml::parse(file_get_contents($this->dataDir . $path));
         }
         return $this->ymlConfig[$path];
+    }
+
+    /**
+     * @param string $filePath
+     * @param string $path,..
+     */
+    protected function getYaml($filePath)
+    {
+        $path = func_get_args();
+        $filePath = array_shift($path);
+
+        if (empty($this->yamlFiles[$filePath])) {
+            $this->yamlFiles[$filePath] = YamlFile::create($this->dataDir . $filePath);
+        }
+
+        return call_user_func_array([$this->yamlFiles[$filePath], 'get'], $path);
     }
 
     /**
