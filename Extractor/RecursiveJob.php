@@ -6,7 +6,8 @@ use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Parser\ParserInterface;
-use Keboola\Filter\Filter;
+use Keboola\Filter\Filter,
+    Keboola\Filter\Exception\FilterException;
 use Keboola\Utils\Utils;
 use Keboola\Juicer\Exception\UserException;
 /**
@@ -86,7 +87,11 @@ class RecursiveJob extends Job implements RecursiveJobInterface
 
         foreach($this->config->getChildJobs() as $jobId => $child) {
             if (!empty($child->getConfig()['recursionFilter'])) {
-                $filter = Filter::create($child->getConfig()['recursionFilter']);
+                try {
+                    $filter = Filter::create($child->getConfig()['recursionFilter']);
+                } catch(FilterException $e) {
+                    throw new UserException($e->getMessage(), 0, $e);
+                }
             }
 
             foreach($data as $result) {
