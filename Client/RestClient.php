@@ -108,7 +108,12 @@ class RestClient implements ClientInterface
                 try {
                     $decoded = Utils::json_decode($body);
                 } catch(JsonDecodeException $e) {
-                    throw new UserException("Invalid JSON response from API: " . $e->getMessage());
+                    throw new UserException(
+                        "Invalid JSON response from API: " . $e->getMessage(),
+                        0,
+                        null,
+                        ['body' => $body]
+                    );
                 }
 
                 return $decoded;
@@ -130,7 +135,6 @@ class RestClient implements ClientInterface
                 $object = new \stdClass;
                 $object->body = (string) $response->getBody();
                 return $object;
-//                 return (string) $response->getBody();
             default:
                 throw new ApplicationException("Data format {$this->responseFormat} not supported.");
         }
