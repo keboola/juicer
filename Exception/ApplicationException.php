@@ -14,7 +14,7 @@ class ApplicationException extends \Exception
 
     public function __construct($message = "", $code = 0, \Exception $previous = null, $data = [])
     {
-        $this->setData = $data;
+        $this->setData($data);
         parent::__construct($message, $code, $previous);
     }
 
