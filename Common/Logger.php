@@ -86,7 +86,7 @@ class Logger
      * @param array $context
      * @return bool
      */
-    public static function log($level, $message, array $context = array())
+    public static function log($level, $message, array $context = [])
     {
         if (self::$logger == null) {
             if (self::$strict) {

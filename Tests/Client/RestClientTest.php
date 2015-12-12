@@ -134,4 +134,30 @@ class RestClientTest extends ExtractorTestCase
 
         $this->assertEquals(json_decode($body), $restClient->download($request));
     }
+
+    public function testMalformedJson()
+    {
+        $body = '[
+                {"field": "d
+        ]';
+
+        $restClient = RestClient::create();
+
+        $mock = new Mock([
+            new Response(200, [], Stream::factory($body))
+        ]);
+        $restClient->getClient()->getEmitter()->attach($mock);
+
+        $request = new RestRequest('ep');
+
+        try {
+            $restClient->download($request);
+        } catch(\Keboola\Juicer\Exception\UserException $e) {
+            self::assertArrayHasKey('errDetail', $e->getData());
+            self::assertArrayHasKey('json', $e->getData());
+            return;
+        }
+
+        throw new \Exception;
+    }
 }

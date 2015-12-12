@@ -91,6 +91,7 @@ class OffsetScroller implements ScrollerInterface
 
     /**
      * {@inheritdoc}
+     * @todo increase by count($data) instead of limit? Could make limit optional then
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {

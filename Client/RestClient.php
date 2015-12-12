@@ -106,13 +106,13 @@ class RestClient implements ClientInterface
                 // Sanitize the JSON
                 $body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
                 try {
-                    $decoded = Utils::json_decode($body);
+                    $decoded = Utils::json_decode($body, false, 512, 0, true, true);
                 } catch(JsonDecodeException $e) {
                     throw new UserException(
                         "Invalid JSON response from API: " . $e->getMessage(),
                         0,
                         null,
-                        ['body' => $body]
+                        $e->getData()
                     );
                 }
 
