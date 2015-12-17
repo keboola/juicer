@@ -5,7 +5,14 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Exception\UserException;
 
 /**
- *
+ * Adds 'nextPageFlag' option to look at a boolean
+ * field in response to continue/stop scrolling
+ * config:
+ * pagination:
+ *   nextPageFlag:
+ *     field: hasMore #name of the bool field
+ *     stopOn: false #whether to stop once the value is true or false
+ *     ifNotSet: false #optional, what value to assume if the field is not present
  */
 abstract class AbstractScroller
 {
