@@ -11,7 +11,7 @@ use Keboola\Juicer\Exception\UserException,
  * Limit can be overriden in job's config's query parameters
  * and it will be used instead of extractor's default
  */
-class OffsetScroller implements ScrollerInterface
+class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {
     const DEFAULT_LIMIT_PARAM = 'limit';
     const DEFAULT_OFFSET_PARAM = 'offset';
@@ -38,17 +38,14 @@ class OffsetScroller implements ScrollerInterface
      */
     protected $pointer = 0;
 
-    public function __construct(
-        $limit,
-        $limitParam = self::DEFAULT_LIMIT_PARAM,
-        $offsetParam = self::DEFAULT_OFFSET_PARAM,
-        $firstPageParams = self::FIRST_PAGE_PARAMS
-    )
+    public function __construct(array $config)
     {
-        $this->limit = $limit;
-        $this->limitParam = $limitParam;
-        $this->offsetParam = $offsetParam;
-        $this->firstPageParams = $firstPageParams;
+            parent::__construct($config);
+
+            $this->limit = $config['limit'];
+            $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
+            $this->offsetParam = !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM;
+            $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
     }
 
     /**
@@ -67,12 +64,7 @@ class OffsetScroller implements ScrollerInterface
             throw new UserException("Missing 'pagination.limit' attribute required for offset pagination");
         }
 
-        return new self(
-            $config['limit'],
-            !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM,
-            !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM,
-            isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS
-        );
+        return new self($config);
     }
 
     /**
@@ -95,7 +87,7 @@ class OffsetScroller implements ScrollerInterface
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (count($data) < $this->getLimit($jobConfig)) {
+        if (count($data) < $this->getLimit($jobConfig) || false === $this->hasMore($response)) {
             $this->reset();
             return false;
         } else {

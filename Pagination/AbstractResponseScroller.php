@@ -10,7 +10,7 @@ use Keboola\Juicer\Client\ClientInterface,
  *
  *
  */
-abstract class AbstractResponseScroller
+abstract class AbstractResponseScroller extends AbstractScroller
 {
     /**
      * {@inheritdoc}

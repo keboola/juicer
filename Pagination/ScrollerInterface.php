@@ -17,7 +17,7 @@ interface ScrollerInterface
     /**
      * @param ClientInterface $client
      * @param $jobConfig $jobConfig
-     * @param object $response
+     * @param mixed $response
      * @param array $data
      * @return RequestInterface|false
      */

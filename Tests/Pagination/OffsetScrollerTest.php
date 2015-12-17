@@ -17,7 +17,7 @@ class OffsetScrollerTest extends ExtractorTestCase
             ]
         ]);
 
-        $scroller = new OffsetScroller(10, 'max', 'startAt');
+        $scroller = new OffsetScroller(['limit' => 10, 'limitParam' => 'max', 'offsetParam' => 'startAt']);
 
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -32,7 +32,7 @@ class OffsetScrollerTest extends ExtractorTestCase
                 'startAt' => 10
             ]
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
 
         $next2 = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected2 = $client->createRequest([
@@ -44,17 +44,49 @@ class OffsetScrollerTest extends ExtractorTestCase
                 'startAt' => 20
             ]
         ]);
-        $this->assertEquals($expected2, $next2);
+        self::assertEquals($expected2, $next2);
 
         $responseUnderLimit = new \stdClass();
         $responseUnderLimit->data = array_fill(0, 5, (object) ['key' => 'value']);
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
-        $this->assertEquals(false, $next3);
+        self::assertEquals(false, $next3);
 
         // this should be in a separete testReset()
         // must match the first one, because #3 should reset the scroller
         $next4 = $scroller->getNextRequest($client, $config, $response, $response->data);
-        $this->assertEquals($expected, $next4);
+        self::assertEquals($expected, $next4);
+    }
+
+    public function testGetNextRequestHasMore()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test'
+        ]);
+
+        $scroller = new OffsetScroller([
+            'limit' => 10,
+            'nextPageFlag' => [
+                'field' => 'hasMore',
+                'stopOn' => false
+            ]
+        ]);
+
+        $next = $scroller->getNextRequest(
+            $client,
+            $config,
+            (object) ['hasMore' => true],
+            array_fill(0, 10, ['k' => 'v'])
+        );
+        self::assertInstanceOf('Keboola\Juicer\Client\RestRequest', $next);
+
+        $noNext = $scroller->getNextRequest(
+            $client,
+            $config,
+            (object) ['hasMore' => false],
+            array_fill(0, 10, ['k' => 'v'])
+        );
+        self::assertFalse($noNext);
     }
 
     public function testGetFirstRequest()
@@ -69,7 +101,7 @@ class OffsetScrollerTest extends ExtractorTestCase
         ]);
         $limit = 10;
 
-        $scroller = new OffsetScroller($limit);
+        $scroller = new OffsetScroller(['limit' => $limit]);
         $req = $scroller->getFirstRequest($client, $config);
         $expected = $client->createRequest([
             'endpoint' => 'test',
@@ -81,11 +113,16 @@ class OffsetScrollerTest extends ExtractorTestCase
                 ]
             )
         ]);
-        $this->assertEquals($expected, $req);
+        self::assertEquals($expected, $req);
 
-        $noParamsScroller = new OffsetScroller($limit, 'count', 'first', false);
+        $noParamsScroller = new OffsetScroller([
+            'limit' => $limit,
+            'limitParam' => 'count',
+            'offsetParam' => 'first',
+            'firstPageParams' => false
+        ]);
         $noParamsRequest = $noParamsScroller->getFirstRequest($client, $config);
         $noParamsExpected = $client->createRequest($config->getConfig());
-        $this->assertEquals($noParamsExpected, $noParamsRequest);
+        self::assertEquals($noParamsExpected, $noParamsRequest);
     }
 }
