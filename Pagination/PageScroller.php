@@ -85,6 +85,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         if (
             (is_null($this->getLimit($jobConfig)) && empty($data))
             || (count($data) < $this->getLimit($jobConfig))
+            || false === $this->hasMore($response)
         ) {
             $this->reset();
             return false;

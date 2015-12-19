@@ -66,7 +66,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (empty($response->{$this->responseParam})) {
+        if (empty($response->{$this->responseParam}) || false === $this->hasMore($response)) {
             return false;
         } else {
             $config = $jobConfig->getConfig();
