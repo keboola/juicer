@@ -11,7 +11,10 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $client = RestClient::create();
         $config = $this->getConfig();
 
-        $scroller = new ResponseParamScroller('_scroll_id', 'scroll_id');
+        $scroller = new ResponseParamScroller([
+            'responseParam' => '_scroll_id',
+            'queryParam' => 'scroll_id'
+        ]);
 
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -38,11 +41,16 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $client = RestClient::create();
         $config = $this->getConfig();
 
-        $scroller = new ResponseParamScroller('_scroll_id', 'scroll_id', false, [
-            'endpoint' => '_search/scroll',
-            'method' => 'POST',
-            'params' => [
-                'scroll' => '1m'
+        $scroller = new ResponseParamScroller([
+            'responseParam' => '_scroll_id',
+            'queryParam' => 'scroll_id',
+            'includeParams' => false,
+            'scrollRequest' => [
+                'endpoint' => '_search/scroll',
+                'method' => 'POST',
+                'params' => [
+                    'scroll' => '1m'
+                ]
             ]
         ]);
 
@@ -71,9 +79,14 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->_scroll_id = 'asdf';
 
-        $scrollerParams = new ResponseParamScroller('_scroll_id', 'scroll_id', true, [
-            'params' => [
-                'scroll' => '1m'
+        $scrollerParams = new ResponseParamScroller([
+            'responseParam' => '_scroll_id',
+            'queryParam' => 'scroll_id',
+            'includeParams' => true,
+            'scrollRequest' => [
+                'params' => [
+                    'scroll' => '1m'
+                ]
             ]
         ]);
 
@@ -95,13 +108,13 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $client = RestClient::create();
         $config = $this->getConfig();
 
-        $scroller = new ResponseParamScroller('_scroll_id', 'scroll_id', false, [
+        $scroller = new ResponseParamScroller(['responseParam' => '_scroll_id', 'queryParam' => 'scroll_id', 'includeParams' => false, 'scrollRequest' => [
             'endpoint' => '_search/scroll',
             'method' => 'POST',
             'params' => [
                 'scroll' => '1m'
             ]
-        ]);
+        ]]);
 
         $expected = $client->createRequest($config->getConfig());
         $this->assertEquals($expected, $scroller->getFirstRequest($client, $config));

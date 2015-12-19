@@ -27,7 +27,7 @@ class PageScrollerTest extends ExtractorTestCase
         $expectedCfg = $config->getConfig();
         $expectedCfg['params']['page'] = 1;
         $expectedCfg['params']['limit'] = 500;
-        $this->assertEquals($client->createRequest($expectedCfg), $req);
+        self::assertEquals($client->createRequest($expectedCfg), $req);
     }
 
     public function testGetFirstRequestNoParams()
@@ -46,7 +46,7 @@ class PageScrollerTest extends ExtractorTestCase
         ]);
 
         $req = $scroller->getFirstRequest($client, $config);
-        $this->assertEquals($client->createRequest($config->getConfig()), $req);
+        self::assertEquals($client->createRequest($config->getConfig()), $req);
     }
 
     public function testGetNextRequest()
@@ -60,7 +60,7 @@ class PageScrollerTest extends ExtractorTestCase
             ]
         ]);
 
-        $scroller = new PageScroller();
+        $scroller = new PageScroller([]);
 
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -74,7 +74,7 @@ class PageScrollerTest extends ExtractorTestCase
                 'page' => 2
             ]
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
 
         $next2 = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected2 = $client->createRequest([
@@ -85,18 +85,18 @@ class PageScrollerTest extends ExtractorTestCase
                 'page' => 3
             ]
         ]);
-        $this->assertEquals($expected2, $next2);
+        self::assertEquals($expected2, $next2);
 
         // Empty response
         $responseUnderLimit = new \stdClass();
         $responseUnderLimit->data = [];
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
-        $this->assertEquals(false, $next3);
+        self::assertEquals(false, $next3);
 
         // Scroller limit higher than response size
-        $scrollerLimit = new PageScroller('page', 100);
+        $scrollerLimit = new PageScroller(['pageParam' => 'page', 'limit' => 100]);
         $next4 = $scrollerLimit->getNextRequest($client, $config, $response, $response->data);
-        $this->assertEquals(false, $next4);
+        self::assertEquals(false, $next4);
     }
 
     public function testGetNextRequestPost()
@@ -111,7 +111,7 @@ class PageScrollerTest extends ExtractorTestCase
             'method' => 'POST'
         ]);
 
-        $scroller = new PageScroller();
+        $scroller = new PageScroller([]);
 
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -125,6 +125,24 @@ class PageScrollerTest extends ExtractorTestCase
             ],
             'method' => 'POST'
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
+    }
+
+    public function testGetFirstNext()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', ['endpoint' => 'test']);
+
+        $scroller = new PageScroller([]);
+
+        $first = $scroller->getFirstRequest($client, $config);
+        $second = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $third = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $last = $scroller->getNextRequest($client, $config, new \stdClass, []);
+
+        self::assertEquals(1, $first->getParams()['page']);
+        self::assertEquals(2, $second->getParams()['page']);
+        self::assertEquals(3, $third->getParams()['page']);
+        self::assertFalse($last);
     }
 }

@@ -11,7 +11,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClient::create();
         $config = $this->getConfig();
 
-        $scroller = new ResponseUrlScroller('next');
+        $scroller = new ResponseUrlScroller(['urlKey' => 'next']);
 
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -39,7 +39,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
-        $scrollerParams = new ResponseUrlScroller('next', true);
+        $scrollerParams = new ResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
 
         $nextParams = $scrollerParams->getNextRequest($client, $config, $response, $response->data);
         $expectedParams = $client->createRequest([

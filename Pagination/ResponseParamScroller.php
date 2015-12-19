@@ -40,16 +40,13 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      * @param bool $includeParams Whether to include params from config
      * @param array $scrollRequest Override endpoint from config?
      */
-    public function __construct(
-        $responseParam,
-        $queryParam,
-        $includeParams = false,
-        array $scrollRequest = null
-    ) {
-        $this->responseParam = $responseParam;
-        $this->queryParam = $queryParam;
-        $this->includeParams = $includeParams;
-        $this->scrollRequest = $scrollRequest;
+    public function __construct($config) {
+        $this->responseParam = $config['responseParam'];
+        $this->queryParam = $config['queryParam'];
+        $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
+        $this->scrollRequest = !empty($config['scrollRequest']) ? $config['scrollRequest'] : null;
+
+        parent::__construct($config);
     }
 
     public static function create(array $config)
@@ -61,12 +58,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
             throw new UserException("Missing required 'pagination.queryParam' parameter.");
         }
 
-        return new self(
-            $config['responseParam'],
-            $config['queryParam'],
-            !empty($config['includeParams']) ? (bool) $config['includeParams'] : false,
-            !empty($config['scrollRequest']) ? $config['scrollRequest'] : null
-        );
+        return new self($config);
     }
 
     /**

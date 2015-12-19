@@ -22,18 +22,17 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      */
     protected $includeParams;
 
-    public function __construct($urlParam = 'next_page', $includeParams = false)
+    public function __construct($config)
     {
-        $this->urlParam = $urlParam;
-        $this->includeParams = $includeParams;
+        $this->urlParam = !empty($config['urlKey']) ? $config['urlKey'] : 'next_page';
+        $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
+
+        parent::__construct($config);
     }
 
     public static function create(array $config)
     {
-        return new self(
-            !empty($config['urlKey']) ? $config['urlKey'] : 'next_page',
-            !empty($config['includeParams']) ? (bool) $config['includeParams'] : false
-        );
+        return new self($config);
     }
 
     /**

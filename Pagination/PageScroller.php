@@ -13,7 +13,7 @@ use Keboola\Juicer\Client\ClientInterface,
  * Pagination will stop if an empty response is received,
  * or when $limit is set and
  */
-class PageScroller implements ScrollerInterface
+class PageScroller extends AbstractScroller implements ScrollerInterface
 {
     const DEFAULT_PAGE_PARAM = 'page';
     const DEFAULT_LIMIT = null;
@@ -46,30 +46,21 @@ class PageScroller implements ScrollerInterface
      */
     protected $page;
 
+    public function __construct($config) {
+        $this->pageParam = !empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM;
+        $this->limit = !empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT;
+        $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
+        $this->firstPage = !empty($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE;
+        $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
 
-    public function __construct(
-        $pageParam = self::DEFAULT_PAGE_PARAM,
-        $limit = self::DEFAULT_LIMIT,
-        $limitParam = self::DEFAULT_LIMIT_PARAM,
-        $firstPage = self::DEFAULT_FIRST_PAGE,
-        $firstPageParams = self::FIRST_PAGE_PARAMS
-    ) {
-        $this->pageParam = $pageParam;
-        $this->limit = $limit;
-        $this->limitParam = $limitParam;
-        $this->firstPage = $this->page = $firstPage;
-        $this->firstPageParams = $firstPageParams;
+        parent::__construct($config);
+
+        $this->reset();
     }
 
     public static function create(array $config)
     {
-        return new self(
-            !empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM,
-            !empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT,
-            !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM,
-            !empty($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE,
-            isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS
-        );
+        return new self($config);
     }
 
     /**
