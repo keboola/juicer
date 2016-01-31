@@ -9,7 +9,8 @@ use Keboola\Juicer\Exception\UserException,
 /**
  * Scrolls using simple "limit" and "offset" query parameters.
  * Limit can be overriden in job's config's query parameters
- * and it will be used instead of extractor's default
+ * and it will be used instead of extractor's default.
+ * Offset can be overriden if 'offsetFromJob' is enabled
  */
 class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {
@@ -37,15 +38,22 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      * @var int
      */
     protected $pointer = 0;
+    /**
+     * @var bool
+     */
+    protected $offsetFromJob = false;
 
     public function __construct(array $config)
     {
-            parent::__construct($config);
+        parent::__construct($config);
 
-            $this->limit = $config['limit'];
-            $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
-            $this->offsetParam = !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM;
-            $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
+        $this->limit = $config['limit'];
+        $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
+        $this->offsetParam = !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM;
+        $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
+        if (!empty($config['offsetFromJob'])) {
+            $this->offsetFromJob = true;
+        }
     }
 
     /**
@@ -72,11 +80,16 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      */
     public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
     {
+        if ($this->offsetFromJob && !empty($jobConfig->getParams()[$this->offsetParam])) {
+            $this->pointer = $jobConfig->getParams()[$this->offsetParam];
+        }
+
         if ($this->firstPageParams) {
             $config = $this->getParams($jobConfig);
         } else {
             $config = $jobConfig->getConfig();
         }
+
 
         return $client->createRequest($config);
     }
@@ -110,13 +123,12 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     protected function getParams(JobConfig $jobConfig)
     {
         $config = $jobConfig->getConfig();
-        $config['params'] = array_replace(
-            $jobConfig->getParams(),
-            [
-                $this->limitParam => $this->getLimit($jobConfig),
-                $this->offsetParam => $this->pointer
-            ]
-        );
+        $scrollParams = [
+            $this->limitParam => $this->getLimit($jobConfig),
+            $this->offsetParam => $this->pointer
+        ];
+
+        $config['params'] = array_replace($jobConfig->getParams(), $scrollParams);
         return $config;
     }
 
