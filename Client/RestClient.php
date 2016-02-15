@@ -184,6 +184,10 @@ class RestClient implements ClientInterface
      */
     public function createRequest(array $config)
     {
+        if (!empty($this->defaultRequestOptions)) {
+            $config = array_replace_recursive($this->defaultRequestOptions, $config);
+        }
+
         return RestRequest::create($config);
     }
 
@@ -248,5 +252,13 @@ class RestClient implements ClientInterface
     public function setResponseEncoding($encoding)
     {
         $this->responseEncoding = $encoding;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultRequestOptions(array $options)
+    {
+        $this->defaultRequestOptions = $options;
     }
 }

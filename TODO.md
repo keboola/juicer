@@ -1,3 +1,3 @@
-- Simplify the flow of Job, ideally to control the flow from a single (run()?) function
-
-- endpoint/{dataFrom:in.c-whatever.blah.column}/... to load config from a static table
+- Default request options
+    - Add ClientInterface setter for default options
+    - ClientInterface::createRequest() would then look into these default options ($config param would overwrite those)

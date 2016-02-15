@@ -135,6 +135,10 @@ class RestClientTest extends ExtractorTestCase
         $this->assertEquals(json_decode($body), $restClient->download($request));
     }
 
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Invalid JSON response from API: JSON decode error: Syntax error, malformed JSON
+     */
     public function testMalformedJson()
     {
         $body = '[
@@ -155,9 +159,38 @@ class RestClientTest extends ExtractorTestCase
         } catch(\Keboola\Juicer\Exception\UserException $e) {
             self::assertArrayHasKey('errDetail', $e->getData());
             self::assertArrayHasKey('json', $e->getData());
-            return;
+            throw $e;
         }
 
         throw new \Exception;
+    }
+
+    public function testDefaultRequestOptions()
+    {
+        $defaultOptions = [
+            'method' => 'POST',
+            'params' => [
+                'defA' => 'defValA',
+                'defB' => 'defValB'
+            ]
+        ];
+
+        $client = RestClient::create();
+        $client->setDefaultRequestOptions($defaultOptions);
+
+        $requestOptions = [
+            'endpoint' => 'ep',
+            'params' => [
+                'defB' => 'overrideB'
+            ]
+        ];
+        $request = $client->createRequest($requestOptions);
+
+        self::assertEquals($defaultOptions['method'], $request->getMethod());
+        self::assertEquals($requestOptions['endpoint'], $request->getEndpoint());
+        self::assertEquals(
+            array_replace($defaultOptions['params'], $requestOptions['params']),
+            $request->getParams()
+        );
     }
 }
