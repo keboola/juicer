@@ -12,7 +12,7 @@ use SoapClient;
 /**
  *
  */
-class SoapClient implements ClientInterface
+class SoapClient extends AbstractClient implements ClientInterface
 {
     /**
      * @var SoapClient
@@ -78,11 +78,7 @@ class SoapClient implements ClientInterface
 
     public function createRequest(array $config)
     {
-        if (!empty($this->defaultRequestOptions)) {
-            $config = array_replace_recursive($this->defaultRequestOptions, $config);
-        }
-
-        return SoapRequest::create($config);
+        return SoapRequest::create($this->getRequestConfig($config));
     }
 
     /**
@@ -91,13 +87,5 @@ class SoapClient implements ClientInterface
     public function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultRequestOptions(array $options)
-    {
-        $this->defaultRequestOptions = $options;
     }
 }
