@@ -3,6 +3,7 @@
 namespace Keboola\Juicer\Client;
 
 use Keboola\Juicer\Config\JobConfig;
+use GuzzleHttp\Client;
 
 /**
  *
@@ -14,7 +15,6 @@ interface ClientInterface
      * @return mixed Raw response as it comes from the client
      */
     public function download(RequestInterface $request);
-
 
     /**
      * Create a request from a JobConfig->getConfig() array
@@ -33,7 +33,12 @@ interface ClientInterface
     public function createRequest(array $config);
 
     /**
-     *
+     * @return Client|SoapClient
      */
     public function getClient();
+
+    /**
+     * @param array $options
+     */
+    public function setDefaultRequestOptions(array $options);
 }
