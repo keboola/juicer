@@ -74,7 +74,11 @@ class Configuration
      */
     public function getConfig(array $params = null)
     {
-        $configYml = $this->getYaml('/config.yml', 'parameters', 'config');
+        try {
+            $configYml = $this->getYaml('/config.yml', 'parameters', 'config');
+        } catch(NoDataException $e) {
+            throw new UserException($e->getMessage(), 0, $e);
+        }
 
         if (!is_null($params)) {
             $configYml = array_replace($configYml, $params);
@@ -163,7 +167,7 @@ class Configuration
      * @param string $path
      * @return array
      * @todo 2nd param to get part of the config with "not found" handling
-     * @deprecated
+     * @deprecated by getYaml($path, $child1key, $child2key, ...)
      */
     protected function getYmlConfig($path = '/config.yml')
     {
