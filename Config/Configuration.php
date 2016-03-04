@@ -84,15 +84,7 @@ class Configuration
             $configYml = array_replace($configYml, $params);
         }
 
-        if (empty($configYml['id'])) {
-            if (empty($configYml['outputBucket'])) {
-                throw new UserException("Missing config parameter 'id' or 'outputBucket'!");
-            } else {
-                $configYml['id'] = "";
-            }
-        }
-
-        $configName = $configYml['id'];
+        $configName = empty($configYml['id']) ? '' : $configYml['id'];
         $runtimeParams = []; // TODO get runtime params from console
 
         if (empty($configYml['jobs'])) {
@@ -205,11 +197,16 @@ class Configuration
      * @param Table[] $csvFiles
      * @param string $bucketName
      * @param bool $sapiPrefix whether to prefix the output bucket with "in.c-"
+     * @param bool $incremental Set the incremental flag in manifest
      */
-    public function storeResults(array $csvFiles, $bucketName, $sapiPrefix = true, $incremental = false)
+    public function storeResults(array $csvFiles, $bucketName = null, $sapiPrefix = true, $incremental = false)
     {
-        $path = "{$this->dataDir}/out/tables/{$bucketName}/";
-        $bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
+        $path = "{$this->dataDir}/out/tables/";
+
+        if (!is_null($bucketName)) {
+            $path .= $bucketName . '/';
+            $bucketName = $sapiPrefix ? 'in.c-' . $bucketName : $bucketName;
+        }
 
         if (!is_dir($path)) {
             mkdir($path, 0775, true);
@@ -218,12 +215,17 @@ class Configuration
         }
 
         foreach($csvFiles as $key => $file) {
-            file_put_contents($path . $key . '.manifest', Yaml::dump([
-                'destination' => "{$bucketName}.{$key}",
-                'incremental' => is_null($file->getIncremental())
-                    ? $incremental
-                    : $file->getIncremental()
-            ]));
+            $manifest = [];
+
+            if (!is_null($bucketName)) {
+                $manifest['destination'] = "{$bucketName}.{$key}";
+            }
+
+            $manifest['incremental'] = is_null($file->getIncremental())
+                ? $incremental
+                : $file->getIncremental();
+
+            file_put_contents($path . $key . '.manifest', Yaml::dump($manifest));
             copy($file->getPathname(), $path . $key);
         }
     }

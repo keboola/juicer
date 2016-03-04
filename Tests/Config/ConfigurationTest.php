@@ -17,10 +17,32 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testIncrementalResults()
     {
-
         $resultsPath = './data/storeResultsTest' . uniqid();
 
         $this->storeResults($resultsPath, 'incremental', true);
+    }
+
+    public function testDefaultBucketResults()
+    {
+        $resultsPath = './data/storeResultsDefaultBucket' . uniqid();
+
+        $configuration = new Configuration($resultsPath, 'defaultBucket', new Temp('test'));
+
+        $files = [
+            Table::create('first', ['col1', 'col2']),
+            Table::create('second', ['col11', 'col12'])
+        ];
+
+        $files[0]->writeRow(['a', 'b']);
+        $files[1]->writeRow(['c', 'd']);
+
+        $configuration->storeResults($files);
+
+        foreach(new \DirectoryIterator('./Tests/data/storeResultsDefaultBucket/out/tables/') as $file) {
+            $this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
+        }
+
+        $this->rmDir($resultsPath);
     }
 
     protected function storeResults($resultsPath, $name, $incremental)
