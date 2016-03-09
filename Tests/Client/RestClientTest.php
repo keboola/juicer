@@ -29,7 +29,7 @@ class RestClientTest extends ExtractorTestCase
 
         $expected = new RestRequest('ep', $arr);
 
-        $this->assertEquals($expected, $request);
+        self::assertEquals($expected, $request);
     }
 
     public function testGetGuzzleRequest()
@@ -43,13 +43,13 @@ class RestClientTest extends ExtractorTestCase
         $post = $this->callMethod($client, 'getGuzzleRequest', [$requestPost]);
         $form = $this->callMethod($client, 'getGuzzleRequest', [$requestForm]);
 
-        $this->assertEquals('ep?a=1', $get->getUrl());
+        self::assertEquals('ep?a=1', $get->getUrl());
 
-        $this->assertEquals('ep', $post->getUrl());
-        $this->assertEquals('{"a":1}', $post->getBody());
+        self::assertEquals('ep', $post->getUrl());
+        self::assertEquals('{"a":1}', $post->getBody());
 
-        $this->assertEquals('ep', $form->getUrl());
-        $this->assertEquals(['a' => 1], $form->getBody()->getFields());
+        self::assertEquals('ep', $form->getUrl());
+        self::assertEquals(['a' => 1], $form->getBody()->getFields());
     }
 
     public function testDownload()
@@ -74,10 +74,10 @@ class RestClientTest extends ExtractorTestCase
 
         $request = new RestRequest('ep', ['a' => 1]);
 
-        $this->assertEquals(json_decode($body), $restClient->download($request));
-        $this->assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
-        $this->assertEquals('GET', $history->getLastRequest()->getMethod());
-        $this->assertEquals(
+        self::assertEquals(json_decode($body), $restClient->download($request));
+        self::assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
+        self::assertEquals('GET', $history->getLastRequest()->getMethod());
+        self::assertEquals(
             [1234],
             $history->getLastRequest()->getHeaders()['X-Test']
         );
@@ -101,7 +101,7 @@ class RestClientTest extends ExtractorTestCase
         $request = new RestRequest('ep', [], 'GET', ['X-RTest' => 'requestHeader']);
         $restClient->download($request);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'X-RTest' => ['requestHeader'],
                 'X-Test' => ['1234']
@@ -132,7 +132,7 @@ class RestClientTest extends ExtractorTestCase
 
         $request = new RestRequest('ep', ['a' => 1]);
 
-        $this->assertEquals(json_decode($body), $restClient->download($request));
+        self::assertEquals(json_decode($body), $restClient->download($request));
     }
 
     /**

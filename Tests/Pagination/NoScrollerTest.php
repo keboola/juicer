@@ -24,7 +24,7 @@ class NoScrollerTest extends ExtractorTestCase
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
 
-        $this->assertEquals(false, $next);
+        self::assertEquals(false, $next);
     }
 
     public function testGetFirstRequest()
@@ -41,6 +41,6 @@ class NoScrollerTest extends ExtractorTestCase
         $scroller = new NoScroller();
         $req = $scroller->getFirstRequest($client, $config);
         $expected = $client->createRequest($config->getConfig());
-        $this->assertEquals($expected, $req);
+        self::assertEquals($expected, $req);
     }
 }

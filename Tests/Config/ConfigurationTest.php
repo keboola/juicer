@@ -39,7 +39,7 @@ class ConfigurationTest extends ExtractorTestCase
         $configuration->storeResults($files);
 
         foreach(new \DirectoryIterator('./Tests/data/storeResultsDefaultBucket/out/tables/') as $file) {
-            $this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
+            self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
         }
 
         $this->rmDir($resultsPath);
@@ -60,7 +60,7 @@ class ConfigurationTest extends ExtractorTestCase
         $configuration->storeResults($files, $name, true, $incremental);
 
         foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/' . $name) as $file) {
-            $this->assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $name . '/' . $file->getFilename());
+            self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $name . '/' . $file->getFilename());
         }
 
         $this->rmDir($resultsPath);
@@ -73,10 +73,10 @@ class ConfigurationTest extends ExtractorTestCase
         $configuration = new Configuration($path, 'test', new Temp('test'));
         $yml = $configuration->getConfigMetadata();
 
-        $this->assertEquals(Yaml::parse("some: data\nmore:\n    woah: 'such recursive'"), $yml);
+        self::assertEquals(Yaml::parse("some: data\nmore:\n    woah: 'such recursive'"), $yml);
 
         $noConfiguration = new Configuration('asdf', 'test', new Temp('test'));
-        $this->assertEquals(null, $noConfiguration->getConfigMetadata());
+        self::assertEquals(null, $noConfiguration->getConfigMetadata());
     }
 
     public function testSaveConfigMetadata()
@@ -92,7 +92,7 @@ class ConfigurationTest extends ExtractorTestCase
             ]
         ]);
 
-        $this->assertFileEquals('./Tests/data/metadataTest/out/state.yml', $resultsPath . '/out/state.yml');
+        self::assertFileEquals('./Tests/data/metadataTest/out/state.yml', $resultsPath . '/out/state.yml');
 
         $this->rmDir($resultsPath);
     }
@@ -106,9 +106,9 @@ class ConfigurationTest extends ExtractorTestCase
         $yml = Yaml::parse(file_get_contents('./Tests/data/recursive/config.yml'));
 
         $jobs = $config->getJobs();
-        $this->assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
+        self::assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
 
-        $this->assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
+        self::assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
     }
 
     public function testGetMultipleConfigs()
@@ -120,11 +120,11 @@ class ConfigurationTest extends ExtractorTestCase
         $yml = Yaml::parse(file_get_contents('./Tests/data/iterations/config.yml'));
 
         foreach($yml['parameters']['iterations'] as $i => $params) {
-            $this->assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
+            self::assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
         }
-        $this->assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
-        $this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
-        $this->assertCount(count($yml['parameters']['iterations']), $configs);
+        self::assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
+        self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        self::assertCount(count($yml['parameters']['iterations']), $configs);
     }
 
     public function testGetMultipleConfigsSingle()
@@ -136,10 +136,10 @@ class ConfigurationTest extends ExtractorTestCase
         $yml = Yaml::parse(file_get_contents('./Tests/data/iteration/config.yml'));
 
 
-        $this->assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
-        $this->assertCount(1, $configs);
+        self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        self::assertCount(1, $configs);
 
-        $this->assertEquals($configuration->getConfig(), $configs[0]);
+        self::assertEquals($configuration->getConfig(), $configs[0]);
     }
 
     public function testGetYaml()

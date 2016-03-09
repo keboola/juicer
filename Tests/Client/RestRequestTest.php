@@ -17,7 +17,7 @@ class RestRequestTest extends ExtractorTestCase
 
         $expected = new RestRequest('ep', $arr);
 
-        $this->assertEquals($expected, $request);
+        self::assertEquals($expected, $request);
     }
 
     /**

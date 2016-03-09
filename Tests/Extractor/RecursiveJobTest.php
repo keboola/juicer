@@ -62,7 +62,7 @@ class RecursiveJobTest extends ExtractorTestCase
             $urls[] = $item['request']->getUrl();
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 "exports/tickets.json",
                 "tickets/1/comments.json",
@@ -75,16 +75,16 @@ class RecursiveJobTest extends ExtractorTestCase
         );
 
         // Assert all three levels were parsed to their respective tables
-        $this->assertEquals(['tickets_export', 'comments', 'subd'], array_keys($parser->getResults()));
+        self::assertEquals(['tickets_export', 'comments', 'subd'], array_keys($parser->getResults()));
 
-        $this->assertEquals(
+        self::assertEquals(
             '"field","id"' . PHP_EOL .
             '"data","1"' . PHP_EOL .
             '"more","2"' . PHP_EOL,
             file_get_contents($parser->getResults()['tickets_export'])
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             '"detail","subId","parent_id"' . PHP_EOL .
             '"something","1","1"' . PHP_EOL .
             '"somethingElse","1","2"' . PHP_EOL .
@@ -92,7 +92,7 @@ class RecursiveJobTest extends ExtractorTestCase
             file_get_contents($parser->getResults()['comments'])
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             '"grand","parent_id","parent_subId"' . PHP_EOL .
             '"child","1","1"' . PHP_EOL .
             '"child","2","1"' . PHP_EOL .
@@ -122,16 +122,16 @@ class RecursiveJobTest extends ExtractorTestCase
 
         $this->callMethod($job, 'parse', [$response->data, ['userData' => 'hello']]);
 
-        $this->assertEquals(
+        self::assertEquals(
             ['tickets_export', 'tickets_export_c'],
             array_keys($parser->getResults())
         );
 
-        $this->assertFileEquals(
+        self::assertFileEquals(
             __DIR__ . '/../data/recursiveJobParseResults/tickets_export',
             $parser->getResults()['tickets_export']->getPathname()
         );
-        $this->assertFileEquals(
+        self::assertFileEquals(
             __DIR__ . '/../data/recursiveJobParseResults/tickets_export_c',
             $parser->getResults()['tickets_export_c']->getPathname()
         );
@@ -221,7 +221,7 @@ class RecursiveJobTest extends ExtractorTestCase
             $urls[] = $item['request']->getUrl();
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'Cubes',
                 'Cubes(\'plan_BudgetPlan\')/Views',
@@ -267,7 +267,7 @@ class RecursiveJobTest extends ExtractorTestCase
 
 //         $children = $jobConfig->getChildJobs();
 //         var_dump(reset($children)->getDataType());
-        $this->assertEquals(
+        self::assertEquals(
             ['exports_tickets_json', 'tickets__1_id__comments_json', 'third_level__2_id___id__json'],
             array_keys($parser->getResults())
         );

@@ -9,6 +9,6 @@ class ParserTest extends ExtractorTestCase
     public function testGetTemp()
     {
         $parser = new Parser();
-        $this->assertInstanceOf('\Keboola\Temp\Temp', self::callMethod($parser, 'getTemp', []));
+        self::assertInstanceOf('\Keboola\Temp\Temp', self::callMethod($parser, 'getTemp', []));
     }
 }

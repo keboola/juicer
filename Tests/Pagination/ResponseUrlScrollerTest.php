@@ -21,13 +21,13 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $expected = $client->createRequest([
             'endpoint' => 'test?page=2'
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
 
         $responseLast = new \stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
-        $this->assertEquals(false, $last);
+        self::assertEquals(false, $last);
     }
 
     public function testGetNextRequestParams()
@@ -49,6 +49,6 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
                 'b' => 2
             ]
         ]);
-        $this->assertEquals($expectedParams, $nextParams);
+        self::assertEquals($expectedParams, $nextParams);
     }
 }

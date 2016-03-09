@@ -27,13 +27,13 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                 'scroll_id' => 'asdf'
             ]
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
 
         $responseLast = new \stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
-        $this->assertEquals(false, $last);
+        self::assertEquals(false, $last);
     }
 
     public function testGetNextRequestOverride()
@@ -67,7 +67,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             ],
             'method' => 'POST'
         ]);
-        $this->assertEquals($expected, $next);
+        self::assertEquals($expected, $next);
     }
 
     public function testGetNextRequestParams()
@@ -100,7 +100,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                 'scroll_id' => 'asdf'
             ]
         ]);
-        $this->assertEquals($expectedParams, $nextParams);
+        self::assertEquals($expectedParams, $nextParams);
     }
 
     public function testGetFirstRequest()
@@ -117,6 +117,6 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         ]]);
 
         $expected = $client->createRequest($config->getConfig());
-        $this->assertEquals($expected, $scroller->getFirstRequest($client, $config));
+        self::assertEquals($expected, $scroller->getFirstRequest($client, $config));
     }
 }

@@ -25,7 +25,7 @@ class JsonTest extends ExtractorTestCase
 
         $parser->process($data, 'test', ['parent' => 'iAreId']);
 
-        $this->assertEquals(
+        self::assertEquals(
             '"pk","arr","parent"
 "1","test_2901753343d19a32b8cd49e31aab748c","iAreId"
 "2","test_5e36066fa62399eedd858f5e374c0c21","iAreId"
@@ -33,7 +33,7 @@ class JsonTest extends ExtractorTestCase
             file_get_contents($parser->getResults()['test'])
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             '"data","JSON_parentId"
 "1","test_2901753343d19a32b8cd49e31aab748c"
 "2","test_2901753343d19a32b8cd49e31aab748c"
@@ -56,7 +56,7 @@ class JsonTest extends ExtractorTestCase
 
         $parser->process($data, 'metadataTest');
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'json_parser.struct' => [
                     'metadataTest' => ['id' => 'scalar']
@@ -91,7 +91,7 @@ class JsonTest extends ExtractorTestCase
             ]
         ], 'root');
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'root.arr.arr1' => ['c' => 'scalar'],
                 'root.arr.arr2' => ['data' => 'scalar'],
@@ -109,19 +109,19 @@ class JsonTest extends ExtractorTestCase
             $parser->getParser()->getStruct()->getStruct()
         );
 
-        $this->assertEquals('"id","arr"
+        self::assertEquals('"id","arr"
 "1","root_a52f96d95586c8de1e8fa67b77597262"
 ', file_get_contents($parser->getParser()->getCsvFiles()['root']));
 
-        $this->assertEquals('"a","b","arr1","arr2","JSON_parentId"
+        self::assertEquals('"a","b","arr1","arr2","JSON_parentId"
 "hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997","root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
 ', file_get_contents($parser->getParser()->getCsvFiles()['root_arr']));
 
-        $this->assertEquals('"c","JSON_parentId"
+        self::assertEquals('"c","JSON_parentId"
 "d","root.arr_a75f0a3e0b848d52033929a761e6c997"
 ', file_get_contents($parser->getParser()->getCsvFiles()['root_arr_arr1']));
 
-        $this->assertEquals('"data","JSON_parentId"
+        self::assertEquals('"data","JSON_parentId"
 "1","root.arr_a75f0a3e0b848d52033929a761e6c997"
 "2","root.arr_a75f0a3e0b848d52033929a761e6c997"
 ', file_get_contents($parser->getParser()->getCsvFiles()['root_arr_arr2']));
@@ -135,6 +135,6 @@ class JsonTest extends ExtractorTestCase
         $parser = new Json(Parser::create($logger));
 
         $parser->process([], 'empty');
-        $this->assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
+        self::assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
     }
 }

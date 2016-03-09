@@ -62,7 +62,7 @@ class JobTest extends ExtractorTestCase
 
         $job->run();
 
-        $this->assertEquals(
+        self::assertEquals(
             '"field"
 "one"
 "two"
@@ -97,7 +97,7 @@ class JobTest extends ExtractorTestCase
         ];
 
         $data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
-        $this->assertEquals($data, $response->{$cfg->getConfig()['dataField']});
+        self::assertEquals($data, $response->{$cfg->getConfig()['dataField']});
     }
 
     public function testFindDataInResponseNested()
@@ -123,7 +123,7 @@ class JobTest extends ExtractorTestCase
         ];
 
         $data = $this->callMethod($job, 'findDataInResponse', [$response, $cfg->getConfig()]);
-        $this->assertEquals($data, $response->data->results);
+        self::assertEquals($data, $response->data->results);
     }
 
     /**
