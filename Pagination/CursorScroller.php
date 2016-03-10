@@ -54,6 +54,8 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      *         'idKey' => string // mandatory parameter; key containing the "cursor"
      *         'param' => string // the cursor parameter
      *         'reverse' => bool // if true, the scroller looks for the lowest ID
+     *         'increment' => int // add (or subtract using a negative number)
+     *                               from the **numeric** cursor value
      *     ]
      * @return static
      */
