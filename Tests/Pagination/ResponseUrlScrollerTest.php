@@ -30,6 +30,27 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         self::assertEquals(false, $last);
     }
 
+    public function testGetNextRequestNested()
+    {
+        $client = RestClient::create();
+        $config = $this->getConfig();
+
+        $scroller = new ResponseUrlScroller(['urlKey' => 'pagination.next']);
+
+        $response = (object) [
+            'pagination' => (object) [
+                'next' => 'test?page=2',
+                'prev' => 'test?page=0' // Not used, just for usecase demo
+            ]
+        ];
+
+        $next = $scroller->getNextRequest($client, $config, $response, []);
+        $expected = $client->createRequest([
+            'endpoint' => 'test?page=2'
+        ]);
+        self::assertEquals($expected, $next);
+    }
+
     public function testGetNextRequestParams()
     {
         $client = RestClient::create();

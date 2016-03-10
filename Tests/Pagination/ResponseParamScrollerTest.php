@@ -36,6 +36,32 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         self::assertEquals(false, $last);
     }
 
+    public function testGetNextRequestNested()
+    {
+        $client = RestClient::create();
+        $config = $this->getConfig();
+
+        $scroller = new ResponseParamScroller([
+            'responseParam' => 'scroll.id',
+            'queryParam' => 'scroll_id'
+        ]);
+
+        $response = (object) [
+            'scroll' => (object) [
+                'id' => 'asdf'
+            ]
+        ];
+
+        $next = $scroller->getNextRequest($client, $config, $response, []);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'scroll_id' => 'asdf'
+            ]
+        ]);
+        self::assertEquals($expected, $next);
+    }
+
     public function testGetNextRequestOverride()
     {
         $client = RestClient::create();

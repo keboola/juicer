@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Config\JobConfig;
+use Keboola\Utils\Utils;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
@@ -40,11 +41,13 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (empty($response->{$this->urlParam}) || false === $this->hasMore($response)) {
+        $nextUrl = Utils::getDataFromPath($this->urlParam, $response, '.');
+
+        if (empty($nextUrl) || false === $this->hasMore($response)) {
             return false;
         } else {
             $config = $jobConfig->getConfig();
-            $config['endpoint'] = $response->{$this->urlParam};
+            $config['endpoint'] = $nextUrl;
             if (!$this->includeParams) {
                 $config['params'] = [];
             }
