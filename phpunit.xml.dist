@@ -14,4 +14,12 @@
 		<directory>Tests</directory>
 	</testsuite>
 
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory suffix=".php">vendor/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>
