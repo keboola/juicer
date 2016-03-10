@@ -90,7 +90,8 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
             $cursor = $this->pointer;
 
             foreach($data as $item) {
-                $cursorVal = Utils::getDataFromPath($this->idKey, $item);
+                $cursorVal = Utils::getDataFromPath($this->idKey, $item, '.');
+
                 if (
                     is_null($this->pointer)
                     || (!$this->reverse && $cursorVal > $this->pointer)

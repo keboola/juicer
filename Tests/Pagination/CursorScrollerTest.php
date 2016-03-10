@@ -33,4 +33,31 @@ class CursorScrollerTest extends ExtractorTestCase
         $last = $scroller->getNextRequest($client, $config, $emptyResponse, $emptyResponse);
         self::assertFalse($last);
     }
+
+    public function testGetNextRequestNested()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test'
+        ]);
+
+        $scroller = new CursorScroller(['idKey' => 'id.int', 'param' => 'since_id']);
+
+        $response = [
+            (object) [
+                'id' => (object) [
+                    'int' => 3
+                ]
+            ]
+        ];
+
+        $next = $scroller->getNextRequest($client, $config, $response, $response);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'since_id' => 3
+            ]
+        ]);
+        self::assertEquals($expected, $next);
+    }
 }
