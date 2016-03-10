@@ -53,6 +53,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      *     [
      *         'idKey' => string // mandatory parameter; key containing the "cursor"
      *         'param' => string // the cursor parameter
+     *         'reverse' => bool // if true, the scroller looks for the lowest ID
      *     ]
      * @return static
      */
@@ -98,7 +99,15 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
                     $this->pointer = $cursorVal;
                 }
 
-                $cursor = $this->pointer + $this->increment;
+                $cursor = $this->pointer;
+
+                if (0 !== $this->increment) {
+                    if (!is_numeric($this->pointer)) {
+                        throw new UserException("Trying to increment a pointer that is not numeric.");
+                    }
+
+                    $cursor += $this->increment;
+                }
             }
 
             $jobConfig->setParam($this->param, $cursor);
