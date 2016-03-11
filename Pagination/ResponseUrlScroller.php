@@ -5,6 +5,7 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Config\JobConfig;
 use Keboola\Utils\Utils;
+use GuzzleHttp\Query;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
@@ -23,10 +24,16 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      */
     protected $includeParams;
 
+    /**
+     * @var bool
+     */
+    protected $paramIsQuery = false;
+
     public function __construct($config)
     {
         $this->urlParam = !empty($config['urlKey']) ? $config['urlKey'] : 'next_page';
         $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
+        $this->paramIsQuery = !empty($config['paramIsQuery']) ? (bool) $config['paramIsQuery'] : false;
 
         parent::__construct($config);
     }
@@ -47,9 +54,17 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
             return false;
         } else {
             $config = $jobConfig->getConfig();
-            $config['endpoint'] = $nextUrl;
+
             if (!$this->includeParams) {
                 $config['params'] = [];
+            }
+
+            if (!$this->paramIsQuery) {
+                $config['endpoint'] = $nextUrl;
+            } else {
+                // Create an array from the query string
+                $responseQuery = Query::fromString(ltrim($nextUrl, '?'))->toArray();
+                $config['params'] = array_replace($config['params'], $responseQuery);
             }
 
             return $client->createRequest($config);

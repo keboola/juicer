@@ -60,16 +60,71 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
-        $scrollerParams = new ResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
+        $scroller = new ResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
 
-        $nextParams = $scrollerParams->getNextRequest($client, $config, $response, $response->data);
-        $expectedParams = $client->createRequest([
+        $next = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
             'endpoint' => 'test?page=2',
             'params' => [
                 'a' => 1,
                 'b' => 2
             ]
         ]);
-        self::assertEquals($expectedParams, $nextParams);
+        self::assertEquals($expected, $next);
+    }
+
+    public function testGetNextRequestQuery()
+    {
+        $client = RestClient::create();
+        $config = $this->getConfig();
+
+        $response = (object) [
+            'data' => [],
+            'scroll' => '?page=2&q=v'
+        ];
+
+        $scroller = new ResponseUrlScroller([
+            'urlKey' => 'scroll',
+            'paramIsQuery' => true
+        ]);
+
+        $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'page' => 2,
+                'q' => 'v'
+            ]
+        ]);
+        self::assertEquals($expected, $nextRequest);
+    }
+
+    public function testGetNextRequestQueryParams()
+    {
+        $client = RestClient::create();
+        $config = $this->getConfig();
+
+        $response = (object) [
+            'data' => [],
+            'scroll' => '?page=2&b=v'
+        ];
+
+        $scroller = new ResponseUrlScroller([
+            'urlKey' => 'scroll',
+            'paramIsQuery' => true,
+            'includeParams' => true
+        ]);
+
+        $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'page' => 2,
+                'a' => 1,
+                'b' => 'v'
+            ]
+        ]);
+        self::assertEquals($expected, $nextRequest);
+
     }
 }
