@@ -100,6 +100,13 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
 
         $scrollerId = $jobConfig->getConfig()['scroller'];
 
+        if (empty($this->scrollers[$scrollerId])) {
+            throw new UserException(
+                "Scroller '{$scrollerId}' not set in API definitions. Scrollers defined: "
+                . join(', ', array_keys($this->scrollers))
+            );
+        }
+
         return $this->scrollers[$scrollerId];
     }
 }

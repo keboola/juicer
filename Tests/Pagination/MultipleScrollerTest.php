@@ -126,6 +126,24 @@ class MultipleScrollerTest extends ExtractorTestCase
         $req = $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
     }
 
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page
+     */
+    public function testUndefinedScrollerException()
+    {
+        $config = $this->getScrollerConfig();
+        $scroller = new MultipleScroller($config);
+
+        $noScrollerConfig = new JobConfig('none', [
+            'endpoint' => 'data',
+            'scroller' => 'nonExistentScroller'
+        ]);
+
+        $req = $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
+
+    }
+
     protected function getScrollerConfig()
     {
         $responseParamConfig = [
