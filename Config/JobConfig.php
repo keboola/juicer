@@ -153,7 +153,7 @@ class JobConfig
      */
     public function getDataType()
     {
-        return empty($this->config['dataType']) ? '' : $this->config['dataType'];
+        return empty($this->config['dataType']) ? $this->config['endpoint'] : $this->config['dataType'];
     }
 
     /**
