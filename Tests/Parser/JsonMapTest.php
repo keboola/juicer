@@ -48,6 +48,6 @@ class JsonMapTest extends ExtractorTestCase
 
         $parser->process($data, 'first', ['parent' => 'iAreId']);
 
-        var_dump($parser->getResults());
+        self::assertEquals(['"item_id"' . PHP_EOL,'"1"' . PHP_EOL,'"2"' . PHP_EOL], file($parser->getResults()['first']));
     }
 }

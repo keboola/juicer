@@ -57,7 +57,8 @@ class JsonMap implements ParserInterface
     {
         $results = [];
         foreach($this->parsers as $type => $parser) {
-            $results += $parser->getCsvFiles();
+            $files = array_filter($parser->getCsvFiles());
+            $results += $files;
         }
 
         return $results;
