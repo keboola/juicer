@@ -20,6 +20,24 @@ class JsonMapTest extends ExtractorTestCase
                     'id' => [
                         'type' => 'column',
                         'mapping' => ['destination' => 'item_id']
+                    ],
+                    'tags' => [
+                        'type' => 'table',
+                        'destination' => 'tags',
+                        'tableMapping' => [
+                            'user' => [
+                                'mapping' => [
+                                    'destination' => 'user',
+                                    'primaryKey' => true
+                                ]
+                            ],
+                            'tag' => [
+                                'mapping' => [
+                                    'destination' => 'tag',
+                                    'primaryKey' => true
+                                ]
+                            ]
+                        ]
                     ]
                 ]
             ]),
@@ -42,12 +60,37 @@ class JsonMapTest extends ExtractorTestCase
             },
             {
                 "id": 2,
-                "arr": ["a","b","c"]
+                "arr": ["a","b","c"],
+                "tags": [
+                    {
+                        "user": "asd",
+                        "tag": "tag1"
+                    },
+                    {
+                        "user": "asd",
+                        "tag": "tag2"
+                    }
+                ]
             }
         ]');
 
         $parser->process($data, 'first', ['parent' => 'iAreId']);
 
-        self::assertEquals(['"item_id"' . PHP_EOL,'"1"' . PHP_EOL,'"2"' . PHP_EOL], file($parser->getResults()['first']));
+        self::assertEquals(
+            [
+                '"item_id","tags"' . PHP_EOL,
+                '"1",""' . PHP_EOL,
+                '"2","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL
+            ],
+            file($parser->getResults()['first'])
+        );
+        self::assertEquals(
+            [
+                '"user","tag","first_pk"' . PHP_EOL,
+                '"asd","tag1","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL,
+                '"asd","tag2","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL
+            ],
+            file($parser->getResults()['tags'])
+        );
     }
 }
