@@ -35,6 +35,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $files[0]->writeRow(['a', 'b']);
         $files[1]->writeRow(['c', 'd']);
+        $files[1]->setPrimaryKey(['col11']);
 
         $configuration->storeResults($files);
 

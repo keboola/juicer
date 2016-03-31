@@ -225,6 +225,10 @@ class Configuration
                 ? $incremental
                 : $file->getIncremental();
 
+            if (!empty($file->getPrimaryKey())) {
+                $manifest['primary_key'] = $file->getPrimaryKey(true);
+            }
+
             file_put_contents($path . $key . '.manifest', Yaml::dump($manifest));
             copy($file->getPathname(), $path . $key);
         }
