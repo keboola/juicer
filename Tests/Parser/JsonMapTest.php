@@ -92,5 +92,7 @@ class JsonMapTest extends ExtractorTestCase
             ],
             file($parser->getResults()['tags'])
         );
+
+        self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
     }
 }
