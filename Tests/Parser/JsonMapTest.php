@@ -95,4 +95,20 @@ class JsonMapTest extends ExtractorTestCase
 
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
     }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Missing 'dataMapping' for 'first' in config.
+     */
+    public function testNoMapping()
+    {
+        $config = new Config('ex', 'test', []);
+        $config->setJobs([
+            JobConfig::create([
+                'endpoint' => '1st',
+                'dataType' => 'first'
+            ])
+        ]);
+        $parser = JsonMap::create($config);
+    }
 }

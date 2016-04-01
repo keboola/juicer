@@ -37,6 +37,10 @@ class JsonMap implements ParserInterface
             if (isset($mappers[$type])) {
                 // TODO compare mappings?
             } else {
+                if (empty($jobConfig['dataMapping'])) {
+                    throw new UserException("Missing 'dataMapping' for '{$type}' in config.");
+                }
+
                 $mappers[$type] = new Mapper($jobConfig['dataMapping'], $type);
             }
         }
