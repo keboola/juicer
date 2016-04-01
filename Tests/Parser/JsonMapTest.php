@@ -111,4 +111,34 @@ class JsonMapTest extends ExtractorTestCase
         ]);
         $parser = JsonMap::create($config);
     }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Bad Json to CSV Mapping configuration: Key 'mapping.destination' must be set for each column.
+     */
+    public function testBadMapping()
+    {
+        $config = new Config('ex', 'test', []);
+        $config->setJobs([
+            JobConfig::create([
+                'endpoint' => 'first',
+                'dataMapping' => [
+                    'id' => [
+                        'type' => 'column',
+                    ]
+                ]
+            ])
+        ]);
+        $parser = JsonMap::create($config);
+
+        $data = json_decode('[
+            {
+                "id": 1,
+                "arr": [1,2,3]
+            }
+        ]');
+
+        $parser->process($data, 'first', ['parent' => 'iAreId']);
+
+    }
 }
