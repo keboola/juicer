@@ -4,8 +4,6 @@ use Keboola\Juicer\Parser\JsonMap,
     Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Config\Config,
     Keboola\Juicer\Config\JobConfig;
-// use Keboola\Csv\CsvFile;
-// use Keboola\Temp\Temp;
 
 class JsonMapTest extends ExtractorTestCase
 {
@@ -74,7 +72,7 @@ class JsonMapTest extends ExtractorTestCase
             }
         ]');
 
-        $parser->process($data, 'first', ['parent' => 'iAreId']);
+        $parser->process($data, 'first');
 
         self::assertEquals(
             [

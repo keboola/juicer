@@ -34,7 +34,6 @@ class JsonMap implements ParserInterface
         foreach($config->getJobs() as $job) {
             $type = $job->getDataType();
             $jobConfig = $job->getConfig();
-//             var_dump($type, $jobConfig);
             if (isset($mappers[$type])) {
                 // TODO compare mappings?
             } else {
@@ -56,7 +55,11 @@ class JsonMap implements ParserInterface
     public function process(array $data, $type, $parentId = null)
     {
         try {
-            return $this->parsers[$type]->parse($data);
+            if (empty($this->parsers[$type])) {
+                throw new UserException("Mapper for type '{$type}' has not been configured.");
+            }
+
+            return $this->parsers[$type]->parse($data, (array) $parentId);
         } catch(BadConfigException $e) {
             throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
         }
