@@ -14,7 +14,7 @@
         "keboola/php-temp": "~0.1.0",
         "keboola/php-utils": "~0.1.20",
         "keboola/php-csvtable": "~0.1.6",
-        "keboola/csvmap": "~0.0.7",
+        "keboola/csvmap": "~0.1.0",
         "keboola/filter": "~0.1.0",
         "symfony/yaml": "~2.6.3",
         "guzzlehttp/retry-subscriber": "~0.1.2",
