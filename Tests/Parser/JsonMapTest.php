@@ -112,7 +112,7 @@ class JsonMapTest extends ExtractorTestCase
 
     /**
      * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Bad Json to CSV Mapping configuration: Key 'mapping.destination' must be set for each column.
+     * @expectedExceptionMessage Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'.
      */
     public function testBadMapping()
     {
@@ -137,6 +137,115 @@ class JsonMapTest extends ExtractorTestCase
         ]');
 
         $parser->process($data, 'first', ['parent' => 'iAreId']);
+    }
 
+    public function testMergeResults()
+    {
+        Logger::setLogger($this->getLogger('testMergeResults', true));
+
+        $configFirst = JobConfig::create([
+            'endpoint' => '1st',
+            'dataType' => 'first',
+            'dataMapping' => [
+                'id' => [
+                    'type' => 'column',
+                    'mapping' => ['destination' => 'item_id']
+                ],
+                'tags' => [
+                    'type' => 'table',
+                    'destination' => 'tags',
+                    'tableMapping' => [
+                        'user' => [
+                            'mapping' => [
+                                'destination' => 'user',
+                                'primaryKey' => true
+                            ]
+                        ],
+                        'tag' => [
+                            'mapping' => [
+                                'destination' => 'tag',
+                                'primaryKey' => true
+                            ]
+                        ]
+                    ],
+                    'parentKey' => [
+                        'disable' => true
+                    ]
+                ]
+            ]
+        ]);
+
+        $configTags = JobConfig::create([
+            'endpoint' => '2nd',
+            'dataType' => 'tags',
+            'dataMapping' => [
+                'user' => [
+                    'mapping' => [
+                        'destination' => 'user',
+                        'primaryKey' => true
+                    ]
+                ],
+                'tag' => [
+                    'mapping' => [
+                        'destination' => 'tag',
+                        'primaryKey' => true
+                    ]
+                ]
+            ]
+        ]);
+
+        $config = new Config('ex', 'test', []);
+        $config->setJobs([
+            $configFirst,
+            $configTags
+        ]);
+
+        $firstData = json_decode('[
+            {
+                "id": 1,
+                "arr": [1,2,3]
+            },
+            {
+                "id": 2,
+                "arr": ["a","b","c"],
+                "tags": [
+                    {
+                        "user": "asd",
+                        "tag": "tag1"
+                    },
+                    {
+                        "user": "asd",
+                        "tag": "tag2"
+                    }
+                ]
+            }
+        ]');
+
+        $secondData = json_decode('[
+            {
+                "user": "asd",
+                "tag": "tag3"
+            },
+            {
+                "user": "asd",
+                "tag": "tag4"
+            }
+        ]');
+
+        $parser = JsonMap::create($config);
+
+        $parser->process($firstData, 'first');
+        $parser->process($secondData, $configTags->getDataType());
+
+        self::assertEquals(
+            [
+                '"user","tag"' . PHP_EOL,
+                '"asd","tag1"' . PHP_EOL,
+                '"asd","tag2"' . PHP_EOL,
+                '"asd","tag3"' . PHP_EOL,
+                '"asd","tag4"' . PHP_EOL
+            ],
+            file($parser->getResults()['tags'])
+        );
     }
 }

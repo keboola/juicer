@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvMap\Mapper,
     Keboola\CsvMap\Exception\BadConfigException;
+use Keboola\Csv\CsvFile;
 use Keboola\Juicer\Config\Config,
     Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\ApplicationException,
@@ -70,9 +71,44 @@ class JsonMap implements ParserInterface
         $results = [];
         foreach($this->parsers as $type => $parser) {
             $files = array_filter($parser->getCsvFiles());
+            foreach($files as $name => $file) {
+                if (array_key_exists($name, $results)) {
+                    Logger::log('debug', "Merging results for '{$name}'.");
+
+                    $existingHeader = $results[$name]->getHeader();
+                    $newHeader = $file->getHeader();
+
+                    if ($existingHeader !== $newHeader) {
+                        throw new UserException("Multiple results for '{$name}' table have different columns!", 0, null, ['differentColumns' => array_diff($existingHeader, $newHeader)]);
+                    }
+
+                    $this->mergeResults($results[$name], $file);
+                } else {
+                    $results[$name] = $file;
+                }
+            }
+
+            // Preserves existing keys in array on dupes
             $results += $files;
         }
 
         return $results;
+    }
+
+    protected function mergeResults(CsvFile $file1, CsvFile $file2)
+    {
+        // CsvFile::getHeader resets it to the first line,
+        // so we need to forward it back to the end to append it
+        // Also, this is a dirty, dirty hack
+        for(;$file1->valid();$file1->next()) {}
+
+        $header = true;
+        foreach($file2 as $row) {
+            if ($header) {
+                $header = false;
+                continue;
+            }
+            $file1->writeRow($row);
+        }
     }
 }

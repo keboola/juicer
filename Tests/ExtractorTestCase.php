@@ -1,5 +1,7 @@
 <?php
 
+use Keboola\Juicer\Common\Logger;
+
 class ExtractorTestCase extends PHPUnit_Framework_TestCase
 {
     protected static function callMethod($obj, $name, array $args)
