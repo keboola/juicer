@@ -158,7 +158,7 @@ class JsonMapTest extends ExtractorTestCase
 
     /**
      * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Error saving 'first' data to CSV column: Cannot write object into a column
+     * @expectedExceptionMessage Error saving 'first' data to CSV column: Error writing 'col' column: Cannot write object into a column
      */
     public function testBadData()
     {
