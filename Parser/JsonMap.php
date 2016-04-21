@@ -30,21 +30,31 @@ class JsonMap implements ParserInterface
         $this->mappers = $mappers;
     }
 
+    /**
+     * @param Config $config
+     * @return static
+     */
     public static function create(Config $config) {
+        if (empty($config->getAttribute('mappings'))) {
+            throw new UserException("Cannot initialize JSON Mapper with no mapping");
+        }
+
         $mappers = [];
+        foreach($config->getAttribute('mappings') as $type => $mapping) {
+            if (empty($mapping)) {
+                throw new UserException("Empty mapping for '{$type}' in config.");
+            }
+
+            $mappers[$type] = new Mapper($mapping, $type);
+        }
+
         foreach($config->getJobs() as $job) {
             $type = $job->getDataType();
-            $jobConfig = $job->getConfig();
-            if (isset($mappers[$type])) {
-                // TODO compare mappings?
-            } else {
-                if (empty($jobConfig['dataMapping'])) {
-                    throw new UserException("Missing 'dataMapping' for '{$type}' in config.");
-                }
-
-                $mappers[$type] = new Mapper($jobConfig['dataMapping'], $type);
+            if (empty($mappers[$type])) {
+                throw new UserException("Missing mapping for '{$type}' in config.");
             }
         }
+
         return new static($mappers);
     }
 

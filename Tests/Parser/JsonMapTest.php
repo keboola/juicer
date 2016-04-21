@@ -13,8 +13,13 @@ class JsonMapTest extends ExtractorTestCase
         $config->setJobs([
             JobConfig::create([
                 'endpoint' => '1st',
-                'dataType' => 'first',
-                'dataMapping' => [
+                'dataType' => 'first'
+            ])
+        ]);
+
+        $config->setAttributes([
+            'mappings' => [
+                'first' => [
                     'id' => [
                         'type' => 'column',
                         'mapping' => ['destination' => 'item_id']
@@ -38,7 +43,7 @@ class JsonMapTest extends ExtractorTestCase
                         ]
                     ]
                 ]
-            ])
+            ]
         ]);
         $parser = JsonMap::create($config);
 
@@ -87,7 +92,7 @@ class JsonMapTest extends ExtractorTestCase
 
     /**
      * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Missing 'dataMapping' for 'first' in config.
+     * @expectedExceptionMessage Missing mapping for 'first' in config.
      */
     public function testNoMapping()
     {
@@ -97,6 +102,40 @@ class JsonMapTest extends ExtractorTestCase
                 'endpoint' => '1st',
                 'dataType' => 'first'
             ])
+        ]);
+        $config->setAttributes([
+            'mappings' => [
+                'notfirst' => [
+                    'id' => [
+                        'type' => 'column',
+                    ]
+                ]
+            ]
+        ]);
+        $parser = JsonMap::create($config);
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Empty mapping for 'first' in config.
+     */
+    public function testEmptyMappingError()
+    {
+        $config = new Config('ex', 'test', []);
+        $config->setJobs([
+            JobConfig::create([
+                'endpoint' => '1st',
+                'dataType' => 'first'
+            ])
+        ]);
+        $config->setAttributes([
+            'mappings' => [
+                'first' => [
+//                     'id' => [
+//                         'type' => 'column',
+//                     ]
+                ]
+            ]
         ]);
         $parser = JsonMap::create($config);
     }
@@ -110,13 +149,17 @@ class JsonMapTest extends ExtractorTestCase
         $config = new Config('ex', 'test', []);
         $config->setJobs([
             JobConfig::create([
-                'endpoint' => 'first',
-                'dataMapping' => [
+                'endpoint' => 'first'
+            ])
+        ]);
+        $config->setAttributes([
+            'mappings' => [
+                'first' => [
                     'id' => [
                         'type' => 'column',
                     ]
                 ]
-            ])
+            ]
         ]);
         $parser = JsonMap::create($config);
 
@@ -136,59 +179,63 @@ class JsonMapTest extends ExtractorTestCase
 
         $configFirst = JobConfig::create([
             'endpoint' => '1st',
-            'dataType' => 'first',
-            'dataMapping' => [
-                'id' => [
-                    'type' => 'column',
-                    'mapping' => ['destination' => 'item_id']
-                ],
-                'tags' => [
-                    'type' => 'table',
-                    'destination' => 'tags',
-                    'tableMapping' => [
-                        'user' => [
-                            'mapping' => [
-                                'destination' => 'user',
-                                'primaryKey' => true
-                            ]
-                        ],
-                        'tag' => [
-                            'mapping' => [
-                                'destination' => 'tag',
-                                'primaryKey' => true
-                            ]
-                        ]
-                    ],
-                    'parentKey' => [
-                        'disable' => true
-                    ]
-                ]
-            ]
+            'dataType' => 'first'
         ]);
 
         $configTags = JobConfig::create([
             'endpoint' => '2nd',
-            'dataType' => 'tags',
-            'dataMapping' => [
-                'user' => [
-                    'mapping' => [
-                        'destination' => 'user',
-                        'primaryKey' => true
-                    ]
-                ],
-                'tag' => [
-                    'mapping' => [
-                        'destination' => 'tag',
-                        'primaryKey' => true
-                    ]
-                ]
-            ]
+            'dataType' => 'tags'
         ]);
 
         $config = new Config('ex', 'test', []);
         $config->setJobs([
             $configFirst,
             $configTags
+        ]);
+        $config->setAttributes([
+            'mappings' => [
+                'first' => [
+                    'id' => [
+                        'type' => 'column',
+                        'mapping' => ['destination' => 'item_id']
+                    ],
+                    'tags' => [
+                        'type' => 'table',
+                        'destination' => 'tags',
+                        'tableMapping' => [
+                            'user' => [
+                                'mapping' => [
+                                    'destination' => 'user',
+                                    'primaryKey' => true
+                                ]
+                            ],
+                            'tag' => [
+                                'mapping' => [
+                                    'destination' => 'tag',
+                                    'primaryKey' => true
+                                ]
+                            ]
+                        ],
+                        'parentKey' => [
+                            'disable' => true
+                        ]
+                    ]
+                ],
+                'tags' => [
+                    'user' => [
+                        'mapping' => [
+                            'destination' => 'user',
+                            'primaryKey' => true
+                        ]
+                    ],
+                    'tag' => [
+                        'mapping' => [
+                            'destination' => 'tag',
+                            'primaryKey' => true
+                        ]
+                    ]
+                ]
+            ]
         ]);
 
         $firstData = json_decode('[
