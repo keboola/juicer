@@ -38,15 +38,6 @@ class JsonMapTest extends ExtractorTestCase
                         ]
                     ]
                 ]
-            ]),
-            JobConfig::create([
-                'endpoint' => '2nd',
-                'dataMapping' => [
-                    'id' => [
-                        'type' => 'column',
-                        'mapping' => ['destination' => 'item_id']
-                    ]
-                ]
             ])
         ]);
         $parser = JsonMap::create($config);
@@ -234,7 +225,7 @@ class JsonMapTest extends ExtractorTestCase
 
         $parser = JsonMap::create($config);
 
-        $parser->process($firstData, 'first');
+        $parser->process($firstData, $configFirst->getDataType());
         $parser->process($secondData, $configTags->getDataType());
 
         self::assertEquals(

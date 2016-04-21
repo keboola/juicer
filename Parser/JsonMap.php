@@ -20,14 +20,14 @@ class JsonMap implements ParserInterface
     /**
      * @var Mapper[]
      */
-    protected $parsers;
+    protected $mappers;
 
     /**
      * @param Mapper[] $mappers
      */
     public function __construct(array $mappers)
     {
-        $this->parsers = $mappers;
+        $this->mappers = $mappers;
     }
 
     public static function create(Config $config) {
@@ -56,11 +56,11 @@ class JsonMap implements ParserInterface
     public function process(array $data, $type, $parentId = null)
     {
         try {
-            if (empty($this->parsers[$type])) {
+            if (empty($this->mappers[$type])) {
                 throw new UserException("Mapper for type '{$type}' has not been configured.");
             }
 
-            return $this->parsers[$type]->parse($data, (array) $parentId);
+            return $this->mappers[$type]->parse($data, (array) $parentId);
         } catch(BadConfigException $e) {
             throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
         }
@@ -69,7 +69,7 @@ class JsonMap implements ParserInterface
     public function getResults()
     {
         $results = [];
-        foreach($this->parsers as $type => $parser) {
+        foreach($this->mappers as $type => $parser) {
             $files = array_filter($parser->getCsvFiles());
             foreach($files as $name => $file) {
                 if (array_key_exists($name, $results)) {
@@ -110,5 +110,10 @@ class JsonMap implements ParserInterface
             }
             $file1->writeRow($row);
         }
+    }
+
+    public function getMappers()
+    {
+        return $this->mappers;
     }
 }
