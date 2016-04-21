@@ -10,12 +10,6 @@ class JsonMapTest extends ExtractorTestCase
     public function testProcess()
     {
         $config = new Config('ex', 'test', []);
-        $config->setJobs([
-            JobConfig::create([
-                'endpoint' => '1st',
-                'dataType' => 'first'
-            ])
-        ]);
 
         $config->setAttributes([
             'mappings' => [
@@ -122,12 +116,6 @@ class JsonMapTest extends ExtractorTestCase
     public function testEmptyMappingError()
     {
         $config = new Config('ex', 'test', []);
-        $config->setJobs([
-            JobConfig::create([
-                'endpoint' => '1st',
-                'dataType' => 'first'
-            ])
-        ]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -147,11 +135,6 @@ class JsonMapTest extends ExtractorTestCase
     public function testBadMapping()
     {
         $config = new Config('ex', 'test', []);
-        $config->setJobs([
-            JobConfig::create([
-                'endpoint' => 'first'
-            ])
-        ]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -173,6 +156,37 @@ class JsonMapTest extends ExtractorTestCase
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
 
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Error saving data to CSV column: Cannot write object into a column
+     */
+    public function testBadData()
+    {
+        $config = new Config('ex', 'test', []);
+        $config->setAttributes([
+            'mappings' => [
+                'first' => [
+                    'obj' => [
+                        'mapping' => [
+                            'destination' => 'col'
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+        $parser = JsonMap::create($config);
+
+        $data = json_decode('[
+            {
+                "obj": {
+                    "id": 1
+                }
+            }
+        ]');
+
+        $parser->process($data, 'first', ['parent' => 'iAreId']);
+    }
+
     public function testMergeResults()
     {
         Logger::setLogger($this->getLogger('testMergeResults', true));
@@ -188,10 +202,6 @@ class JsonMapTest extends ExtractorTestCase
         ]);
 
         $config = new Config('ex', 'test', []);
-        $config->setJobs([
-            $configFirst,
-            $configTags
-        ]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [

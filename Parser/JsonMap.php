@@ -3,7 +3,8 @@
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvMap\Mapper,
-    Keboola\CsvMap\Exception\BadConfigException;
+    Keboola\CsvMap\Exception\BadConfigException,
+    Keboola\CsvMap\Exception\BadDataException;
 use Keboola\Csv\CsvFile;
 use Keboola\Juicer\Config\Config,
     Keboola\Juicer\Exception\UserException,
@@ -73,6 +74,8 @@ class JsonMap implements ParserInterface
             return $this->mappers[$type]->parse($data, (array) $parentId);
         } catch(BadConfigException $e) {
             throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
+        } catch(BadDataException $e) {
+            throw new UserException("Error saving data to CSV column: " . $e->getMessage(), 0, $e, $e->getData());
         }
     }
 
