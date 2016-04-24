@@ -35,7 +35,11 @@ class JsonMapTest extends ExtractorTestCase
                                 ]
                             ]
                         ]
-                    ]
+                    ],
+                    'parent' => [
+                        'type' => 'user',
+                        'mapping' => ['destination' => 'parent_id']
+                    ],
                 ]
             ]
         ]);
@@ -62,21 +66,21 @@ class JsonMapTest extends ExtractorTestCase
             }
         ]');
 
-        $parser->process($data, 'first');
+        $parser->process($data, 'first', ['parent' => 'iAreId']);
 
         self::assertEquals(
             [
-                '"item_id","tags"' . PHP_EOL,
-                '"1",""' . PHP_EOL,
-                '"2","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL
+                '"item_id","tags","parent_id"' . PHP_EOL,
+                '"1","","iAreId"' . PHP_EOL,
+                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . PHP_EOL
             ],
             file($parser->getResults()['first'])
         );
         self::assertEquals(
             [
                 '"user","tag","first_pk"' . PHP_EOL,
-                '"asd","tag1","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL,
-                '"asd","tag2","675d5912d25c9220fbe677fbf35bfd09"' . PHP_EOL
+                '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL,
+                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL
             ],
             file($parser->getResults()['tags'])
         );
