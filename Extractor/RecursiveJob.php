@@ -138,6 +138,10 @@ class RecursiveJob extends Job implements RecursiveJobInterface
                 $level = 0;
             }
 
+            if (!is_scalar($field)) {
+                throw new UserException("The path for placeholder '{$placeholder}' must be a string value.");
+            }
+
             $value = Utils::getDataFromPath($field, $parentResults[$level], ".");
             if (empty($value)) {
                 throw new UserException(
