@@ -1,9 +1,11 @@
 <?php
 
 use Keboola\Juicer\Parser\JsonMap,
+    Keboola\Juicer\Parser\Json,
     Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Config\Config,
     Keboola\Juicer\Config\JobConfig;
+use Keboola\Temp\Temp;
 
 class JsonMapTest extends ExtractorTestCase
 {
@@ -109,7 +111,53 @@ class JsonMapTest extends ExtractorTestCase
         $parser = JsonMap::create($config);
     }
 
-    /**
+    public function testNoMappingFallback()
+    {
+        $config = new Config('ex', 'test', []);
+        $config->setAttributes([
+            'mappings' => [
+                'notfirst' => [
+                    'id' => [
+                        'mapping' => [
+                            'destination' => 'id'
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $fallback = Json::create($config, $this->getLogger('test', true), new Temp);
+        $parser = JsonMap::create($config, $fallback);
+
+        $data = json_decode('[
+            {
+                "id": 1,
+                "arr": [1,2,3]
+            },
+            {
+                "id": 2,
+                "arr": ["a","b","c"],
+                "tags": [
+                    {
+                        "user": "asd",
+                        "tag": "tag1"
+                    },
+                    {
+                        "user": "asd",
+                        "tag": "tag2"
+                    }
+                ]
+            }
+        ]');
+
+        $parser->process($data, 'first');
+        $parser->process($data, 'notfirst');
+
+        $this->assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
+        $this->assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
+    }
+
+        /**
      * @expectedException \Keboola\Juicer\Exception\UserException
      * @expectedExceptionMessage Empty mapping for 'first' in config.
      */

@@ -24,6 +24,11 @@ class JsonMap implements ParserInterface
     protected $mappers;
 
     /**
+     * @var ParserInterface
+     */
+    protected $fallback;
+
+    /**
      * @param Mapper[] $mappers
      */
     public function __construct(array $mappers)
@@ -35,7 +40,8 @@ class JsonMap implements ParserInterface
      * @param Config $config
      * @return static
      */
-    public static function create(Config $config) {
+    public static function create(Config $config, ParserInterface $fallbackParser = null)
+    {
         if (empty($config->getAttribute('mappings'))) {
             throw new UserException("Cannot initialize JSON Mapper with no mapping");
         }
@@ -52,11 +58,16 @@ class JsonMap implements ParserInterface
         foreach($config->getJobs() as $job) {
             $type = $job->getDataType();
             if (empty($mappers[$type])) {
-                throw new UserException("Missing mapping for '{$type}' in config.");
+                if (is_null($fallbackParser)) {
+                    throw new UserException("Missing mapping for '{$type}' in config.");
+                }
+
             }
         }
 
-        return new static($mappers);
+        $parser = new static($mappers);
+        $parser->setFallbackParser($fallbackParser);
+        return $parser;
     }
 
     /**
@@ -68,7 +79,11 @@ class JsonMap implements ParserInterface
     {
         try {
             if (empty($this->mappers[$type])) {
-                throw new UserException("Mapper for type '{$type}' has not been configured.");
+                if (empty($this->fallback)) {
+                    throw new UserException("Mapper for type '{$type}' has not been configured.");
+                }
+
+                return $this->fallback->process($data, $type, (array) $parentId);
             }
 
             return $this->mappers[$type]->parse($data, (array) $parentId);
@@ -84,31 +99,45 @@ class JsonMap implements ParserInterface
         $results = [];
         foreach($this->mappers as $type => $parser) {
             $files = array_filter($parser->getCsvFiles());
-            foreach($files as $name => $file) {
-                if (array_key_exists($name, $results)) {
-                    Logger::log('debug', "Merging results for '{$name}'.");
+            $results = $this->mergeResults($results, $files);
+        }
 
-                    $existingHeader = $results[$name]->getHeader();
-                    $newHeader = $file->getHeader();
-
-                    if ($existingHeader !== $newHeader) {
-                        throw new UserException("Multiple results for '{$name}' table have different columns!", 0, null, ['differentColumns' => array_diff($existingHeader, $newHeader)]);
-                    }
-
-                    $this->mergeResults($results[$name], $file);
-                } else {
-                    $results[$name] = $file;
-                }
-            }
-
-            // Preserves existing keys in array on dupes
-            $results += $files;
+        if (!empty($this->fallback)) {
+            $files = array_filter($this->fallback->getResults());
+            $results = $this->mergeResults($results, $files);
         }
 
         return $results;
     }
 
-    protected function mergeResults(CsvFile $file1, CsvFile $file2)
+    protected function mergeResults(array $results, array $files)
+    {
+        foreach($files as $name => $file) {
+            if (array_key_exists($name, $results)) {
+                Logger::log('debug', "Merging results for '{$name}'.");
+
+                $existingHeader = $results[$name]->getHeader();
+                $newHeader = $file->getHeader();
+
+                if ($existingHeader !== $newHeader) {
+                    throw new UserException(
+                        "Multiple results for '{$name}' table have different columns!",
+                        0,
+                        null,
+                        ['differentColumns' => array_diff($existingHeader, $newHeader)]
+                    );
+                }
+
+                $this->mergeFiles($results[$name], $file);
+            } else {
+                $results[$name] = $file;
+            }
+        }
+
+        return $results;
+    }
+
+    protected function mergeFiles(CsvFile $file1, CsvFile $file2)
     {
         // CsvFile::getHeader resets it to the first line,
         // so we need to forward it back to the end to append it
@@ -128,5 +157,15 @@ class JsonMap implements ParserInterface
     public function getMappers()
     {
         return $this->mappers;
+    }
+
+    public function setFallbackParser(ParserInterface $fallback = null)
+    {
+        $this->fallback = $fallback;
+    }
+
+    public function getMetadata()
+    {
+        return empty($this->fallback) ? [] : $this->fallback->getMetadata();
     }
 }
