@@ -127,16 +127,6 @@ class Job
     }
 
     /**
-     *  In case the request has ie. expiry time.
-     * TODO use as a callback function instead? in second parameter to download
-     * FIXME no longer works in RestJob
-     *
-     * @param &$request
-     * @return void
-     */
-    protected function updateRequest($request) {}
-
-    /**
      * Try to find the data array within $response.
      *
      * @param array|object $response
