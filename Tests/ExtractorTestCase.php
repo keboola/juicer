@@ -27,4 +27,9 @@ class ExtractorTestCase extends PHPUnit_Framework_TestCase
             $null ? [new \Monolog\Handler\NullHandler()] : []
         );
     }
+
+    public function setUp()
+    {
+        Logger::setStrict(false);
+    }
 }

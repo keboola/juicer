@@ -212,7 +212,7 @@ class RestClient extends AbstractClient implements ClientInterface
                         $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
                         $delay = $date->getTimestamp() - time();
                     } else {
-                        $delay  = RetrySubscriber::exponentialDelay($retries, $event);
+                        $delay = RetrySubscriber::exponentialDelay($retries, $event);
                     }
                 } else {
                     $delay  = RetrySubscriber::exponentialDelay($retries, $event);
