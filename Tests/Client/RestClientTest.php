@@ -122,7 +122,7 @@ class RestClientTest extends ExtractorTestCase
         $restClient = RestClient::create();
 
         $mock = new Mock([
-            new Response(429, ['Retry-After' => 1]),
+            new Response(429, ['Retry-After' => 5]),
             new Response(200, [], Stream::factory($body))
         ]);
         $restClient->getClient()->getEmitter()->attach($mock);
@@ -133,6 +133,7 @@ class RestClientTest extends ExtractorTestCase
         $request = new RestRequest('ep', ['a' => 1]);
 
         self::assertEquals(json_decode($body), $restClient->download($request));
+        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay']);
     }
 
     /**
