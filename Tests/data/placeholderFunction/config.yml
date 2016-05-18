@@ -1,0 +1,20 @@
+parameters:
+    api:
+        baseUrl: 'test'
+    config:
+        outputBucket: 'rec'
+        jobs:
+            -
+                endpoint: exports/tickets.json
+                dataType: tickets_export
+                children:
+                    -
+                        endpoint: tickets/{1:id}/comments.json
+                        recursionFilter: "status!=Deleted"
+                        dataType: comments
+                        placeholders:
+                            1:id:
+                                path: id
+                                function: urlencode
+                                args:
+                                    - placeholder: value

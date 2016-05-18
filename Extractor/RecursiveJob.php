@@ -5,11 +5,13 @@ namespace Keboola\Juicer\Extractor;
 use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Parser\ParserInterface;
+    Keboola\Juicer\Parser\ParserInterface,
+    Keboola\Juicer\Exception\UserException;
 use Keboola\Filter\Filter,
     Keboola\Filter\Exception\FilterException;
 use Keboola\Utils\Utils;
-use Keboola\Juicer\Exception\UserException;
+use Keboola\Code\Builder,
+    Keboola\Code\Exception\UserScriptException;
 /**
  * {@inheritdoc}
  * Adds a capability to process recursive calls based on
@@ -139,7 +141,13 @@ class RecursiveJob extends Job implements RecursiveJobInterface
             }
 
             if (!is_scalar($field)) {
-                throw new UserException("The path for placeholder '{$placeholder}' must be a string value.");
+                if (empty($field['path'])) {
+                    throw new UserException("The path for placeholder '{$placeholder}' must be a string value or an object containing 'path' and 'function'.");
+                }
+
+                $fn = $field;
+                $field = $field['path'];
+                unset($fn['path']);
             }
 
             $value = Utils::getDataFromPath($field, $parentResults[$level], ".");
@@ -153,6 +161,12 @@ class RecursiveJob extends Job implements RecursiveJobInterface
                         'config' => $config->getConfig()
                     ]
                 );
+            }
+
+            if (isset($fn)) {
+                $builder = new Builder;
+                $builder->allowFunction('urlencode');
+                $value = $builder->run(Utils::arrayToObject($fn), ['placeholder' => ['value' => $value]]);
             }
 
             $params[$placeholder] = [

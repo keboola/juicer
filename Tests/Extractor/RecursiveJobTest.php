@@ -273,6 +273,27 @@ class RecursiveJobTest extends ExtractorTestCase
         );
     }
 
+    public function testPlaceholderFunction()
+    {
+        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('placeholderFunction');
+        $parent = '[
+            {"field": "data", "id": "1:1"}
+        ]';
+        $detail = '[
+            {"detail": "something", "subId": 1}
+        ]';
+        $mock = new Mock([
+            new Response(200, [], Stream::factory($parent)),
+            new Response(200, [], Stream::factory($detail))
+        ]);
+
+        $client->getClient()->getEmitter()->attach($mock);
+
+        $job->run();
+
+        self::assertEquals('tickets/1%3A1/comments.json', $history->getLastRequest()->getUrl());
+    }
+
     /**
      * I'm not too sure this is optimal!
      * If it looks stupid, but works, it ain't stupid!
