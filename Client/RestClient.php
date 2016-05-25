@@ -194,7 +194,7 @@ class RestClient extends AbstractClient implements ClientInterface
      * @param array $retryCodes
      * @return RetrySubscriber
      */
-    public static function getBackoff($max = 8, $retryCodes = [500, 502, 503, 504, 408, 420, 429])
+    public static function getBackoff($max = 10, $retryCodes = [500, 502, 503, 504, 408, 420, 429])
     {
         return new RetrySubscriber([
             'filter' => RetrySubscriber::createChainFilter([
