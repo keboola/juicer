@@ -12,6 +12,7 @@ class ScrollerFactory
     /**
      * @param array $config
      * @return ScrollerInterface
+     * @throws UserException
      */
     public static function getScroller(array $config)
     {
@@ -26,6 +27,8 @@ class ScrollerFactory
                 return ResponseParamScroller::create($config);
             case 'response.url':
                 return ResponseUrlScroller::create($config);
+            case 'zendesk.response.url':
+                return ZendeskResponseUrlScroller::create($config);
             case 'pagenum':
                 return PageScroller::create($config);
             case 'cursor':
