@@ -16,7 +16,11 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @var int
      */
-    protected $pointer = null;
+    protected $max = null;
+    /**
+     * @var int
+     */
+    protected $min = null;
     /**
      * @var string
      */
@@ -89,28 +93,28 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
             $this->reset();
             return false;
         } else {
-            $cursor = $this->pointer;
+            $cursor = 0;
 
             foreach($data as $item) {
                 $cursorVal = Utils::getDataFromPath($this->idKey, $item, '.');
 
-                if (
-                    is_null($this->pointer)
-                    || (!$this->reverse && $cursorVal > $this->pointer)
-                    || ($this->reverse && $cursorVal < $this->pointer)
-                ) {
-                    $this->pointer = $cursorVal;
+                if (is_null($this->max) || $cursorVal > $this->max) {
+                    $this->max = $cursorVal;
                 }
 
-                $cursor = $this->pointer;
-
-                if (0 !== $this->increment) {
-                    if (!is_numeric($this->pointer)) {
-                        throw new UserException("Trying to increment a pointer that is not numeric.");
-                    }
-
-                    $cursor += $this->increment;
+                if (is_null($this->min) || $cursorVal < $this->min) {
+                    $this->min = $cursorVal;
                 }
+
+                $cursor = $this->reverse ? $this->min : $this->max;
+            }
+
+            if (0 !== $this->increment) {
+                if (!is_numeric($cursor)) {
+                    throw new UserException("Trying to increment a pointer that is not numeric.");
+                }
+
+                $cursor += $this->increment;
             }
 
             $jobConfig->setParam($this->param, $cursor);
@@ -121,6 +125,6 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
 
     public function reset()
     {
-        $this->pointer = null;
+        $this->max = $this->min = null;
     }
 }
