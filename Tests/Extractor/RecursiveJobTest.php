@@ -59,38 +59,6 @@ class RecursiveJobTest extends ExtractorTestCase
         );
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage No value found for 1:id in parent result. (level: 1)
-     */
-    public function testWrongResponse()
-    {
-        list($job, $client) = $this->getJob();
-
-        $parentBody = '[
-                {"field": "data", "id": 1},
-                {"field": "more"}
-        ]';
-        $detail1 = '[
-                {"detail": "something", "subId": 1}
-        ]';
-        $detail2 = '[
-                {"detail": "somethingElse", "subId": 1},
-                {"detail": "another", "subId": 2}
-        ]';
-        $subDetail = '[{"grand": "child"}]';
-
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($parentBody)),
-            new Response(200, [], Stream::factory($detail1)),
-            new Response(200, [], Stream::factory($subDetail)),
-//             new Response(200, [], Stream::factory($detail2)),
-        ]);
-        $client->getClient()->getEmitter()->attach($mock);
-
-        $job->run();
-    }
-
     public function testSamePlaceholder()
     {
         list($job, $client, $parser, $history) = $this->getJob('recursive2');
@@ -195,25 +163,178 @@ class RecursiveJobTest extends ExtractorTestCase
         );
     }
 
-    public function testPlaceholderFunction()
+    public function testCreateChild()
     {
-        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('placeholderFunction');
-        $parent = '[
-            {"field": "data", "id": "1:1"}
-        ]';
-        $detail = '[
-            {"detail": "something", "subId": 1}
-        ]';
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($parent)),
-            new Response(200, [], Stream::factory($detail))
-        ]);
+        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive');
 
-        $client->getClient()->getEmitter()->attach($mock);
+        $children = $jobConfig->getChildJobs();
+        $child = reset($children);
 
-        $job->run();
+        $childJob = $this->callMethod($job, 'createChild', [
+            $child,
+            [0 => ['id' => 123]]
+        ]
+        );
 
-        self::assertEquals('tickets/1%3A1/comments.json', $history->getLastRequest()->getUrl());
+        $parentParams = (new ReflectionClass($childJob))->getProperty('parentParams');
+        $parentParams->setAccessible(true);
+
+        $this->assertEquals(
+            [
+                '1:id' => [
+                    'placeholder' => '1:id',
+                    'field' => 'id',
+                    'value' => 123
+                ]
+            ],
+            $parentParams->getValue($childJob)
+        );
+
+        $this->assertEquals('comments', $this->callMethod($childJob, 'getDataType', []));
+
+        $grandChildren = $child->getChildJobs();
+        $grandChild = reset($grandChildren);
+        $grandChildJob = $this->callMethod($childJob, 'createChild', [
+            $grandChild,
+            [0 => ['id' => 456], 1 => ['id' => 123]]
+        ]
+        );
+
+        $childParams = (new ReflectionClass($grandChildJob))->getProperty('parentParams');
+        $childParams->setAccessible(true);
+var_dump($childParams->getValue($grandChildJob));
+
+        $this->assertEquals('third/level/{2:id}/{id}.json', $this->callMethod($grandChildJob, 'getDataType', []));
+    }
+
+    /**
+     * @dataProvider placeholderProvider
+     */
+    public function testGetPlaceholder($field, $expectedValue)
+    {
+        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $value = $this->callMethod(
+            $job,
+            'getPlaceholder',
+            [ // $placeholder, $field, $parentResults
+                '1:id',
+                $field,
+                [
+                    (object) [
+                        'field' => 'data',
+                        'id' => '1:1'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertEquals(
+            [
+                'placeholder' => '1:id',
+                'field' => 'id',
+                'value' => $expectedValue
+            ],
+            $value
+        );
+    }
+
+    public function placeholderProvider()
+    {
+        return [
+            [
+                [
+                    'path' => 'id',
+                    'function' => 'urlencode',
+                    'args' => [
+                        ['placeholder' => 'value']
+                    ]
+                ],
+                '1%3A1'
+            ],
+            [
+                'id',
+                '1:1'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider placeholderValueProvider
+     */
+    public function testGetPlaceholderValue($level, $expected)
+    {
+        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $value = $this->callMethod(
+            $job,
+            'getPlaceholderValue',
+            [ // $field, $parentResults, $level, $placeholder
+                'id',
+                [
+                    0 => ['id' => 123],
+                    1 => ['id' => 456]
+                ],
+                $level,
+                '1:id'
+            ]
+        );
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @dataProvider placeholderErrorValueProvider
+     */
+    public function testGetPlaceholderValueError($data, $message)
+    {
+        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        try {
+            $value = $this->callMethod(
+                $job,
+                'getPlaceholderValue',
+                [ // $field, $parentResults, $level, $placeholder
+                    'id',
+                    $data,
+                    0,
+                    '1:id'
+                ]
+            );
+        } catch(\Keboola\Juicer\Exception\UserException $e) {
+            $this->assertEquals($message, $e->getMessage());
+            return;
+        }
+
+        $this->fail('UserException was not thrown');
+    }
+
+    public function placeholderErrorValueProvider()
+    {
+        return [
+            [[], 'Level 1 not found in parent results! Maximum level: 0'],
+            [[0 => ['noId' => 'noVal']], 'No value found for 1:id in parent result. (level: 1)']
+        ];
+    }
+
+    public function placeholderValueProvider()
+    {
+        return [
+            [
+                0,
+                123
+            ],
+            [
+                1,
+                456
+            ]
+        ];
     }
 
     /**
@@ -234,7 +355,10 @@ class RecursiveJobTest extends ExtractorTestCase
         $history = new History();
         $client->getClient()->getEmitter()->attach($history);
 
-        $job = new RecursiveJob($jobConfig, $client, $parser);
+        $job = $this->getMockForAbstractClass(
+            'Keboola\Juicer\Extractor\RecursiveJob',
+            [$jobConfig, $client, $parser]
+        );
 
         return [
             $job,

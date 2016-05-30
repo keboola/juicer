@@ -9,7 +9,8 @@ use Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Exception\UserException;
 use Keboola\Filter\Filter,
     Keboola\Filter\Exception\FilterException;
-use Keboola\Utils\Utils;
+use Keboola\Utils\Utils,
+    Keboola\Utils\Exception\NoDataFoundException;
 use Keboola\Code\Builder,
     Keboola\Code\Exception\UserScriptException;
 /**
@@ -130,50 +131,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
         }
 
         foreach($placeholders as $placeholder => $field) {
-            // TODO allow using a descriptive ID by storing the result by `task(job) id` in $parentResults
-            if (strpos($placeholder, ':') !== false) {
-                list($level, $ph) = explode(':', $placeholder, 2);
-                // Make the direct parent a 1 instead of 0 for a better user friendship
-                $level -= 1;
-            } else {
-                $ph = $placeholder;
-                $level = 0;
-            }
-
-            if (!is_scalar($field)) {
-                if (empty($field['path'])) {
-                    throw new UserException("The path for placeholder '{$placeholder}' must be a string value or an object containing 'path' and 'function'.");
-                }
-
-                $fn = $field;
-                $field = $field['path'];
-                unset($fn['path']);
-            }
-
-            $value = Utils::getDataFromPath($field, $parentResults[$level], ".");
-            if (empty($value)) {
-                throw new UserException(
-                    "No value found for {$placeholder} in parent result. (level: " . ++$level . ")",
-                    0,
-                    null,
-                    [
-                        'parents' => $parentResults,
-                        'config' => $config->getConfig()
-                    ]
-                );
-            }
-
-            if (isset($fn)) {
-                $builder = new Builder;
-                $builder->allowFunction('urlencode');
-                $value = $builder->run(Utils::arrayToObject($fn), ['placeholder' => ['value' => $value]]);
-            }
-
-            $params[$placeholder] = [
-                'placeholder' => $placeholder,
-                'field' => $field,
-                'value' => $value
-            ];
+            $params[$placeholder] = $this->getPlaceholder($placeholder, $field, $parentResults);
         }
 
         // Add parent params as well (for 'tagging' child-parent data)
@@ -185,6 +143,70 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
         $job->setParentResults($parentResults);
 
         return $job;
+    }
+
+    /**
+     * @param string $placeholder
+     * @param string|object $field Path or a function with a path
+     * @reutrn array ['placeholder', 'field', 'value']
+     */
+    protected function getPlaceholder($placeholder, $field, $parentResults)
+    {
+        // TODO allow using a descriptive ID(level) by storing the result by `task(job) id` in $parentResults
+        $level = strpos($placeholder, ':') === false
+            ? 0
+            : strtok($placeholder, ':') -1;
+
+        if (!is_scalar($field)) {
+            if (empty($field['path'])) {
+                throw new UserException("The path for placeholder '{$placeholder}' must be a string value or an object containing 'path' and 'function'.");
+            }
+
+            $fn = Utils::arrayToObject($field);
+            $field = $field['path'];
+            unset($fn->path);
+        }
+
+        $value = $this->getPlaceholderValue($field, $parentResults, $level, $placeholder);
+
+        if (isset($fn)) {
+            $builder = new Builder;
+            $builder->allowFunction('urlencode');
+            $value = $builder->run($fn, ['placeholder' => ['value' => $value]]);
+        }
+
+        return [
+            'placeholder' => $placeholder,
+            'field' => $field,
+            'value' => $value
+        ];
+    }
+
+    /**
+     * @param string $field
+     * @param array $parentResults
+     * @param int $level
+     * @return mixed
+     */
+    protected function getPlaceholderValue($field, $parentResults, $level, $placeholder)
+    {
+        try {
+            if (!array_key_exists($level, $parentResults)) {
+                $maxLevel = empty($parentResults) ? 0 : max(array_keys($parentResults)) +1;
+                throw new UserException("Level " . ++$level . " not found in parent results! Maximum level: " . $maxLevel);
+            }
+
+            return Utils::getDataFromPath($field, $parentResults[$level], ".", false);
+        } catch(NoDataFoundException $e) {
+            throw new UserException(
+                "No value found for {$placeholder} in parent result. (level: " . ++$level . ")",
+                0,
+                null,
+                [
+                    'parents' => $parentResults
+                ]
+            );
+        }
     }
 
     public function setParentResults(array $results)
