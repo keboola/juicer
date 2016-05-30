@@ -8,14 +8,12 @@ use Keboola\Juicer\Common\Logger,
     Keboola\Juicer\Config\JobConfig,
     Keboola\Juicer\Client\ClientInterface,
     Keboola\Juicer\Client\RequestInterface,
-    Keboola\Juicer\Parser\ParserInterface,
-    Keboola\Juicer\Pagination\ScrollerInterface,
-    Keboola\Juicer\Pagination\NoScroller;
+    Keboola\Juicer\Parser\ParserInterface;
 use Keboola\Juicer\Exception\UserException;
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */
-class Job
+abstract class Job
 {
     /**
      * @var JobConfig
@@ -57,16 +55,27 @@ class Job
      *
      * @return void
      */
-    public function run()
-    {
-        $request = $this->firstPage($this->config);
-        while ($request !== false) {
-            $response = $this->download($request);
-            $data = $this->findDataInResponse($response, $this->config->getConfig());
-            $this->parse($data);
-            $request = $this->nextPage($this->config, $response, $data);
-        }
-    }
+    abstract public function run();
+
+    /**
+     * Create the first download request.
+     * Return a download request
+     *
+     * @param JobConfig $config
+     * @return RequestInterface | false
+     */
+    abstract protected function firstPage();
+
+    /**
+     * Create subsequent requests for pagination (usually based on $response from previous request)
+     * Return a download request OR false if no next page exists
+     *
+     * @param JobConfig $config
+     * @param mixed $response
+     * @param array|null $data
+     * @return RequestInterface | false
+     */
+    abstract protected function nextPage();
 
     /**
      *  Download an URL from REST or SOAP API and return its body as an object.
@@ -101,135 +110,10 @@ class Job
     }
 
     /**
-     * Create subsequent requests for pagination (usually based on $response from previous request)
-     * Return a download request OR false if no next page exists
-     *
-     * @param JobConfig $config
-     * @param mixed $response
-     * @param array|null $data
-     * @return RequestInterface | false
-     */
-    protected function nextPage(JobConfig $config, $response, $data)
-    {
-        return $this->getScroller()->getNextRequest($this->client, $config, $response, $data);
-    }
-
-    /**
-     * Create the first download request.
-     * Return a download request
-     *
-     * @param JobConfig $config
-     * @return RequestInterface | false
-     */
-    protected function firstPage(JobConfig $config)
-    {
-        return $this->getScroller()->getFirstRequest($this->client, $config);
-    }
-
-    /**
-     * Try to find the data array within $response.
-     *
-     * @param array|object $response
-     * @param array $config
-     * @return array
-     * @todo support array of dataFields
-     *     - would return object with results, changing the class' API
-     *     - parse would just have to loop through if it returns an object
-     *     - and append $type with the dataField
-     * @deprecated Use response module
-     */
-    protected function findDataInResponse($response, array $config = [])
-    {
-        // If dataField doesn't say where the data is in a response, try to find it!
-        if (!empty($config['dataField'])) {
-            if (is_array($config['dataField'])) {
-                if (empty($config['dataField']['path'])) {
-                    throw new UserException("'dataField.path' must be set!");
-                }
-
-                $path = $config['dataField']['path'];
-            } elseif (is_scalar($config['dataField'])) {
-                $path = $config['dataField'];
-            } else {
-                throw new UserException("'dataField' must be either a path string or an object with 'path' attribute.");
-            }
-
-            $data = Utils::getDataFromPath($path, $response, ".");
-            if (empty($data)) {
-                Logger::log('warning', "dataField '{$path}' contains no data!");
-            }
-
-            // In case of a single object being returned
-            if (!is_array($data)) {
-                $data = [$data];
-            }
-        } elseif (is_array($response)) {
-            // Simplest case, the response is just the dataset
-            $data = $response;
-        } elseif (is_object($response)) {
-            // Find arrays in the response
-            $arrays = [];
-            foreach($response as $key => $value) {
-                if (is_array($value)) {
-                    $arrays[$key] = $value;
-                } // TODO else {$this->metadata[$key] = json_encode($value);} ? return [$data,$metadata];
-            }
-
-            $arrayNames = array_keys($arrays);
-            if (count($arrays) == 1) {
-                $data = $arrays[$arrayNames[0]];
-            } elseif (count($arrays) == 0) {
-                Logger::log('warning', "No data array found in response! (endpoint: {$config['endpoint']})", [
-                    'response' => json_encode($response),
-                    'config row ID' => $this->getJobId()
-                ]);
-                $data = [];
-            } else {
-                $e = new UserException("More than one array found in response! Use 'dataField' parameter to specify a key to the data array. (endpoint: {$config['endpoint']}, arrays in response root: " . join(", ", $arrayNames) . ")");
-                $e->setData([
-                    'response' => json_encode($response),
-                    'config row ID' => $this->getJobId(),
-                    'arrays found' => $arrayNames
-                ]);
-                throw $e;
-            }
-        } else {
-            $e = new UserException('Unknown response from API.');
-            $e->setData([
-                'response' => json_encode($response),
-                'config row ID' => $this->getJobId()
-            ]);
-            throw $e;
-        }
-
-        return $data;
-    }
-
-    /**
      * @return string
      */
     public function getJobId()
     {
         return $this->jobId;
-    }
-
-    /**
-     * @return ScrollerInterface
-     */
-    protected function getScroller()
-    {
-        if (empty($this->scroller)) {
-            $this->scroller = new NoScroller;
-        }
-
-        return $this->scroller;
-    }
-
-    /**
-     * @param ScrollerInterface $scroller
-     */
-    public function setScroller(ScrollerInterface $scroller)
-    {
-        $this->scroller = $scroller;
     }
 }
