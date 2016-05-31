@@ -25,7 +25,7 @@ class RecursiveJobTest extends ExtractorTestCase
 {
     public function testParse()
     {
-        list($job, $client, $parser) = $this->getJob('iteration');
+        list($job, $client, $parser) = $this->getJob('simple_basic');
 
         $response = json_decode('{
             "data": [
@@ -64,7 +64,7 @@ class RecursiveJobTest extends ExtractorTestCase
      */
     public function testSamePlaceholder()
     {
-        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive2');
+        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive_same_ph');
 
         $children = $jobConfig->getChildJobs();
         $child = reset($children);

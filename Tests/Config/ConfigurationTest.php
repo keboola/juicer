@@ -130,11 +130,11 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigsSingle()
     {
-        $configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
+        $configuration = new Configuration('./Tests/data/simple_basic', 'test', new Temp('test'));
 
         $configs = $configuration->getMultipleConfigs();
 
-        $yml = Yaml::parse(file_get_contents('./Tests/data/iteration/config.yml'));
+        $yml = Yaml::parse(file_get_contents('./Tests/data/simple_basic/config.yml'));
 
 
         self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
@@ -145,7 +145,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetYaml()
     {
-        $configuration = new Configuration('./Tests/data/iteration', 'test', new Temp('test'));
+        $configuration = new Configuration('./Tests/data/simple_basic', 'test', new Temp('test'));
 
         $result = self::callMethod($configuration, 'getYaml', ['/config.yml', 'parameters', 'config', 'id']);
 
