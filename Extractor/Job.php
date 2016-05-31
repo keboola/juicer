@@ -64,7 +64,7 @@ abstract class Job
      * @param JobConfig $config
      * @return RequestInterface | false
      */
-    abstract protected function firstPage();
+    abstract protected function firstPage(JobConfig $config);
 
     /**
      * Create subsequent requests for pagination (usually based on $response from previous request)
@@ -75,7 +75,7 @@ abstract class Job
      * @param array|null $data
      * @return RequestInterface | false
      */
-    abstract protected function nextPage();
+    abstract protected function nextPage(JobConfig $config, $response, $data);
 
     /**
      *  Download an URL from REST or SOAP API and return its body as an object.
