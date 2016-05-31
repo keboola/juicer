@@ -59,108 +59,33 @@ class RecursiveJobTest extends ExtractorTestCase
         );
     }
 
+    /**
+     * Test the correct placeholder is used if two levels have identical one
+     */
     public function testSamePlaceholder()
     {
-        list($job, $client, $parser, $history) = $this->getJob('recursive2');
+        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive2');
 
-        $cubes = '{
-            "@odata.context": "$metadata#Cubes",
-            "value": [
-                {
-                    "Name": "plan_BudgetPlan",
-                    "Rules": "tl;dr"
-                },
-                {
-                    "Name": "SDK.SampleCube",
-                    "Rules": ""
-                }
+        $children = $jobConfig->getChildJobs();
+        $child = reset($children);
+
+        $childJob = $this->callMethod($job, 'createChild', [
+                $child,
+                [0 => ['id' => 123]]
             ]
-        }';
+        );
 
-        $views = '{
-            "@odata.context": "../$metadata#Cubes(\'plan_BudgetPlan\')/Views",
-            "value": [
-                {
-                    "Name": "budget_placeholder",
-                    "SuppressEmptyRows": false
-                },
-                {
-                    "Name": "Budget Input Detailed",
-                    "SuppressEmptyRows": false
-                }
+        $this->assertEquals('root/123', $this->getProperty($childJob, 'config')->getEndpoint());
+
+        $grandChildren = $child->getChildJobs();
+        $grandChild = reset($grandChildren);
+        $grandChildJob = $this->callMethod($childJob, 'createChild', [
+                $grandChild,
+                [0 => ['id' => 456], 1 => ['id' => 123]]
             ]
-        }';
-
-        $results = '{}';
-
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($cubes)),
-            new Response(200, [], Stream::factory($views)),
-            new Response(200, [], Stream::factory($results)),
-            new Response(200, [], Stream::factory($results)),
-            new Response(200, [], Stream::factory($views)),
-            new Response(200, [], Stream::factory($results)),
-            new Response(200, [], Stream::factory($results)),
-        ]);
-        $client->getClient()->getEmitter()->attach($mock);
-
-        $job->run();
-
-        $urls = [];
-        foreach($history as $item) {
-            $urls[] = $item['request']->getUrl();
-        }
-
-        self::assertEquals(
-            [
-                'Cubes',
-                'Cubes(\'plan_BudgetPlan\')/Views',
-                'Cubes(\'plan_BudgetPlan\')/Views(\'budget_placeholder\')/tm1.Execute?%24expand=Cells',
-                'Cubes(\'plan_BudgetPlan\')/Views(\'Budget%20Input%20Detailed\')/tm1.Execute?%24expand=Cells',
-                'Cubes(\'SDK.SampleCube\')/Views',
-                'Cubes(\'SDK.SampleCube\')/Views(\'budget_placeholder\')/tm1.Execute?%24expand=Cells',
-                'Cubes(\'SDK.SampleCube\')/Views(\'Budget%20Input%20Detailed\')/tm1.Execute?%24expand=Cells',
-            ],
-            $urls
         );
-    }
 
-    public function testDataTypeWithId()
-    {
-        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursiveNoType');
-
-        $parentBody = '[
-                {"field": "data", "id": 1},
-                {"field": "more", "id": 2}
-        ]';
-        $detail1 = '[
-                {"detail": "something", "subId": 1}
-        ]';
-        $detail2 = '[
-                {"detail": "somethingElse", "subId": 1},
-                {"detail": "another", "subId": 2}
-        ]';
-        $subDetail = '[{"grand": "child"}]';
-
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($parentBody)),
-            new Response(200, [], Stream::factory($detail1)),
-            new Response(200, [], Stream::factory($subDetail)),
-            new Response(200, [], Stream::factory($detail2)),
-            new Response(200, [], Stream::factory($subDetail)),
-            new Response(200, [], Stream::factory($subDetail))
-        ]);
-        $client->getClient()->getEmitter()->attach($mock);
-
-
-        $job->run();
-
-//         $children = $jobConfig->getChildJobs();
-//         var_dump(reset($children)->getDataType());
-        self::assertEquals(
-            ['exports_tickets_json', 'tickets__1_id__comments_json', 'third_level__2_id___id__json'],
-            array_keys($parser->getResults())
-        );
+        $this->assertEquals('root/123/456', $this->getProperty($grandChildJob, 'config')->getEndpoint());
     }
 
     public function testCreateChild()
@@ -171,13 +96,10 @@ class RecursiveJobTest extends ExtractorTestCase
         $child = reset($children);
 
         $childJob = $this->callMethod($job, 'createChild', [
-            $child,
-            [0 => ['id' => 123]]
-        ]
+                $child,
+                [0 => ['id' => 123]]
+            ]
         );
-
-        $parentParams = (new ReflectionClass($childJob))->getProperty('parentParams');
-        $parentParams->setAccessible(true);
 
         $this->assertEquals(
             [
@@ -187,7 +109,7 @@ class RecursiveJobTest extends ExtractorTestCase
                     'value' => 123
                 ]
             ],
-            $parentParams->getValue($childJob)
+            $this->getProperty($childJob, 'parentParams')
         );
 
         $this->assertEquals('comments', $this->callMethod($childJob, 'getDataType', []));
@@ -195,16 +117,19 @@ class RecursiveJobTest extends ExtractorTestCase
         $grandChildren = $child->getChildJobs();
         $grandChild = reset($grandChildren);
         $grandChildJob = $this->callMethod($childJob, 'createChild', [
-            $grandChild,
-            [0 => ['id' => 456], 1 => ['id' => 123]]
-        ]
+                $grandChild,
+                [0 => ['id' => 456], 1 => ['id' => 123]]
+            ]
         );
 
-        $childParams = (new ReflectionClass($grandChildJob))->getProperty('parentParams');
-        $childParams->setAccessible(true);
-var_dump($childParams->getValue($grandChildJob));
-
+        // Ensure the IDs from 2 parent levels are properly mapped
+        $values = $this->getProperty($grandChildJob, 'parentParams');
+        $this->assertEquals(456, $values['id']['value']);
+        $this->assertEquals(123, $values['2:id']['value']);
+        // Check the dataType from endpoint has placeholders not replaced by values
         $this->assertEquals('third/level/{2:id}/{id}.json', $this->callMethod($grandChildJob, 'getDataType', []));
+
+        $this->assertEquals('third/level/123/456.json', $this->getProperty($grandChildJob, 'config')->getEndpoint());
     }
 
     /**

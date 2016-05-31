@@ -135,6 +135,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
         }
 
         // Add parent params as well (for 'tagging' child-parent data)
+        // Same placeholder in deeper nesting replaces parent value
         if (!empty($this->parentParams)) {
             $params = array_replace($this->parentParams, $params);
         }

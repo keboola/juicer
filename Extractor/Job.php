@@ -100,6 +100,9 @@ abstract class Job
         $this->parser->process($data, $this->getDataType(), $parentId);
     }
 
+    /**
+     * @return string
+     */
     protected function getDataType()
     {
         $config = $this->config->getConfig();

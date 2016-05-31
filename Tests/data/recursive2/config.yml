@@ -2,29 +2,17 @@ parameters:
     api:
       baseUrl: "http://example.com/"
     config:
-      debug: 1
-      id: "tm1"
-      http:
-        headers:
-          Accept: "application/json"
       jobs:
         -
-          endpoint: "Cubes"
-          dataType: "Cubes"
-          dataField: "value"
+          endpoint: "root"
           children:
             -
-              endpoint: "Cubes('{CName}')/Views"
-              dataType: "views"
-              dataField: "value"
+              endpoint: "root/{1:id}"
               placeholders:
-                CName: "Name"
+                "1:id": "id"
               children:
                 -
-                  endpoint: "Cubes('{2:Name}')/Views('{1:Name}')/tm1.Execute?$expand=Cells"
-                  dataType: "results"
-                  dataField: "Cells"
+                  endpoint: "root/{2:id}/{1:id}"
                   placeholders:
-                    2:Name: "Name"
-                    1:Name: "Name"
-                  method: "POST"
+                    "2:id": "id"
+                    "1:id": "id"
