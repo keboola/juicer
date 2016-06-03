@@ -125,6 +125,5 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
             ]
         ]);
         self::assertEquals($expected, $nextRequest);
-
     }
 }

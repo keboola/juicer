@@ -28,12 +28,6 @@ class RestClient extends AbstractClient implements ClientInterface
     protected $client;
 
     /**
-     * GET or POST
-     * @var string
-     */
-    protected $method;
-
-    /**
      * override if the server response isn't UTF-8
      * @var string
      */
@@ -42,6 +36,8 @@ class RestClient extends AbstractClient implements ClientInterface
     const JSON = 'json';
     const XML = 'xml';
     const RAW = 'raw';
+
+    protected static $defaultRetryCodes = [500, 502, 503, 504, 408, 420, 429];
 
     /**
      * @var string
@@ -53,10 +49,14 @@ class RestClient extends AbstractClient implements ClientInterface
         $this->client = $guzzle;
     }
 
-    public static function create($defaults = [])
+    public static function create($defaults = [], $retryConfig = null)
     {
+        $retries = $retryConfig['maxRetries'] ?? 10;
+        $httpCodes = $retryConfig['httpCodes'] ?? self::$defaultRetryCodes;
+        $delayHeaderName = $retryConfig['headerName'] ?? 'Retry-After';
+
         $guzzle = new Client($defaults);
-        $guzzle->getEmitter()->attach(self::getBackoff());
+        $guzzle->getEmitter()->attach(self::getBackoff($retries, $httpCodes, $delayHeaderName));
         return new self($guzzle);
     }
 
@@ -194,29 +194,18 @@ class RestClient extends AbstractClient implements ClientInterface
      * @param array $retryCodes
      * @return RetrySubscriber
      */
-    public static function getBackoff($max = 10, $retryCodes = [500, 502, 503, 504, 408, 420, 429])
+    public static function getBackoff($max = 10, array $retryCodes = null, $headerName = 'Retry-After')
     {
+        $retryCodes = is_null($retryCodes) ? self::$defaultRetryCodes : $retryCodes;
+
         return new RetrySubscriber([
             'filter' => RetrySubscriber::createChainFilter([
                 RetrySubscriber::createStatusFilter($retryCodes),
                 RetrySubscriber::createCurlFilter()
             ]),
             'max' => $max,
-            'delay' => function ($retries, AbstractTransferEvent $event) {
-                if (!is_null($event->getResponse()) && $event->getResponse()->hasHeader('Retry-After')) {
-                    $retryAfter = $event->getResponse()->getHeader('Retry-after');
-                    if (is_numeric($retryAfter) && $retryAfter < 1417200713) {
-                        $delay =  $retryAfter;
-                    } elseif (Utils::isValidDateTimeString($retryAfter, DATE_RFC1123)) {
-                        // why not strtotime()?
-                        $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
-                        $delay = $date->getTimestamp() - time();
-                    } else {
-                        $delay = RetrySubscriber::exponentialDelay($retries, $event);
-                    }
-                } else {
-                    $delay  = RetrySubscriber::exponentialDelay($retries, $event);
-                }
+            'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName) {
+                $delay = self::getRetryDelay($retries, $event, $headerName);
 
                 $errData = [
                     "http_code" => !empty($event->getTransferInfo()['http_code']) ? $event->getTransferInfo()['http_code'] : null,
@@ -232,6 +221,32 @@ class RestClient extends AbstractClient implements ClientInterface
                 return 1000 * $delay;
             }
         ]);
+    }
+
+    protected static function getRetryDelay($retries, AbstractTransferEvent $event, $headerName)
+    {
+        if (
+            is_null($event->getResponse())
+            || !$event->getResponse()->hasHeader($headerName)
+        ) {
+            return RetrySubscriber::exponentialDelay($retries, $event);
+        }
+
+        $retryAfter = $event->getResponse()->getHeader($headerName);
+        if (is_numeric($retryAfter)) {
+            if ($retryAfter < time() - strtotime('1 day', 0)) {
+                return $retryAfter;
+            } else {
+                return $retryAfter - time();
+            }
+        }
+
+        if (Utils::isValidDateTimeString($retryAfter, DATE_RFC1123)) {
+            $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
+            return $date->getTimestamp() - time();
+        }
+
+        return RetrySubscriber::exponentialDelay($retries, $event);
     }
 
     /**

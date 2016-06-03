@@ -110,7 +110,10 @@ class RestClientTest extends ExtractorTestCase
         );
     }
 
-    public function testBackoff()
+    /**
+     * @dataProvider retryProvider
+     */
+    public function testBackoff(RestClient $restClient, Response $errResponse)
     {
         Logger::setLogger($this->getLogger('test', true));
 
@@ -119,10 +122,8 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "more"}
         ]';
 
-        $restClient = RestClient::create();
-
         $mock = new Mock([
-            new Response(429, ['Retry-After' => 5]),
+            $errResponse,
             new Response(200, [], Stream::factory($body))
         ]);
         $restClient->getClient()->getEmitter()->attach($mock);
@@ -133,7 +134,30 @@ class RestClientTest extends ExtractorTestCase
         $request = new RestRequest('ep', ['a' => 1]);
 
         self::assertEquals(json_decode($body), $restClient->download($request));
-        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay']);
+        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
+    }
+
+    public function retryProvider()
+    {
+        return [
+            'default' => [
+                RestClient::create(),
+                new Response(429, ['Retry-After' => 5])
+            ],
+            'custom' => [
+                RestClient::create([], [
+                    'headerName' => 'X-Rate-Limit-Reset',
+        //             'relative' => false, // is "guessed" by the app
+                    'httpCodes' => [403, 429],
+                    'maxRetries' => 8
+                ]),
+                new Response(403, ['X-Rate-Limit-Reset' => 5])
+            ],
+            'absolute' => [
+                RestClient::create(),
+                new Response(429, ['Retry-After' => time() + 5])
+            ]
+        ];
     }
 
     /**
