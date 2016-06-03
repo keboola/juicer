@@ -49,6 +49,14 @@ class RestClient extends AbstractClient implements ClientInterface
         $this->client = $guzzle;
     }
 
+    /**
+     * @param array $defaults GuzzleHttp\Client defaults
+     * @param array $retryConfig
+     *      maxRetries => Maximum retries
+     *      httpCodes => List of HTTP error codes to retry on
+     *      headerName => Header containing the retry delay
+     * @return self
+     */
     public static function create($defaults = [], $retryConfig = null)
     {
         $retries = $retryConfig['maxRetries'] ?? 10;
