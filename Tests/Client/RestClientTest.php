@@ -110,13 +110,8 @@ class RestClientTest extends ExtractorTestCase
         );
     }
 
-    /**
-     * @dataProvider retryProvider
-     */
-    public function testBackoff(RestClient $restClient, Response $errResponse)
+    protected function runBackoff(RestClient $restClient, Response $errResponse)
     {
-        Logger::setLogger($this->getLogger('test', true));
-
         $body = '[
                 {"field": "data"},
                 {"field": "more"}
@@ -132,14 +127,19 @@ class RestClientTest extends ExtractorTestCase
         $restClient->getClient()->getEmitter()->attach($history);
 
         $request = new RestRequest('ep', ['a' => 1]);
-
-        self::assertEquals(json_decode($body), $restClient->download($request));
-        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
+        $this->assertEquals(json_decode($body), $restClient->download($request));
+        $this->assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
     }
 
-    public function retryProvider()
+    /**
+     * Cannot use dataProvider because that gets set up before all tests
+     * and the delay causes issues
+     */
+    public function testBackoff()
     {
-        return [
+        Logger::setLogger($this->getLogger('test', true));
+
+        $sets = [
             'default' => [
                 RestClient::create(),
                 new Response(429, ['Retry-After' => 5])
@@ -158,6 +158,11 @@ class RestClientTest extends ExtractorTestCase
                 new Response(429, ['Retry-After' => time() + 5])
             ]
         ];
+
+        foreach($sets as $set) {
+            $this->runBackoff($set[0], $set[1]);
+        }
+
     }
 
     /**
