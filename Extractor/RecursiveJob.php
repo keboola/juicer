@@ -155,8 +155,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
         if (!empty($this->parentParams)) {
             $params = array_replace($this->parentParams, $params);
         }
-// var_dump('own', $params, 'parent', $parentResults);
-var_dump($config->getEndpoint(), $params);
+
         $job->setParams($params);
         $job->setParentResults($parentResults);
 
