@@ -46,8 +46,6 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
         $this->queryParam = $config['queryParam'];
         $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
         $this->scrollRequest = !empty($config['scrollRequest']) ? $config['scrollRequest'] : null;
-
-        parent::__construct($config);
     }
 
     public static function create(array $config)
@@ -68,7 +66,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
         $nextParam = Utils::getDataFromPath($this->responseParam, $response, '.');
-        if (empty($nextParam) || false === $this->hasMore($response)) {
+        if (empty($nextParam)) {
             return false;
         } else {
             $config = $jobConfig->getConfig();

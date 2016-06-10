@@ -34,8 +34,6 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
         $this->urlParam = !empty($config['urlKey']) ? $config['urlKey'] : 'next_page';
         $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
         $this->paramIsQuery = !empty($config['paramIsQuery']) ? (bool) $config['paramIsQuery'] : false;
-
-        parent::__construct($config);
     }
 
     public static function create(array $config)
@@ -50,7 +48,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
     {
         $nextUrl = Utils::getDataFromPath($this->urlParam, $response, '.');
 
-        if (empty($nextUrl) || false === $this->hasMore($response)) {
+        if (empty($nextUrl)) {
             return false;
         } else {
             $config = $jobConfig->getConfig();

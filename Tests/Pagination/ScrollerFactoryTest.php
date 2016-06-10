@@ -6,7 +6,7 @@ use Keboola\Juicer\Client\RestClient,
 
 class ScrollerFactoryTest extends ExtractorTestCase
 {
-    public function testGetScroller()
+    public function testCreateScroller()
     {
         self::assertInstanceOf('\Keboola\Juicer\Pagination\NoScroller', ScrollerFactory::getScroller([]));
         self::assertInstanceOf('\Keboola\Juicer\Pagination\CursorScroller', ScrollerFactory::getScroller([
@@ -33,6 +33,16 @@ class ScrollerFactoryTest extends ExtractorTestCase
             'method' => 'multiple',
             'scrollers' => ['none' => []]
         ]));
+    }
 
+    public function testDecorateScroller()
+    {
+        self::assertInstanceOf('\Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator', ScrollerFactory::getScroller([
+            'nextPageFlag' => [
+                'field' => 'continue',
+                'stopOn' => 'false'
+            ],
+            'method' => 'pagenum'
+        ]));
     }
 }

@@ -45,8 +45,6 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
 
     public function __construct(array $config)
     {
-        parent::__construct($config);
-
         $this->limit = $config['limit'];
         $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
         $this->offsetParam = !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM;
@@ -100,7 +98,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (count($data) < $this->getLimit($jobConfig) || false === $this->hasMore($response)) {
+        if (count($data) < $this->getLimit($jobConfig)) {
             $this->reset();
             return false;
         } else {

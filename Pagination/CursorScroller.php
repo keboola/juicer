@@ -40,8 +40,6 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
 
     public function __construct(array $config)
     {
-        parent::__construct($config);
-
         $this->idKey = $config['idKey'];
         $this->param = $config['param'];
         if (!empty($config['reverse'])) {
@@ -89,7 +87,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (empty($data) || false === $this->hasMore($response)) {
+        if (empty($data)) {
             $this->reset();
             return false;
         } else {

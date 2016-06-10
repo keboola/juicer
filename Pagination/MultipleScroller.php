@@ -25,8 +25,6 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
 
     public function __construct(array $config)
     {
-        parent::__construct($config);
-
         if (empty($config['scrollers'])) {
             throw new UserException('At least one scroller must be configured for "multiple" scroller.');
         }

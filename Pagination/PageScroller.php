@@ -53,8 +53,6 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         $this->firstPage = !empty($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE;
         $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
 
-        parent::__construct($config);
-
         $this->reset();
     }
 
@@ -85,7 +83,6 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         if (
             (is_null($this->getLimit($jobConfig)) && empty($data))
             || (count($data) < $this->getLimit($jobConfig))
-            || false === $this->hasMore($response)
         ) {
             $this->reset();
             return false;

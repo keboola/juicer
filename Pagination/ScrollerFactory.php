@@ -16,6 +16,24 @@ class ScrollerFactory
      */
     public static function getScroller(array $config)
     {
+        $scroller = self::createScroller($config);
+
+        $scroller = self::decorateScroller($scroller, $config);
+
+        return $scroller;
+    }
+
+    protected static function decorateScroller($scroller, $config)
+    {
+        if (!empty($config['nextPageFlag'])) {
+            $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
+        }
+
+        return $scroller;
+    }
+
+    protected static function createScroller(array $config)
+    {
         if (empty($config['method'])) {
             return NoScroller::create([]);
         }

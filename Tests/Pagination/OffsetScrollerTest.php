@@ -57,38 +57,6 @@ class OffsetScrollerTest extends ExtractorTestCase
         self::assertEquals($expected, $next4);
     }
 
-    public function testGetNextRequestHasMore()
-    {
-        $client = RestClient::create();
-        $config = new JobConfig('test', [
-            'endpoint' => 'test'
-        ]);
-
-        $scroller = new OffsetScroller([
-            'limit' => 10,
-            'nextPageFlag' => [
-                'field' => 'hasMore',
-                'stopOn' => false
-            ]
-        ]);
-
-        $next = $scroller->getNextRequest(
-            $client,
-            $config,
-            (object) ['hasMore' => true],
-            array_fill(0, 10, ['k' => 'v'])
-        );
-        self::assertInstanceOf('Keboola\Juicer\Client\RestRequest', $next);
-
-        $noNext = $scroller->getNextRequest(
-            $client,
-            $config,
-            (object) ['hasMore' => false],
-            array_fill(0, 10, ['k' => 'v'])
-        );
-        self::assertFalse($noNext);
-    }
-
     public function testGetFirstRequest()
     {
         $client = RestClient::create();

@@ -79,15 +79,18 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
      */
     protected function parse(array $data, array $parentId = null)
     {
-        // Add parent values to the result
-        $parentCols = is_null($parentId) ? [] : $parentId;
-        foreach($this->parentParams as $v) {
-            $key = $this->prependParent($v['field']);
-            $parentCols[$key] = $v['value'];
-        }
+        parent::parse($data, $this->getParentCols($parentId));
 
-        parent::parse($data, $parentCols);
+        $this->runChildJobs($data);
 
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function runChildJobs(array $data)
+    {
         foreach($this->config->getChildJobs() as $jobId => $child) {
             if (!empty($child->getConfig()['recursionFilter'])) {
                 try {
@@ -98,7 +101,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
             }
 
             foreach($data as $result) {
-                if (!empty($filter) && ($filter->compareObject((object) $result) == false)){
+                if (!empty($filter) && ($filter->compareObject((object) $result) == false)) {
                     continue;
                 }
 
@@ -110,8 +113,21 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
                 $childJob->run();
             }
         }
+    }
 
-        return $data;
+    /**
+     * @param array $parentIdCols
+     * @return array
+     */
+    protected function getParentCols(array $parentIdCols = null)
+    {
+        // Add parent values to the result
+        $parentCols = is_null($parentIdCols) ? [] : $parentIdCols;
+        foreach($this->parentParams as $v) {
+            $key = $this->prependParent($v['field']);
+            $parentCols[$key] = $v['value'];
+        }
+        return $parentCols;
     }
 
     /**
@@ -139,7 +155,8 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
         if (!empty($this->parentParams)) {
             $params = array_replace($this->parentParams, $params);
         }
-
+// var_dump('own', $params, 'parent', $parentResults);
+var_dump($config->getEndpoint(), $params);
         $job->setParams($params);
         $job->setParentResults($parentResults);
 
