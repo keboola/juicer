@@ -71,6 +71,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
     {
         $this->startTime = time();
+        $this->pageCounter = 1;
 
         return $this->scroller->getFirstRequest($client, $jobConfig);
     }
