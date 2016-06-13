@@ -9,7 +9,7 @@ use Keboola\Juicer\Pagination\ScrollerInterface,
     Keboola\Juicer\Exception\UserException;
 
 /**
- *
+ * @todo $config should be the config for the Decorator itself
  */
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
@@ -42,7 +42,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        return $this->scroller->getFirstRequest($client, $jobConfig, $response, $data);
+        return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);
     }
 
     /**

@@ -20,11 +20,6 @@ use Keboola\Juicer\Pagination\ScrollerInterface,
  */
 class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var ScrollerInterface
-     */
-    protected $scroller;
-
     protected $nextPageFlag = null;
 
     public function __construct(ScrollerInterface $scroller, array $config)
@@ -61,7 +56,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             return false;
         }
 
-        return $this->scroller->getFirstRequest($client, $jobConfig, $response, $data);
+        return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);
     }
 
         /**

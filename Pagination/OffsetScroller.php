@@ -88,7 +88,6 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
             $config = $jobConfig->getConfig();
         }
 
-
         return $client->createRequest($config);
     }
 
