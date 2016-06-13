@@ -29,6 +29,10 @@ class ScrollerFactory
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
         }
 
+        if (!empty($config['forceStop'])) {
+            $scroller = new Decorator\ForceStopScrollerDecorator($scroller, $config);
+        }
+
         return $scroller;
     }
 
