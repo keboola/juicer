@@ -119,7 +119,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
             return false;
         }
 
-        if ($this->startTime + $this->timeLimit > time()) {
+        if (($this->startTime + $this->timeLimit) <= time()) {
             return true;
         }
     }
@@ -140,6 +140,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     {
         $this->pageCounter = 0;
         $this->volumeCounter = 0;
+        $this->startTime = time();
 
         return parent::reset();
     }
