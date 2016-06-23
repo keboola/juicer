@@ -59,7 +59,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);
     }
 
-        /**
+    /**
      * @param mixed $response
      * @return bool|null Returns null if this option isn't used
      */

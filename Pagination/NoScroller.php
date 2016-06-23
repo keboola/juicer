@@ -36,4 +36,11 @@ class NoScroller implements ScrollerInterface
     public static function create(array $config) {
         return new self;
     }
+
+    public function getState()
+    {
+        return [];
+    }
+
+    public function setState(array $state) {}
 }

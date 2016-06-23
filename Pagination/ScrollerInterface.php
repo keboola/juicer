@@ -17,7 +17,7 @@ interface ScrollerInterface
     /**
      * @param ClientInterface $client
      * @param $jobConfig $jobConfig
-     * @param mixed $response
+     * @param array|object $response
      * @param array $data
      * @return RequestInterface|false
      */
@@ -27,6 +27,18 @@ interface ScrollerInterface
      * Reset the pagination pointer
      */
     public function reset();
+
+    /**
+     * Get the current scrolling state
+     * @return array
+     */
+    public function getState();
+
+    /**
+     * Restore the scroller state
+     * @param array $state
+     */
+    public function setState(array $state);
 
     public static function create(array $config);
 }
