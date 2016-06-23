@@ -50,7 +50,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         $this->pageParam = !empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM;
         $this->limit = !empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT;
         $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
-        $this->firstPage = !empty($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE;
+        $this->firstPage = isset($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE;
         $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
 
         $this->reset();

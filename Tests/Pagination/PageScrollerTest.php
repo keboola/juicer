@@ -30,6 +30,27 @@ class PageScrollerTest extends ExtractorTestCase
         self::assertEquals($client->createRequest($expectedCfg), $req);
     }
 
+    public function testGetFirstRequestExplicit()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', [
+            'endpoint' => 'test',
+            'params' => [
+                'a' => 1,
+                'b' => 2
+            ]
+        ]);
+
+        $scroller = PageScroller::create(['limit' => 500, 'firstPage' => 0]);
+
+        $req = $scroller->getFirstRequest($client, $config);
+
+        $expectedCfg = $config->getConfig();
+        $expectedCfg['params']['page'] = 0;
+        $expectedCfg['params']['limit'] = 500;
+        self::assertEquals($client->createRequest($expectedCfg), $req);
+    }
+
     public function testGetFirstRequestNoParams()
     {
         $client = RestClient::create();
