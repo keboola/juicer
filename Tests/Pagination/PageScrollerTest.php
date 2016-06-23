@@ -166,4 +166,21 @@ class PageScrollerTest extends ExtractorTestCase
         self::assertEquals(3, $third->getParams()['page']);
         self::assertFalse($last);
     }
+
+    public function testSetState()
+    {
+        $client = RestClient::create();
+        $config = new JobConfig('test', ['endpoint' => 'test']);
+
+        $scroller = new PageScroller(['pageParam' => 'p']);
+
+        $first = $scroller->getFirstRequest($client, $config);
+        $second = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+
+        $state = $scroller->getState();
+        $newScroller = new PageScroller([]);
+        $newScroller->setState($state);
+        $third = $newScroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        self::assertEquals(3, $third->getParams()['p']);
+    }
 }

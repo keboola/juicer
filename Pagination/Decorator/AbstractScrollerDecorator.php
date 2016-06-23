@@ -23,7 +23,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
         $this->scroller = $scroller;
     }
 
-        /**
+    /**
      * @param ClientInterface $client
      * @param $jobConfig $jobConfig
      * @return RequestInterface|false
@@ -64,6 +64,30 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     public function getScroller()
     {
         return $this->scroller;
+    }
+
+    /**
+     * Get object vars by default
+     */
+    public function getState()
+    {
+        return [
+            'decorator' => get_object_vars($this),
+            'scroller' => get_object_vars($this->scroller)
+        ];
+    }
+
+    public function setState(array $state)
+    {
+        if (isset($state['scroller'])) {
+            $this->scroller->setState($state['scroller']);
+        }
+
+        foreach(array_keys(get_object_vars($this)) as $key) {
+            if (isset($state['decorator'][$key])) {
+                $this->{$key} = $state['decorator'][$key];
+            }
+        }
     }
 }
 

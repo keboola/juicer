@@ -47,6 +47,11 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      */
     protected $startTime;
 
+    /**
+     * @var bool
+     */
+    protected $limitReached;
+
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         if (!empty($config['forceStop'])) {
@@ -68,6 +73,11 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         $this->reset();
     }
 
+    /**
+     * @param ClientInterface $client
+     * @param $jobConfig $jobConfig
+     * @return RequestInterface
+     */
     public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
     {
         $this->startTime = time();
@@ -86,6 +96,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
         if ($this->checkLimits($response)) {
+            $this->limitReached = true;
             return false;
         }
 
@@ -103,6 +114,10 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         }
     }
 
+    /**
+     * Uses internal counter to check page limit
+     * @return bool
+     */
     protected function checkPages()
     {
         if (is_null($this->pageLimit)) {
@@ -114,6 +129,10 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         }
     }
 
+    /**
+     * Checks time between first and current request
+     * @return bool
+     */
     protected function checkTime()
     {
         if (is_null($this->timeLimit)) {
@@ -125,6 +144,11 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         }
     }
 
+    /**
+     * Count the size of $response and check the limit
+     * @param object|array $response
+     * @return bool
+     */
     protected function checkVolume($response)
     {
         if (is_null($this->volumeLimit)) {
@@ -144,6 +168,14 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         $this->startTime = time();
 
         return parent::reset();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLimitReached()
+    {
+        return (bool) $this->limitReached;
     }
 }
 
