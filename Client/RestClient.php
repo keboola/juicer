@@ -2,6 +2,7 @@
 
 namespace Keboola\Juicer\Client;
 
+use GuzzleHttp\Exception\RequestException;
 use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\ApplicationException,
     Keboola\Juicer\Config\JobConfig,
@@ -37,34 +38,51 @@ class RestClient extends AbstractClient implements ClientInterface
     const XML = 'xml';
     const RAW = 'raw';
 
-    protected static $defaultRetryCodes = [500, 502, 503, 504, 408, 420, 429];
-
     /**
      * @var string
      */
     protected $responseFormat = self::JSON;
 
+    /**
+     * RestClient constructor.
+     * @param Client $guzzle
+     */
     public function __construct(Client $guzzle)
     {
         $this->client = $guzzle;
     }
 
     /**
-     * @param array $defaults GuzzleHttp\Client defaults
-     * @param array $retryConfig
-     *      maxRetries => Maximum retries
-     *      httpCodes => List of HTTP error codes to retry on
-     *      headerName => Header containing the retry delay
+     * @param array $guzzleConfig GuzzleHttp\Client defaults
+     * @param array $retryConfig @see RestClient::createBackoff()
+     *
+     * retryConfig options
+     *  - maxRetries: (integer) max retries count
+     *  - http
+     *      - retryHeader (string) header containing retry time header
+     *      - codes (array) list of status codes to retry on
+     * - curl
+     *      - codes (array) list of error codes to retry on
+     *
      * @return self
      */
-    public static function create($defaults = [], $retryConfig = null)
+    public static function create($guzzleConfig = [], $retryConfig = [])
     {
-        $retries = $retryConfig['maxRetries'] ?? 10;
-        $httpCodes = $retryConfig['httpCodes'] ?? self::$defaultRetryCodes;
-        $delayHeaderName = $retryConfig['headerName'] ?? 'Retry-After';
+        $guzzle = new Client($guzzleConfig);
+        $guzzle->getEmitter()->attach(self::createBackoff($retryConfig));
 
-        $guzzle = new Client($defaults);
-        $guzzle->getEmitter()->attach(self::getBackoff($retries, $httpCodes, $delayHeaderName));
+        $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent) {
+            $errno = $errorEvent->getTransferInfo('errno');
+            $error = $errorEvent->getTransferInfo('error');
+
+            if ($errno > 0) {
+                throw new UserException(sprintf(
+                    "CURL error %d: %s",
+                    $errno,
+                    $error
+                ));
+            }
+        }, "last");
         return new self($guzzle);
     }
 
@@ -97,6 +115,12 @@ class RestClient extends AbstractClient implements ClientInterface
                 $e,
                 ['body' => $data]
             );
+        } catch (RequestException $e) {
+            if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
+                throw $e->getPrevious();
+            } else {
+                throw $e;
+            }
         }
 
         return $this->getObjectFromResponse($response);
@@ -104,7 +128,9 @@ class RestClient extends AbstractClient implements ClientInterface
 
     /**
      * @param Response $response
-     * @return object|array Should be anything that can result from json_decode
+     * @return array|object Should be anything that can result from json_decode
+     * @throws ApplicationException
+     * @throws UserException
      */
     protected function getObjectFromResponse(Response $response)
     {
@@ -151,6 +177,8 @@ class RestClient extends AbstractClient implements ClientInterface
     /**
      * @param RequestInterface $request
      * @return GuzzleRequest
+     * @throws ApplicationException
+     * @throws UserException
      */
     protected function getGuzzleRequest(RequestInterface $request)
     {
@@ -196,22 +224,39 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * Returns an exponential backoff (prefers Retry-After header) for GuzzleClient (4.*).
-     * Use: `$client->getEmitter()->attach($this->getBackoff());`
-     * @param int $max
-     * @param array $retryCodes
+     * Create expontential backoff for GuzzleClient
+     *
+     * options
+     *  - maxRetries: (integer) max retries count
+     *  - http
+     *      - retryHeader (string) header containing retry time header
+     *      - codes (array) list of status codes to retry on
+     * - curl
+     *      - codes (array) list of error codes to retry on
+     *
+     * @param array $options
      * @return RetrySubscriber
      */
-    public static function getBackoff($max = 10, array $retryCodes = null, $headerName = 'Retry-After')
+    private static function createBackoff(array $options)
     {
-        $retryCodes = is_null($retryCodes) ? self::$defaultRetryCodes : $retryCodes;
+        $headerName = isset($options['http']['retryHeader']) ? $options['http']['retryHeader'] : 'Retry-After';
+        $httpRetryCodes = isset($options['http']['codes']) ? $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];
+        $maxRetries = isset($options['maxRetries']) ? (int) $options['maxRetries']: 10;
+
+        $curlRetryCodes = isset($options['curl']['codes']) ? $options['curl']['codes'] : [
+            CURLE_OPERATION_TIMEOUTED,
+            CURLE_COULDNT_RESOLVE_HOST,
+            CURLE_COULDNT_CONNECT,
+            CURLE_SSL_CONNECT_ERROR,
+            CURLE_GOT_NOTHING
+        ];
 
         return new RetrySubscriber([
             'filter' => RetrySubscriber::createChainFilter([
-                RetrySubscriber::createStatusFilter($retryCodes),
-                RetrySubscriber::createCurlFilter()
+                RetrySubscriber::createStatusFilter($httpRetryCodes),
+                RetrySubscriber::createCurlFilter($curlRetryCodes)
             ]),
-            'max' => $max,
+            'max' => $maxRetries,
             'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName) {
                 $delay = self::getRetryDelay($retries, $event, $headerName);
 

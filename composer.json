@@ -17,7 +17,7 @@
         "keboola/csvmap": "^0.2",
         "keboola/filter": "~0.1.0",
         "symfony/yaml": "~2.6.3",
-        "guzzlehttp/retry-subscriber": "^2.0",
+        "guzzlehttp/retry-subscriber": "dev-master#270393c",
         "guzzlehttp/guzzle": "^5.3",
         "monolog/monolog": "~1.15.0",
         "keboola/codebuilder": "~0.2.0"
