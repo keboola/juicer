@@ -51,6 +51,8 @@ class ScrollerFactory
                 return ResponseUrlScroller::create($config);
             case 'zendesk.response.url':
                 return ZendeskResponseUrlScroller::create($config);
+            case 'facebook.response.url':
+                return FacebookResponseUrlScroller::create($config);
             case 'pagenum':
                 return PageScroller::create($config);
             case 'cursor':
