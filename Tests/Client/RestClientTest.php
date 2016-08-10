@@ -9,6 +9,7 @@ use GuzzleHttp\Client,
     GuzzleHttp\Stream\Stream,
     GuzzleHttp\Subscriber\Mock,
     GuzzleHttp\Subscriber\History;
+use Monolog\Handler;
 
 class RestClientTest extends ExtractorTestCase
 {
@@ -135,7 +136,7 @@ class RestClientTest extends ExtractorTestCase
      * Cannot use dataProvider because that gets set up before all tests
      * and the delay causes issues
      */
-    public function testBackoff()
+    public function testStatusBackoff()
     {
         Logger::setLogger($this->getLogger('test', true));
 
@@ -146,9 +147,10 @@ class RestClientTest extends ExtractorTestCase
             ],
             'custom' => [
                 RestClient::create([], [
-                    'headerName' => 'X-Rate-Limit-Reset',
-        //             'relative' => false, // is "guessed" by the app
-                    'httpCodes' => [403, 429],
+                    'http' => [
+                        'retryHeader' => 'X-Rate-Limit-Reset',
+                        'codes' => [403, 429],
+                    ],
                     'maxRetries' => 8
                 ]),
                 new Response(403, ['X-Rate-Limit-Reset' => 5])
@@ -163,6 +165,75 @@ class RestClientTest extends ExtractorTestCase
             $this->runBackoff($set[0], $set[1]);
         }
 
+    }
+
+    /**
+     * Cannot use dataProvider because that gets set up before all tests
+     * and the delay causes issues
+     */
+    public function testCurlBackoff()
+    {
+        // mapped curl error
+        $retries = 3;
+        $handler = new \Monolog\Handler\TestHandler();
+        $logger = new \Monolog\Logger("test", [
+            $handler
+        ]);
+
+        Logger::setLogger($logger);
+
+        $client = RestClient::create([], [
+            'maxRetries' => $retries,
+            'curl' => [
+                'codes' => [ 6 ],
+            ]
+        ]);
+
+        try {
+            $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
+
+            $this->fail("Request shoul fail");
+        } catch (\Exception $e) {
+            $this->assertCount($retries, $handler->getRecords());
+
+            foreach ($handler->getRecords() AS $record) {
+                $this->assertEquals(100, $record['level']);
+                $this->assertRegExp('/retrying/ui', $record['message']);
+                $this->assertRegExp('/curl error 6\:/ui', $record['context']['message']);
+            }
+
+
+            $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            $this->assertTrue($e instanceof \Keboola\Juicer\Exception\UserException);
+        }
+
+
+        // non-mapped curl error
+        $retries = 3;
+        $handler = new \Monolog\Handler\TestHandler();
+        $logger = new \Monolog\Logger("test", [
+            $handler
+        ]);
+
+        Logger::setLogger($logger);
+
+        $client = RestClient::create([], [
+            'maxRetries' => $retries,
+            'curl' => [
+                'codes' => [ 77 ],
+            ]
+        ]);
+
+        try {
+            $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
+
+            $this->fail("Request shoul fail");
+        } catch (\Exception $e) {
+            $this->assertCount(0, $handler->getRecords());
+
+            $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            $this->assertTrue($e instanceof \Keboola\Juicer\Exception\UserException);
+        }
     }
 
     /**
