@@ -2,12 +2,10 @@
 
 namespace Keboola\Juicer\Config;
 
-use Symfony\Component\Yaml\Yaml;
-use Keboola\Juicer\Exception\ApplicationException,
+use Keboola\Juicer\Filesystem\JsonFile;
     Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
     Keboola\Juicer\Exception\NoDataException,
-    Keboola\Juicer\Filesystem\YamlFile;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 
@@ -26,10 +24,6 @@ class Configuration
      */
     protected $temp;
 
-    /**
-     * @var array
-     */
-    protected $ymlConfig = [];
 
     /**
      * @var string
@@ -37,9 +31,9 @@ class Configuration
     protected $dataDir;
 
     /**
-     * @var YamlFile[]
+     * @var JsonFile[]
      */
-    protected $yamlFiles;
+    protected $jsonFiles;
 
     public function __construct($dataDir, $appName, Temp $temp)
     {
@@ -54,7 +48,7 @@ class Configuration
     public function getMultipleConfigs()
     {
         try {
-            $iterations = $this->getYaml('/config.yml', 'parameters', 'iterations');
+            $iterations = $this->getJSON('/config.json', 'parameters', 'iterations');
         } catch(NoDataException $e) {
             $iterations = [null];
         }
@@ -70,38 +64,37 @@ class Configuration
     /**
      * @param array $params Values to override in the config
      * @return Config
-     * @todo separate the loading of YML and pass it as an argument
      */
     public function getConfig(array $params = null)
     {
         try {
-            $configYml = $this->getYaml('/config.yml', 'parameters', 'config');
+            $configJson = $this->getJSON('/config.json', 'parameters', 'config');
         } catch(NoDataException $e) {
             throw new UserException($e->getMessage(), 0, $e);
         }
 
         if (!is_null($params)) {
-            $configYml = array_replace($configYml, $params);
+            $configJson = array_replace($configJson, $params);
         }
 
-        $configName = empty($configYml['id']) ? '' : $configYml['id'];
+        $configName = empty($configJson['id']) ? '' : $configJson['id'];
         $runtimeParams = []; // TODO get runtime params from console
 
-        if (empty($configYml['jobs'])) {
+        if (empty($configJson['jobs'])) {
             throw new UserException("No 'jobs' specified in the config!");
         }
 
-        $jobs = $configYml['jobs'];
+        $jobs = $configJson['jobs'];
         $jobConfigs = [];
         foreach($jobs as $job) {
             $jobConfig = $this->createJob($job);
             $jobConfigs[$jobConfig->getJobId()] = $jobConfig;
         }
-        unset($configYml['jobs']); // weird
+        unset($configJson['jobs']); // weird
 
         $config = new Config($this->appName, $configName, $runtimeParams);
         $config->setJobs($jobConfigs);
-        $config->setAttributes($configYml);
+        $config->setAttributes($configJson);
 
         return $config;
     }
@@ -130,18 +123,17 @@ class Configuration
     }
 
     /**
-     * @todo bool $asArray = false
-     * @return YamlFile
+     * @return JsonFile
      */
     public function getMetadata()
     {
-        $yaml = new YamlFile($this->dataDir . "/in/state.yml");
+        $json = new JsonFile($this->dataDir . "/in/state.json");
         try {
-            $yaml->load();
+            $json->load();
         } catch(FileNotFoundException $e) {
             // log?
         }
-        return $yaml;
+        return $json;
     }
 
     public function saveConfigMetadata(array $data)
@@ -152,37 +144,24 @@ class Configuration
             mkdir($dirPath, 0700, true);
         }
 
-        file_put_contents($dirPath . '/state.yml', Yaml::dump($data));
+        file_put_contents($dirPath . '/state.json', json_encode($data));
     }
 
-    /**
-     * @param string $path
-     * @return array
-     * @todo 2nd param to get part of the config with "not found" handling
-     * @deprecated by getYaml($path, $child1key, $child2key, ...)
-     */
-    protected function getYmlConfig($path = '/config.yml')
-    {
-        if (empty($this->ymlConfig[$path])) {
-            $this->ymlConfig[$path] = Yaml::parse(file_get_contents($this->dataDir . $path));
-        }
-        return $this->ymlConfig[$path];
-    }
 
     /**
      * @param string $filePath
      * @param string $path,..
      */
-    protected function getYaml($filePath)
+    protected function getJSON($filePath)
     {
         $path = func_get_args();
         $filePath = array_shift($path);
 
-        if (empty($this->yamlFiles[$filePath])) {
-            $this->yamlFiles[$filePath] = YamlFile::create($this->dataDir . $filePath);
+        if (empty($this->jsonFiles[$filePath])) {
+            $this->jsonFiles[$filePath] = JsonFile::create($this->dataDir . $filePath);
         }
 
-        return call_user_func_array([$this->yamlFiles[$filePath], 'get'], $path);
+        return call_user_func_array([$this->jsonFiles[$filePath], 'get'], $path);
     }
 
     /**
@@ -229,7 +208,7 @@ class Configuration
                 $manifest['primary_key'] = $file->getPrimaryKey(true);
             }
 
-            file_put_contents($path . $key . '.manifest', Yaml::dump($manifest));
+            file_put_contents($path . $key . '.manifest', json_encode($manifest));
             copy($file->getPathname(), $path . $key);
         }
     }

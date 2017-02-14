@@ -1,13 +1,13 @@
 <?php
 
-use Keboola\Juicer\Filesystem\YamlFile;
+use Keboola\Juicer\Filesystem\JsonFile;
 
-class YamlFileTest extends ExtractorTestCase
+class JsonFileTest extends ExtractorTestCase
 {
 
     public function testGet()
     {
-        $file = new YamlFile('');
+        $file = new JsonFile('');
         $file->setData([
             'first' => [
                 'second' => 'value'
@@ -20,10 +20,10 @@ class YamlFileTest extends ExtractorTestCase
     public function testCreate()
     {
         $path = ROOT_PATH . '/Tests/config.yml';
-        $file = YamlFile::create($path);
+        $file = JsonFile::create($path);
 
         self::assertEquals(
-            \Symfony\Component\Yaml\Yaml::parse(file_get_contents($path)),
+            json_decode(file_get_contents($path), true),
             $file->getData()
         );
     }
@@ -34,6 +34,6 @@ class YamlFileTest extends ExtractorTestCase
      */
     public function testCreateWError()
     {
-        $yamlFile = YamlFile::create('/asd/123', 'w');
+        JsonFile::create('/asd/123', 'w');
     }
 }

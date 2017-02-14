@@ -71,7 +71,7 @@ class JsonTest extends ExtractorTestCase
     {
         $parser = new Json(Parser::create($this->getLogger('test', true)));
 
-        $struct = \Symfony\Component\Yaml\Yaml::parse(file_get_contents('./Tests/data/outdatedStruct.yml'));
+        $struct = json_decode(file_get_contents('./Tests/data/outdatedStruct.json'), true);
 
         $updated = $this->callMethod($parser, 'updateStruct', [$struct]);
 

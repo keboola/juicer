@@ -1,3 +1,1 @@
-incremental: false
-primary_key:
-    - col11
+{"incremental":false,"primary_key":["col11"]}

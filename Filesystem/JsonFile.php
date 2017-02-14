@@ -2,9 +2,7 @@
 
 namespace Keboola\Juicer\Filesystem;
 
-use Symfony\Component\Yaml\Yaml;
 use Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
     Keboola\Juicer\Exception\NoDataException;
 
@@ -14,7 +12,7 @@ use Keboola\Juicer\Exception\ApplicationException,
  *  should probably default to object
  * @todo also 2nd param, exceptionOnInvalidType
  */
-class YamlFile
+class JsonFile
 {
     const MODE_READ = 'r';
     const MODE_WRITE = 'w';
@@ -38,34 +36,34 @@ class YamlFile
      */
     public static function create($pathName, $mode = self::MODE_READ)
     {
-        $yaml = new self($pathName);
+        $json = new self($pathName);
 
         if ($mode == self::MODE_READ) {
-            $yaml->load();
+            $json->load();
         } elseif ($mode == self::MODE_WRITE) {
             try {
                 touch($pathName);
             } catch(\ErrorException $e) {
                 throw new ApplicationException("Error creating file '{$pathName}'");
             }
-            $yaml->load();
+            $json->load();
         }
 
-        return $yaml;
+        return $json;
     }
 
     public function load()
     {
         if (!file_exists($this->pathName)) {
-            throw new FileNotFoundException("Failed loading YAML file {$this->pathName}. File does not exist.");
+            throw new FileNotFoundException("Failed loading JSON file {$this->pathName}. File does not exist.");
         }
 
-        $this->data = Yaml::parse(file_get_contents($this->pathName));
+        $this->data = json_decode(file_get_contents($this->pathName), true);
     }
 
     public function save()
     {
-        file_put_contents($this->pathName, Yaml::dump($this->data));
+        file_put_contents($this->pathName, json_encode($this->data));
     }
 
     public function getData()
@@ -81,10 +79,9 @@ class YamlFile
         $path = func_get_args();
 
         if (is_scalar($this->data) && func_num_args() > 0) {
-            throw new NoDataException("Cannot retrieve nested nodes from a scalar in the YAML.");
+            throw new NoDataException("Cannot retrieve nested nodes from a scalar in the JSON.");
         }
 
-        // TODO test to ensure a data object isn't changed
         $data = $this->data;
         foreach($path as $key) {
             $data = (array) $data;
@@ -106,7 +103,6 @@ class YamlFile
 
     public function update($data)
     {
-        // FIXME what if it's not an array?
         $this->data = array_replace_recursive($this->data, $data);
     }
 }
