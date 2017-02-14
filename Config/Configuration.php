@@ -5,7 +5,7 @@ namespace Keboola\Juicer\Config;
 use Keboola\Juicer\Filesystem\JsonFile;
 use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
-    Keboola\Juicer\Exception\NoDataException,
+    Keboola\Juicer\Exception\NoDataException;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 
