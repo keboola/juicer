@@ -4,7 +4,6 @@ use Keboola\Juicer\Config\Configuration,
     Keboola\Juicer\Config\JobConfig;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
-use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationTest extends ExtractorTestCase
 {
@@ -72,9 +71,9 @@ class ConfigurationTest extends ExtractorTestCase
         $path = __DIR__ . '/../data/metadataTest';
 
         $configuration = new Configuration($path, 'test', new Temp('test'));
-        $yml = $configuration->getConfigMetadata();
+        $json = $configuration->getConfigMetadata();
 
-        self::assertEquals(Yaml::parse("some: data\nmore:\n    woah: 'such recursive'"), $yml);
+        self::assertEquals(json_decode('{"some":"data","more": {"woah": "such recursive"}}', true), $json);
 
         $noConfiguration = new Configuration('asdf', 'test', new Temp('test'));
         self::assertEquals(null, $noConfiguration->getConfigMetadata());
@@ -93,7 +92,7 @@ class ConfigurationTest extends ExtractorTestCase
             ]
         ]);
 
-        self::assertFileEquals('./Tests/data/metadataTest/out/state.yml', $resultsPath . '/out/state.yml');
+        self::assertFileEquals('./Tests/data/metadataTest/out/state.json', $resultsPath . '/out/state.json');
 
         $this->rmDir($resultsPath);
     }
@@ -104,12 +103,12 @@ class ConfigurationTest extends ExtractorTestCase
 
         $config = $configuration->getConfig();
 
-        $yml = Yaml::parse(file_get_contents('./Tests/data/recursive/config.yml'));
+        $json = json_decode(file_get_contents('./Tests/data/recursive/config.json'), true);
 
         $jobs = $config->getJobs();
-        self::assertEquals(JobConfig::create($yml['parameters']['config']['jobs'][0]), reset($jobs));
+        self::assertEquals(JobConfig::create($json['parameters']['config']['jobs'][0]), reset($jobs));
 
-        self::assertEquals($yml['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
+        self::assertEquals($json['parameters']['config']['outputBucket'], $config->getAttribute('outputBucket'));
     }
 
     public function testGetMultipleConfigs()
@@ -118,14 +117,14 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configs = $configuration->getMultipleConfigs();
 
-        $yml = Yaml::parse(file_get_contents('./Tests/data/iterations/config.yml'));
+        $json = json_decode(file_get_contents('./Tests/data/iterations/config.json'), true);
 
-        foreach($yml['parameters']['iterations'] as $i => $params) {
-            self::assertEquals(array_replace(['id' => $yml['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
+        foreach($json['parameters']['iterations'] as $i => $params) {
+            self::assertEquals(array_replace(['id' => $json['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
         }
         self::assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
         self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
-        self::assertCount(count($yml['parameters']['iterations']), $configs);
+        self::assertCount(count($json['parameters']['iterations']), $configs);
     }
 
     public function testGetMultipleConfigsSingle()
@@ -134,8 +133,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configs = $configuration->getMultipleConfigs();
 
-        $yml = Yaml::parse(file_get_contents('./Tests/data/simple_basic/config.yml'));
-
+        $json = json_decode(file_get_contents('./Tests/data/simple_basic/config.json'), true);
 
         self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
         self::assertCount(1, $configs);
@@ -143,11 +141,11 @@ class ConfigurationTest extends ExtractorTestCase
         self::assertEquals($configuration->getConfig(), $configs[0]);
     }
 
-    public function testGetYaml()
+    public function testGetJson()
     {
         $configuration = new Configuration('./Tests/data/simple_basic', 'test', new Temp('test'));
 
-        $result = self::callMethod($configuration, 'getYaml', ['/config.yml', 'parameters', 'config', 'id']);
+        $result = self::callMethod($configuration, 'getJson', ['/config.json', 'parameters', 'config', 'id']);
 
         self::assertEquals('multiCfg', $result);
     }

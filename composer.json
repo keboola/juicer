@@ -12,7 +12,7 @@
         "php": ">=7.0",
         "keboola/json-parser": "~1.0.0",
         "keboola/php-temp": "~0.1.0",
-        "keboola/php-utils": "~0.1.20",
+        "keboola/php-utils": "0.1.20",
         "keboola/php-csvtable": "~0.1.6",
         "keboola/csvmap": "^0.2",
         "keboola/filter": "~0.1.0",
