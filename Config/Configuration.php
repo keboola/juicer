@@ -3,7 +3,7 @@
 namespace Keboola\Juicer\Config;
 
 use Keboola\Juicer\Filesystem\JsonFile;
-    Keboola\Juicer\Exception\UserException,
+use Keboola\Juicer\Exception\UserException,
     Keboola\Juicer\Exception\FileNotFoundException,
     Keboola\Juicer\Exception\NoDataException,
 use Keboola\Temp\Temp;
