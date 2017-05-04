@@ -2,6 +2,7 @@
 
 namespace Keboola\Juicer\Pagination\Decorator;
 
+use Keboola\Juicer\Client\RequestInterface;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;

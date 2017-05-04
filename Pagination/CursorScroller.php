@@ -14,11 +14,11 @@ use Keboola\Utils\Utils;
 class CursorScroller extends AbstractScroller implements ScrollerInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $max = null;
     /**
-     * @var int
+     * @var int|null
      */
     protected $min = null;
     /**

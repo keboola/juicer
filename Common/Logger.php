@@ -6,6 +6,7 @@ use Keboola\Juicer\Exception\ApplicationException as Exception;
 use Monolog\Logger as Monolog;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wrapper for Monolog\Logger
@@ -18,6 +19,10 @@ class Logger
      */
     private static $logger = null;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $hovno;
     /**
      * @var bool
      */

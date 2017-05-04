@@ -99,6 +99,7 @@ class RestClient extends AbstractClient implements ClientInterface
     {
         try {
             $response = $this->client->send($this->getGuzzleRequest($request));
+            return $this->getObjectFromResponse($response);
         } catch (BadResponseException $e) {
             // TODO try XML if JSON fails
             $data = json_decode($e->getResponse()->getBody(), true);
@@ -119,8 +120,6 @@ class RestClient extends AbstractClient implements ClientInterface
                 throw $e;
             }
         }
-
-        return $this->getObjectFromResponse($response);
     }
 
     /**
