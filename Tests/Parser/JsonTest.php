@@ -1,10 +1,12 @@
 <?php
 
-use Keboola\Juicer\Parser\Json,
-    Keboola\Juicer\Common\Logger;
+namespace Keboola\Juicer\Tests\Parser;
+
+use Keboola\Juicer\Parser\Json;
+use Keboola\Juicer\Common\Logger;
 use Keboola\Json\Parser;
-use Keboola\Csv\CsvFile;
-use Keboola\Temp\Temp;
+use Keboola\Juicer\Tests\ExtractorTestCase;
+use Monolog\Handler\TestHandler;
 
 class JsonTest extends ExtractorTestCase
 {
@@ -129,7 +131,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testProcessNoData()
     {
-        $logHandler = new \Monolog\Handler\TestHandler();
+        $logHandler = new TestHandler();
         $logger = new \Monolog\Logger('test', [$logHandler]);
         Logger::setLogger($logger);
         $parser = new Json(Parser::create($logger));

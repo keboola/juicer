@@ -1,8 +1,11 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\NoScroller;
+namespace Keboola\Juicer\Tests\Pagination;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\NoScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class NoScrollerTest extends ExtractorTestCase
 {

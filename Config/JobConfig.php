@@ -2,8 +2,6 @@
 
 namespace Keboola\Juicer\Config;
 
-use Keboola\Utils\Utils,
-    Keboola\Utils\Exception\JsonDecodeException;
 use Keboola\Juicer\Exception\UserException;
 
 /**
@@ -46,8 +44,9 @@ class JobConfig
      *        ]
      * where accountId is a placeholder used as {accountId} in child job's endpoint
      * and account_id points to a key in a single response object (within an array)
-     * @param array $configs Array of all configs to create recursion
      * @return JobConfig
+     * @throws UserException
+     * @internal param array $configs Array of all configs to create recursion
      */
     public static function create(array $config)
     {
@@ -62,7 +61,7 @@ class JobConfig
 
         $job = new self($config['id'], $config);
         if (!empty($config['children'])) {
-            foreach($config['children'] as $child) {
+            foreach ($config['children'] as $child) {
                 $job->addChildJob(self::create($child));
             }
         }

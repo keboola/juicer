@@ -2,10 +2,6 @@
 
 namespace Keboola\Juicer\Client;
 
-use Keboola\Juicer\Exception\ApplicationException as Exception;
-/**
- *
- */
 abstract class Request
 {
     protected $endpoint;
@@ -37,6 +33,4 @@ abstract class Request
     {
         return $this->params;
     }
-
-
 }

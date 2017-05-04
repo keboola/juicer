@@ -3,24 +3,19 @@
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\RequestException;
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Common\Logger;
-use GuzzleHttp\Client,
-    GuzzleHttp\Exception\BadResponseException,
-    GuzzleHttp\Exception\ClientException,
-    GuzzleHttp\Message\Request as GuzzleRequest,
-    GuzzleHttp\Message\Response,
-    GuzzleHttp\Subscriber\Retry\RetrySubscriber,
-    GuzzleHttp\Event\AbstractTransferEvent,
-    GuzzleHttp\Event\ErrorEvent;
-use Keboola\Utils\Utils,
-    Keboola\Utils\Exception\JsonDecodeException;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Exception\ApplicationException;
+use Keboola\Juicer\Common\Logger;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Message\Request as GuzzleRequest;
+use GuzzleHttp\Message\Response;
+use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
+use GuzzleHttp\Event\AbstractTransferEvent;
+use GuzzleHttp\Event\ErrorEvent;
+use Keboola\Utils\Utils;
+use Keboola\Utils\Exception\JsonDecodeException;
 
-/**
- *
- */
 class RestClient extends AbstractClient implements ClientInterface
 {
     /**
@@ -95,8 +90,10 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @param Request $request
-     * @return object|array
+     * @param Request|RequestInterface $request
+     * @return array|object
+     * @throws UserException
+     * @throws \Exception
      */
     public function download(RequestInterface $request)
     {
@@ -141,7 +138,7 @@ class RestClient extends AbstractClient implements ClientInterface
                 $body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
                 try {
                     $decoded = Utils::json_decode($body, false, 512, 0, true, true);
-                } catch(JsonDecodeException $e) {
+                } catch (JsonDecodeException $e) {
                     throw new UserException(
                         "Invalid JSON response from API: " . $e->getMessage(),
                         0,
@@ -154,7 +151,7 @@ class RestClient extends AbstractClient implements ClientInterface
             case self::XML:
                 try {
                     $xml = new \SimpleXMLElement($response->getBody());
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     throw new UserException(
                         "Error decoding the XML response: " . $e->getMessage(),
                         400,
@@ -278,8 +275,7 @@ class RestClient extends AbstractClient implements ClientInterface
 
     protected static function getRetryDelay($retries, AbstractTransferEvent $event, $headerName)
     {
-        if (
-            is_null($event->getResponse())
+        if (is_null($event->getResponse())
             || !$event->getResponse()->hasHeader($headerName)
         ) {
             return RetrySubscriber::exponentialDelay($retries, $event);
@@ -311,7 +307,7 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @param string $format
+     * @param $encoding
      */
     public function setResponseEncoding($encoding)
     {

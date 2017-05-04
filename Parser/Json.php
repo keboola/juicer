@@ -2,14 +2,15 @@
 
 namespace Keboola\Juicer\Parser;
 
-use Keboola\Json\Parser as JsonParser,
-    Keboola\Json\Exception\JsonParserException,
-    Keboola\Json\Exception\NoDataException,
-    Keboola\Json\Struct;
-use Keboola\Juicer\Config\Config,
-    Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Common\Logger;
+use Keboola\CsvTable\Table;
+use Keboola\Json\Parser as JsonParser;
+use Keboola\Json\Exception\JsonParserException;
+use Keboola\Json\Exception\NoDataException;
+use Keboola\Json\Struct;
+use Keboola\Juicer\Config\Config;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Exception\ApplicationException;
+use Keboola\Juicer\Common\Logger;
 use Keboola\Temp\Temp;
 use Monolog\Logger as Monolog;
 
@@ -26,7 +27,8 @@ class Json implements ParserInterface
     /**
      * @param JsonParser $parser
      */
-    public function __construct(JsonParser $parser) {
+    public function __construct(JsonParser $parser)
+    {
         $this->parser = $parser;
     }
 
@@ -34,14 +36,16 @@ class Json implements ParserInterface
      * Parse the data
      * @param array $data shall be the response body
      * @param string $type data type
+     * @param null $parentId
+     * @throws UserException
      */
     public function process(array $data, $type, $parentId = null)
     {
         try {
             $this->parser->process($data, $type, $parentId);
-        } catch(NoDataException $e) {
+        } catch (NoDataException $e) {
             Logger::log('debug', "No data returned in '{$type}'");
-        } catch(JsonParserException $e) {
+        } catch (JsonParserException $e) {
             throw new UserException(
                 "Error parsing response JSON: " . $e->getMessage(),
                 500,
@@ -55,7 +59,8 @@ class Json implements ParserInterface
      * Return the results list
      * @return Table[]
      */
-    public function getResults() {
+    public function getResults()
+    {
         return $this->parser->getCsvFiles();
     }
 
@@ -69,7 +74,7 @@ class Json implements ParserInterface
 
     /**
      * @param Config $config // not used anywhere in real aps (yet? - analyze)
-     * @param Logger $logger
+     * @param Logger|Monolog $logger
      * @param Temp $temp
      * @param array $metadata
      * @return static
@@ -78,8 +83,7 @@ class Json implements ParserInterface
     {
         // TODO move this if to $this->validateStruct altogether
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
-            if (
-                empty($metadata['json_parser.structVersion'])
+            if (empty($metadata['json_parser.structVersion'])
                 || $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
             ) {
                 // temporary
@@ -110,12 +114,12 @@ class Json implements ParserInterface
 
     protected static function updateStruct(array $struct)
     {
-        foreach($struct as $type => &$children) {
+        foreach ($struct as $type => &$children) {
             if (!is_array($children)) {
                 throw new ApplicationException("Error updating struct at '{$type}', an array was expected");
             }
 
-            foreach($children as $child => &$dataType) {
+            foreach ($children as $child => &$dataType) {
                 if (in_array($dataType, ['integer', 'double', 'string', 'boolean'])) {
                     // Make scalars non-strict
                     $dataType = 'scalar';

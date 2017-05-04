@@ -2,14 +2,12 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use GuzzleHttp\Client as GuzzleClient;
-use Keboola\Utils\Utils;
-use Keboola\Juicer\Common\Logger,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Client\RequestInterface,
-    Keboola\Juicer\Parser\ParserInterface;
-use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Pagination\ScrollerInterface;
+use Keboola\Juicer\Parser\ParserInterface;
+
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
  */
@@ -92,8 +90,9 @@ abstract class Job
     /**
      * Parse the result into a CSV (either using any of built-in parsers, or using own methods).
      *
-     * @param object $response
+     * @param array $data
      * @param array $parentId ID (or list thereof) to be passed to parser
+     * @internal param object $response
      */
     protected function parse(array $data, array $parentId = null)
     {

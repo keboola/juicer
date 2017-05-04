@@ -1,6 +1,9 @@
 <?php
 
+namespace Keboola\Juicer\Tests\Exception;
+
 use Keboola\Juicer\Exception\ApplicationException;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class ApplicationExceptionTest extends ExtractorTestCase
 {

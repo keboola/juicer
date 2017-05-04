@@ -1,10 +1,13 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\OffsetScroller,
-    Keboola\Juicer\Pagination\NoScroller,
-    Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
+namespace Keboola\Juicer\Tests\Pagination\Decorator;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\OffsetScroller;
+use Keboola\Juicer\Pagination\NoScroller;
+use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
@@ -66,6 +69,4 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $null = self::callMethod($scroller, 'hasMore', [(object) ['finished' => false]]);
         self::assertNull($null);
     }
-
 }
-

@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 use Keboola\Utils\Utils;
 
 /**
@@ -60,6 +60,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      *                               from the **numeric** cursor value
      *     ]
      * @return static
+     * @throws UserException
      */
     public static function create(array $config)
     {
@@ -93,7 +94,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
         } else {
             $cursor = 0;
 
-            foreach($data as $item) {
+            foreach ($data as $item) {
                 $cursorVal = Utils::getDataFromPath($this->idKey, $item, '.');
 
                 if (is_null($this->max) || $cursorVal > $this->max) {

@@ -2,10 +2,9 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
-use Keboola\Utils\Utils;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Looks within the response **data** for an ID
@@ -29,7 +28,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
             throw new UserException('At least one scroller must be configured for "multiple" scroller.');
         }
 
-        foreach($config['scrollers'] as $id => $scrollerCfg) {
+        foreach ($config['scrollers'] as $id => $scrollerCfg) {
             $this->scrollers[$id] = ScrollerFactory::getScroller($scrollerCfg);
         }
 
@@ -40,9 +39,6 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
 
     /**
      * @param array $config
-     *     [
-     *
-     *     ]
      * @return static
      */
     public static function create(array $config)
@@ -68,7 +64,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
 
     public function reset()
     {
-        foreach($this->scrollers as $scroller) {
+        foreach ($this->scrollers as $scroller) {
             $scroller->reset();
         }
     }
@@ -81,6 +77,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @param JobConfig $jobConfig
      * @return ScrollerInterface
+     * @throws UserException
      */
     public function getScrollerForJob(JobConfig $jobConfig)
     {

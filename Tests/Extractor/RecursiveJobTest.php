@@ -1,21 +1,14 @@
 <?php
 
-use Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Config\Configuration,
-    Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Parser\Json,
-    Keboola\Juicer\Pagination\ResponseUrlScroller,
-    Keboola\Juicer\Extractor\RecursiveJob,
-    Keboola\Juicer\Common\Logger;
+namespace Keboola\Juicer\Tests\Extractor;
 
-use Keboola\Json\Parser;
+use Keboola\Juicer\Config\Configuration;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Parser\Json;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
-
-use GuzzleHttp\Client,
-    GuzzleHttp\Message\Response,
-    GuzzleHttp\Stream\Stream,
-    GuzzleHttp\Subscriber\Mock,
-    GuzzleHttp\Subscriber\History;
+use GuzzleHttp\Subscriber\History;
 
 /**
  * @todo testCreateChild
@@ -69,7 +62,10 @@ class RecursiveJobTest extends ExtractorTestCase
         $children = $jobConfig->getChildJobs();
         $child = reset($children);
 
-        $childJob = $this->callMethod($job, 'createChild', [
+        $childJob = $this->callMethod(
+            $job,
+            'createChild',
+            [
                 $child,
                 [0 => ['id' => 123]]
             ]
@@ -79,7 +75,10 @@ class RecursiveJobTest extends ExtractorTestCase
 
         $grandChildren = $child->getChildJobs();
         $grandChild = reset($grandChildren);
-        $grandChildJob = $this->callMethod($childJob, 'createChild', [
+        $grandChildJob = $this->callMethod(
+            $childJob,
+            'createChild',
+            [
                 $grandChild,
                 [0 => ['id' => 456], 1 => ['id' => 123]]
             ]
@@ -95,7 +94,10 @@ class RecursiveJobTest extends ExtractorTestCase
         $children = $jobConfig->getChildJobs();
         $child = reset($children);
 
-        $childJob = $this->callMethod($job, 'createChild', [
+        $childJob = $this->callMethod(
+            $job,
+            'createChild',
+            [
                 $child,
                 [0 => ['id' => 123]]
             ]
@@ -116,7 +118,10 @@ class RecursiveJobTest extends ExtractorTestCase
 
         $grandChildren = $child->getChildJobs();
         $grandChild = reset($grandChildren);
-        $grandChildJob = $this->callMethod($childJob, 'createChild', [
+        $grandChildJob = $this->callMethod(
+            $childJob,
+            'createChild',
+            [
                 $grandChild,
                 [0 => ['id' => 456], 1 => ['id' => 123]]
             ]
@@ -188,6 +193,8 @@ class RecursiveJobTest extends ExtractorTestCase
 
     /**
      * @dataProvider placeholderValueProvider
+     * @param $level
+     * @param $expected
      */
     public function testGetPlaceholderValue($level, $expected)
     {
@@ -214,6 +221,8 @@ class RecursiveJobTest extends ExtractorTestCase
 
     /**
      * @dataProvider placeholderErrorValueProvider
+     * @param $data
+     * @param $message
      */
     public function testGetPlaceholderValueError($data, $message)
     {
@@ -222,7 +231,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ->getMock();
 
         try {
-            $value = $this->callMethod(
+            $this->callMethod(
                 $job,
                 'getPlaceholderValue',
                 [ // $field, $parentResults, $level, $placeholder
@@ -232,7 +241,7 @@ class RecursiveJobTest extends ExtractorTestCase
                     '1:id'
                 ]
             );
-        } catch(\Keboola\Juicer\Exception\UserException $e) {
+        } catch (UserException $e) {
             $this->assertEquals($message, $e->getMessage());
             return;
         }
@@ -265,6 +274,8 @@ class RecursiveJobTest extends ExtractorTestCase
     /**
      * I'm not too sure this is optimal!
      * If it looks stupid, but works, it ain't stupid!
+     * @param string $dir
+     * @return array
      */
     public function getJob($dir = 'recursive')
     {

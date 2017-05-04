@@ -2,9 +2,6 @@
 
 namespace Keboola\Juicer\Client;
 
-/**
- *
- */
 abstract class AbstractClient
 {
     /**

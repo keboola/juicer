@@ -1,4 +1,5 @@
 <?php
+
 namespace Keboola\Juicer\Extractor;
 
 /**

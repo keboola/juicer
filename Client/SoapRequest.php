@@ -2,14 +2,14 @@
 
 namespace Keboola\Juicer\Client;
 
-/**
- *
- */
 class SoapRequest extends Request implements RequestInterface
 {
     protected $type = "soap";
 
-    private $soapFunction, $params, $options, $inputHeader;
+    private $soapFunction;
+    private $params;
+    private $options;
+    private $inputHeader;
 
     /**
      * @todo $params optional?
@@ -78,9 +78,11 @@ class SoapRequest extends Request implements RequestInterface
     /**
      * @todo Actually use the request object?
      * Should perhaps return the response straight away (call it self::call() or so)
-     * @param string $endpoint REST endpoint or SOAP function
-     * @param array parameters
-     * @param array REST method or SOAP options+inputHeader
+     * @param array $config
+     *  - endpoint - REST endpoint or SOAP function
+     *  - parameters
+     *  - options
+     *  - inputHeader
      * @return RequestInterface
      */
     public static function create(array $config)

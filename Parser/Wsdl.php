@@ -2,7 +2,6 @@
 
 namespace Keboola\Juicer\Parser;
 
-use Keboola\Juicer\Parser\Parser;
 use Keboola\Utils\Utils;
 use Keboola\CsvTable\Table;
 
@@ -53,7 +52,8 @@ class Wsdl extends Parser implements ParserInterface
     /**
      * @param array $types is generally a WSDL definition, obtained by \SoapClient::__getTypes() (upon a properly initialized client, obviously)
      */
-    public function __construct(array $types) {
+    public function __construct(array $types)
+    {
         $this->types = $types;
         $this->struct = $this->createStruct();
     }
@@ -74,6 +74,7 @@ class Wsdl extends Parser implements ParserInterface
      * Create structure from a WSDL
      * @param array $types
      * @param int $maxDepth defines how many levels of the response should be parsed (unlimited by default)
+     * @return array
      */
     protected function createStruct(array $types = [], $maxDepth = -1)
     {
@@ -89,7 +90,7 @@ class Wsdl extends Parser implements ParserInterface
                 continue;
             }
 
-            if($typeArr[0] == "struct") {
+            if ($typeArr[0] == "struct") {
                 // Clear ; on line ends
                 $str = str_replace(";", "", $typeArr[2]);
                 // Get parts of the struct
@@ -121,7 +122,8 @@ class Wsdl extends Parser implements ParserInterface
      * @param string $parent used internally for naming child arrays/columns
      * @param string $parentId used internally to link child objects to parent
      */
-    public function parse($data, $type, $path = null, $parent = null, $parentId = null) {
+    public function parse($data, $type, $path = null, $parent = null, $parentId = null)
+    {
         if (!empty($path)) {
             $data = Utils::getDataFromPath($path, $data);
         }
@@ -139,17 +141,17 @@ class Wsdl extends Parser implements ParserInterface
         $handle = $this->csvFiles[$fileName];
         $struct = $this->struct[$type];
 
-        foreach(Utils::to_assoc($data) as $record) {
+        foreach (Utils::to_assoc($data) as $record) {
             $row = [];
 
-            foreach($struct as $key => $valueType) {
+            foreach ($struct as $key => $valueType) {
                 if (empty($record[$key])) {
                     $row[$key] = null;
                 } elseif (in_array($valueType, $this->stdTypes)) {
-                    $row[$key] = (string) $record[$key];
+                    $row[$key] = (string)$record[$key];
                 } elseif (array_key_exists($valueType, $this->struct)) {
                     // Walk through the data type and parse children
-                    foreach($this->struct[$valueType] as $attr => $attrType) {
+                    foreach ($this->struct[$valueType] as $attr => $attrType) {
                         $childId = $type . "_" . $attrType . "_" . (!empty($row["id"]) ? $row["id"] : uniqid());
                         $row[$key] = $childId;
                         $childPath = "{$key}/{$attr}";
@@ -173,7 +175,8 @@ class Wsdl extends Parser implements ParserInterface
      * @return Table[]
      * @deprecated
      */
-    public function getCsvFiles() {
+    public function getCsvFiles()
+    {
         return $this->getResults();
     }
 
@@ -181,7 +184,8 @@ class Wsdl extends Parser implements ParserInterface
      * Return the results list
      * @return Table[]
      */
-    public function getResults() {
+    public function getResults()
+    {
         return $this->csvFiles;
     }
 }

@@ -2,16 +2,9 @@
 
 namespace Keboola\Juicer\Client;
 
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Common\Logger;
-use Keboola\Utils\Utils;
-use SoapClient;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Common\Logger;
 
-/**
- *
- */
 class SoapClient extends AbstractClient implements ClientInterface
 {
     /**
@@ -36,8 +29,9 @@ class SoapClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @param Request $request
+     * @param Request|RequestInterface $request
      * @return mixed
+     * @throws UserException
      */
     public function download(RequestInterface $request)
     {
@@ -52,7 +46,7 @@ class SoapClient extends AbstractClient implements ClientInterface
 
             try {
                 $response = $this->client->__soapCall($request->getFunction(), $request->getParams(), $request->getOptions(), $request->getInputHeader(), $outputHeaders);
-            } catch(\SoapFault $e) {
+            } catch (\SoapFault $e) {
                 $backoffTry++;
                     $errData = array(
                         "code" => $e->getCode(),
@@ -82,7 +76,7 @@ class SoapClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @return client
+     * @return SoapClient
      */
     public function getClient()
     {

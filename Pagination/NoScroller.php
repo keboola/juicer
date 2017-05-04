@@ -2,8 +2,9 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
+
 /**
  * For extractors with no pagination
  */
@@ -28,12 +29,15 @@ class NoScroller implements ScrollerInterface
     /**
      * {@inheritdoc}
      */
-    public function reset() {}
+    public function reset()
+    {
+    }
 
     /**
      * {@inheritdoc}
      */
-    public static function create(array $config) {
+    public static function create(array $config)
+    {
         return new self;
     }
 
@@ -42,5 +46,7 @@ class NoScroller implements ScrollerInterface
         return [];
     }
 
-    public function setState(array $state) {}
+    public function setState(array $state)
+    {
+    }
 }

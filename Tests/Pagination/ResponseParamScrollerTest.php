@@ -1,8 +1,10 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\ResponseParamScroller;
+namespace Keboola\Juicer\Tests\Pagination;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Pagination\ResponseParamScroller;
+use Keboola\Juicer\Tests\Pagination\ResponseScrollerTestCase;
 
 class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {

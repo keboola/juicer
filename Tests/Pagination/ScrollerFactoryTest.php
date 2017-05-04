@@ -1,8 +1,9 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\ScrollerFactory;
+namespace Keboola\Juicer\Tests\Pagination;
+
+use Keboola\Juicer\Pagination\ScrollerFactory;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class ScrollerFactoryTest extends ExtractorTestCase
 {

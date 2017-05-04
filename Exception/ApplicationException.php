@@ -2,9 +2,6 @@
 
 namespace Keboola\Juicer\Exception;
 
-/**
- *
- */
 class ApplicationException extends \Exception
 {
     /**

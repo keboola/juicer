@@ -2,11 +2,6 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Exception\UserException;
-
-/**
- *
- */
 abstract class AbstractScroller
 {
     /**
@@ -19,7 +14,7 @@ abstract class AbstractScroller
 
     public function setState(array $state)
     {
-        foreach(array_keys(get_object_vars($this)) as $key) {
+        foreach (array_keys(get_object_vars($this)) as $key) {
             if (isset($state[$key])) {
                 $this->{$key} = $state[$key];
             }

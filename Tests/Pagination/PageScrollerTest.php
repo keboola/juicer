@@ -1,8 +1,11 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\PageScroller;
+namespace Keboola\Juicer\Tests\Pagination;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\PageScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 /**
  * @todo test with no limit until empty response

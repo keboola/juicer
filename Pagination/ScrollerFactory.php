@@ -4,9 +4,6 @@ namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Exception\UserException;
 
-/**
- *
- */
 class ScrollerFactory
 {
     /**
