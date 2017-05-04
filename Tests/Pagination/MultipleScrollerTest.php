@@ -1,8 +1,11 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\MultipleScroller;
+namespace Keboola\Juicer\Tests\Pagination;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\MultipleScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class MultipleScrollerTest extends ExtractorTestCase
 {
@@ -140,8 +143,7 @@ class MultipleScrollerTest extends ExtractorTestCase
             'scroller' => 'nonExistentScroller'
         ]);
 
-        $req = $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
-
+        $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
     }
 
     protected function getScrollerConfig()

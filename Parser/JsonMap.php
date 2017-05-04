@@ -2,16 +2,13 @@
 
 namespace Keboola\Juicer\Parser;
 
-use Keboola\CsvMap\Mapper,
-    Keboola\CsvMap\Exception\BadConfigException,
-    Keboola\CsvMap\Exception\BadDataException;
+use Keboola\CsvMap\Mapper;
+use Keboola\CsvMap\Exception\BadConfigException;
+use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\Csv\CsvFile;
-use Keboola\Juicer\Config\Config,
-    Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Common\Logger;
-use Keboola\Temp\Temp;
-use Monolog\Logger as Monolog;
+use Keboola\Juicer\Config\Config;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Common\Logger;
 
 /**
  * Parse JSON results from REST API to CSV
@@ -38,7 +35,9 @@ class JsonMap implements ParserInterface
 
     /**
      * @param Config $config
+     * @param ParserInterface|null $fallbackParser
      * @return static
+     * @throws UserException
      */
     public static function create(Config $config, ParserInterface $fallbackParser = null)
     {
@@ -47,7 +46,7 @@ class JsonMap implements ParserInterface
         }
 
         $mappers = [];
-        foreach($config->getAttribute('mappings') as $type => $mapping) {
+        foreach ($config->getAttribute('mappings') as $type => $mapping) {
             if (empty($mapping)) {
                 throw new UserException("Empty mapping for '{$type}' in config.");
             }
@@ -55,13 +54,12 @@ class JsonMap implements ParserInterface
             $mappers[$type] = new Mapper($mapping, $type);
         }
 
-        foreach($config->getJobs() as $job) {
+        foreach ($config->getJobs() as $job) {
             $type = $job->getDataType();
             if (empty($mappers[$type])) {
                 if (is_null($fallbackParser)) {
                     throw new UserException("Missing mapping for '{$type}' in config.");
                 }
-
             }
         }
 
@@ -74,6 +72,8 @@ class JsonMap implements ParserInterface
      * Parse the data
      * @param array $data shall be the response body
      * @param string $type data type
+     * @param null $parentId
+     * @throws UserException
      */
     public function process(array $data, $type, $parentId = null)
     {
@@ -87,9 +87,9 @@ class JsonMap implements ParserInterface
             }
 
             return $this->mappers[$type]->parse($data, (array) $parentId);
-        } catch(BadConfigException $e) {
+        } catch (BadConfigException $e) {
             throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
-        } catch(BadDataException $e) {
+        } catch (BadDataException $e) {
             throw new UserException("Error saving '{$type}' data to CSV column: " . $e->getMessage(), 0, $e, $e->getData());
         }
     }
@@ -97,7 +97,7 @@ class JsonMap implements ParserInterface
     public function getResults()
     {
         $results = [];
-        foreach($this->mappers as $type => $parser) {
+        foreach ($this->mappers as $type => $parser) {
             $files = array_filter($parser->getCsvFiles());
             $results = $this->mergeResults($results, $files);
         }
@@ -112,7 +112,7 @@ class JsonMap implements ParserInterface
 
     protected function mergeResults(array $results, array $files)
     {
-        foreach($files as $name => $file) {
+        foreach ($files as $name => $file) {
             if (array_key_exists($name, $results)) {
                 Logger::log('debug', "Merging results for '{$name}'.");
 
@@ -142,10 +142,11 @@ class JsonMap implements ParserInterface
         // CsvFile::getHeader resets it to the first line,
         // so we need to forward it back to the end to append it
         // Also, this is a dirty, dirty hack
-        for(;$file1->valid();$file1->next()) {}
+        for (; $file1->valid(); $file1->next()) {
+        }
 
         $header = true;
-        foreach($file2 as $row) {
+        foreach ($file2 as $row) {
             if ($header) {
                 $header = false;
                 continue;

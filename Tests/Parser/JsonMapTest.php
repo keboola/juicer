@@ -1,10 +1,13 @@
 <?php
 
-use Keboola\Juicer\Parser\JsonMap,
-    Keboola\Juicer\Parser\Json,
-    Keboola\Juicer\Common\Logger,
-    Keboola\Juicer\Config\Config,
-    Keboola\Juicer\Config\JobConfig;
+namespace Keboola\Juicer\Tests\Parser;
+
+use Keboola\Juicer\Parser\JsonMap;
+use Keboola\Juicer\Parser\Json;
+use Keboola\Juicer\Common\Logger;
+use Keboola\Juicer\Config\Config;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 
 class JsonMapTest extends ExtractorTestCase

@@ -1,6 +1,9 @@
 <?php
 
+namespace Keboola\Juicer\Tests\Client;
+
 use Keboola\Juicer\Client\RestRequest;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class RestRequestTest extends ExtractorTestCase
 {
@@ -26,6 +29,6 @@ class RestRequestTest extends ExtractorTestCase
      */
     public function testValidateConfig()
     {
-        $request = RestRequest::create(['endpoint' => 'ep', 'params' => 'string']);
+        RestRequest::create(['endpoint' => 'ep', 'params' => 'string']);
     }
 }

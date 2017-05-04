@@ -1,11 +1,12 @@
 <?php
 
-use Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Parser\Json,
-    Keboola\Juicer\Extractor\Job;
+namespace Keboola\Juicer\Tests\Extractor;
 
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Parser\Json;
 use Keboola\Json\Parser;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class JobTest extends ExtractorTestCase
 {

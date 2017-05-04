@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Scrolls using simple "limit" and "offset" query parameters.
@@ -63,6 +63,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      *         'firstPageParams' => bool // whether to include the limit and offset in the first request (default = true)
      *     ]
      * @return static
+     * @throws UserException
      */
     public static function create(array $config)
     {

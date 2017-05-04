@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Filesystem;
 
-use Keboola\Juicer\Exception\ApplicationException,
-    Keboola\Juicer\Exception\FileNotFoundException,
-    Keboola\Juicer\Exception\NoDataException;
+use Keboola\Juicer\Exception\ApplicationException;
+use Keboola\Juicer\Exception\FileNotFoundException;
+use Keboola\Juicer\Exception\NoDataException;
 
 /**
  * Reflects a YAML file in memory
@@ -33,6 +33,7 @@ class JsonFile
      * @param string $pathName
      * @param string $mode [r,w]
      * @return static
+     * @throws ApplicationException
      */
     public static function create($pathName, $mode = self::MODE_READ)
     {
@@ -43,7 +44,7 @@ class JsonFile
         } elseif ($mode == self::MODE_WRITE) {
             try {
                 touch($pathName);
-            } catch(\ErrorException $e) {
+            } catch (\ErrorException $e) {
                 throw new ApplicationException("Error creating file '{$pathName}'");
             }
             $json->load();
@@ -72,7 +73,8 @@ class JsonFile
     }
 
     /**
-     * @param string $path,... Nodes within the Yaml file. Each argument goes one level deeper.
+     * @return array|bool|float|int|mixed|string
+     * @throws NoDataException
      */
     public function get()
     {
@@ -83,7 +85,7 @@ class JsonFile
         }
 
         $data = $this->data;
-        foreach($path as $key) {
+        foreach ($path as $key) {
             $data = (array) $data;
             if (!isset($data[$key])) {
                 $pathString = join('.', $path);

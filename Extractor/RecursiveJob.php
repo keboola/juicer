@@ -2,17 +2,17 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Common\Logger,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Parser\ParserInterface,
-    Keboola\Juicer\Exception\UserException;
-use Keboola\Filter\Filter,
-    Keboola\Filter\Exception\FilterException;
-use Keboola\Utils\Utils,
-    Keboola\Utils\Exception\NoDataFoundException;
-use Keboola\Code\Builder,
-    Keboola\Code\Exception\UserScriptException;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Common\Logger;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Parser\ParserInterface;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Filter\Filter;
+use Keboola\Filter\Exception\FilterException;
+use Keboola\Utils\Utils;
+use Keboola\Utils\Exception\NoDataFoundException;
+use Keboola\Code\Builder;
+
 /**
  * {@inheritdoc}
  * Adds a capability to process recursive calls based on
@@ -56,7 +56,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
      */
     public function setParams(array $params)
     {
-        foreach($params as $param) {
+        foreach ($params as $param) {
             $this->config->setEndpoint(str_replace('{' . $param['placeholder'] . '}', $param['value'], $this->config->getConfig()['endpoint']));
         }
 
@@ -88,19 +88,20 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
 
     /**
      * @param array $data
+     * @throws UserException
      */
     protected function runChildJobs(array $data)
     {
-        foreach($this->config->getChildJobs() as $jobId => $child) {
+        foreach ($this->config->getChildJobs() as $jobId => $child) {
             if (!empty($child->getConfig()['recursionFilter'])) {
                 try {
                     $filter = Filter::create($child->getConfig()['recursionFilter']);
-                } catch(FilterException $e) {
+                } catch (FilterException $e) {
                     throw new UserException($e->getMessage(), 0, $e);
                 }
             }
 
-            foreach($data as $result) {
+            foreach ($data as $result) {
                 if (!empty($filter) && ($filter->compareObject((object) $result) == false)) {
                     continue;
                 }
@@ -123,7 +124,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     {
         // Add parent values to the result
         $parentCols = is_null($parentIdCols) ? [] : $parentIdCols;
-        foreach($this->parentParams as $v) {
+        foreach ($this->parentParams as $v) {
             $key = $this->prependParent($v['field']);
             $parentCols[$key] = $v['value'];
         }
@@ -146,7 +147,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
             Logger::log("WARNING", "No 'placeholders' set for '" . $config->getConfig()['endpoint'] . "'");
         }
 
-        foreach($placeholders as $placeholder => $field) {
+        foreach ($placeholders as $placeholder => $field) {
             $params[$placeholder] = $this->getPlaceholder($placeholder, $field, $parentResults);
         }
 
@@ -165,7 +166,9 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     /**
      * @param string $placeholder
      * @param string|object $field Path or a function with a path
-     * @reutrn array ['placeholder', 'field', 'value']
+     * @param $parentResults
+     * @return array ['placeholder', 'field', 'value']
+     * @throws UserException
      */
     protected function getPlaceholder($placeholder, $field, $parentResults)
     {
@@ -203,7 +206,9 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
      * @param string $field
      * @param array $parentResults
      * @param int $level
+     * @param string $placeholder
      * @return mixed
+     * @throws UserException
      */
     protected function getPlaceholderValue($field, $parentResults, $level, $placeholder)
     {
@@ -214,7 +219,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
             }
 
             return Utils::getDataFromPath($field, $parentResults[$level], ".", false);
-        } catch(NoDataFoundException $e) {
+        } catch (NoDataFoundException $e) {
             throw new UserException(
                 "No value found for {$placeholder} in parent result. (level: " . ++$level . ")",
                 0,

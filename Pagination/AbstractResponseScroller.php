@@ -2,13 +2,11 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
- *
- *
  */
 abstract class AbstractResponseScroller extends AbstractScroller
 {
@@ -20,5 +18,7 @@ abstract class AbstractResponseScroller extends AbstractScroller
         return $client->createRequest($jobConfig->getConfig());
     }
 
-    public function reset() {}
+    public function reset()
+    {
+    }
 }

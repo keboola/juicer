@@ -1,15 +1,19 @@
 <?php
 
-use Keboola\Juicer\Client\RestRequest,
-    Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Common\Logger;
-use GuzzleHttp\Client,
-    GuzzleHttp\Message\Response,
-    GuzzleHttp\Stream\Stream,
-    GuzzleHttp\Subscriber\Mock,
-    GuzzleHttp\Subscriber\History;
-use Monolog\Handler;
+namespace Keboola\Juicer\Tests\Client;
+
+use Keboola\Juicer\Client\RestRequest;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Common\Logger;
+use GuzzleHttp\Client;
+use GuzzleHttp\Message\Response;
+use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Subscriber\Mock;
+use GuzzleHttp\Subscriber\History;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Tests\ExtractorTestCase;
+use Monolog\Handler\TestHandler;
 
 class RestClientTest extends ExtractorTestCase
 {
@@ -161,10 +165,9 @@ class RestClientTest extends ExtractorTestCase
             ]
         ];
 
-        foreach($sets as $set) {
+        foreach ($sets as $set) {
             $this->runBackoff($set[0], $set[1]);
         }
-
     }
 
     /**
@@ -175,7 +178,7 @@ class RestClientTest extends ExtractorTestCase
     {
         // mapped curl error
         $retries = 3;
-        $handler = new \Monolog\Handler\TestHandler();
+        $handler = new TestHandler();
         $logger = new \Monolog\Logger("test", [
             $handler
         ]);
@@ -196,7 +199,7 @@ class RestClientTest extends ExtractorTestCase
         } catch (\Exception $e) {
             $this->assertCount($retries, $handler->getRecords());
 
-            foreach ($handler->getRecords() AS $record) {
+            foreach ($handler->getRecords() as $record) {
                 $this->assertEquals(100, $record['level']);
                 $this->assertRegExp('/retrying/ui', $record['message']);
                 $this->assertRegExp('/curl error 6\:/ui', $record['context']['message']);
@@ -204,13 +207,13 @@ class RestClientTest extends ExtractorTestCase
 
 
             $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
-            $this->assertTrue($e instanceof \Keboola\Juicer\Exception\UserException);
+            $this->assertTrue($e instanceof UserException);
         }
 
 
         // non-mapped curl error
         $retries = 3;
-        $handler = new \Monolog\Handler\TestHandler();
+        $handler = new TestHandler();
         $logger = new \Monolog\Logger("test", [
             $handler
         ]);
@@ -232,7 +235,7 @@ class RestClientTest extends ExtractorTestCase
             $this->assertCount(0, $handler->getRecords());
 
             $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
-            $this->assertTrue($e instanceof \Keboola\Juicer\Exception\UserException);
+            $this->assertTrue($e instanceof UserException);
         }
     }
 
@@ -257,7 +260,7 @@ class RestClientTest extends ExtractorTestCase
 
         try {
             $restClient->download($request);
-        } catch(\Keboola\Juicer\Exception\UserException $e) {
+        } catch (UserException $e) {
             self::assertArrayHasKey('errDetail', $e->getData());
             self::assertArrayHasKey('json', $e->getData());
             throw $e;

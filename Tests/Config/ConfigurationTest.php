@@ -1,7 +1,10 @@
 <?php
 
-use Keboola\Juicer\Config\Configuration,
-    Keboola\Juicer\Config\JobConfig;
+namespace Keboola\Juicer\Tests\Config;
+
+use Keboola\Juicer\Config\Configuration;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 
@@ -38,7 +41,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configuration->storeResults($files);
 
-        foreach(new \DirectoryIterator('./Tests/data/storeResultsDefaultBucket/out/tables/') as $file) {
+        foreach (new \DirectoryIterator('./Tests/data/storeResultsDefaultBucket/out/tables/') as $file) {
             self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
         }
 
@@ -59,7 +62,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configuration->storeResults($files, $name, true, $incremental);
 
-        foreach(new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/' . $name) as $file) {
+        foreach (new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/' . $name) as $file) {
             self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $name . '/' . $file->getFilename());
         }
 
@@ -119,7 +122,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $json = json_decode(file_get_contents('./Tests/data/iterations/config.json'), true);
 
-        foreach($json['parameters']['iterations'] as $i => $params) {
+        foreach ($json['parameters']['iterations'] as $i => $params) {
             self::assertEquals(array_replace(['id' => $json['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
         }
         self::assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
@@ -152,7 +155,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     protected function rmDir($dirPath)
     {
-        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dirPath, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $path) {
             $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
         }
         return rmdir($dirPath);

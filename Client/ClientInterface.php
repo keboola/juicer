@@ -2,12 +2,8 @@
 
 namespace Keboola\Juicer\Client;
 
-use Keboola\Juicer\Config\JobConfig;
 use GuzzleHttp\Client;
 
-/**
- *
- */
 interface ClientInterface
 {
     /**

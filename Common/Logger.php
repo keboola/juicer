@@ -3,9 +3,10 @@
 namespace Keboola\Juicer\Common;
 
 use Keboola\Juicer\Exception\ApplicationException as Exception;
-use Monolog\Logger as Monolog,
-    Monolog\Handler\StreamHandler,
-    Monolog\Formatter\LineFormatter;
+use Monolog\Logger as Monolog;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wrapper for Monolog\Logger
@@ -17,15 +18,22 @@ class Logger
      * @var Monolog
      */
     private static $logger = null;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $hovno;
     /**
      * @var bool
      */
     private static $strict = true;
 
     /**
-     *    Ensure the class doesn't get instantinated
+     * Ensure the class doesn't get instantinated
      */
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public static function setLogger(Monolog $logger)
     {
@@ -85,6 +93,7 @@ class Logger
      * @param string $message
      * @param array $context
      * @return bool
+     * @throws Exception
      */
     public static function log($level, $message, array $context = [])
     {

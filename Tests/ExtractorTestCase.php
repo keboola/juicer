@@ -1,8 +1,11 @@
 <?php
 
-use Keboola\Juicer\Common\Logger;
+namespace Keboola\Juicer\Tests;
 
-class ExtractorTestCase extends PHPUnit_Framework_TestCase
+use Keboola\Juicer\Common\Logger;
+use Monolog\Handler\NullHandler;
+
+class ExtractorTestCase extends \PHPUnit_Framework_TestCase
 {
     protected static function callMethod($obj, $name, array $args)
     {
@@ -13,7 +16,8 @@ class ExtractorTestCase extends PHPUnit_Framework_TestCase
         return $method->invokeArgs($obj, $args);
     }
 
-    protected static function getProperty($obj, $name) {
+    protected static function getProperty($obj, $name)
+    {
         $class = new \ReflectionClass($obj);
         $property = $class->getProperty($name);
         $property->setAccessible(true);
@@ -24,7 +28,7 @@ class ExtractorTestCase extends PHPUnit_Framework_TestCase
     {
         return new \Monolog\Logger(
             $name,
-            $null ? [new \Monolog\Handler\NullHandler()] : []
+            $null ? [new NullHandler()] : []
         );
     }
 

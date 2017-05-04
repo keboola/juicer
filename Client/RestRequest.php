@@ -4,9 +4,6 @@ namespace Keboola\Juicer\Client;
 
 use Keboola\Juicer\Exception\UserException;
 
-/**
- *
- */
 class RestRequest extends Request implements RequestInterface
 {
     /**
@@ -66,7 +63,7 @@ class RestRequest extends Request implements RequestInterface
 
     protected static function validateConfig(array $config)
     {
-        foreach([
+        foreach ([
             'params' => 'array',
             'headers' => 'array',
             'endpoint' => 'string',

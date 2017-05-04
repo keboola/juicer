@@ -2,8 +2,8 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Scrolls using simple "limit" and "page" query parameters.
@@ -46,7 +46,8 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      */
     protected $page;
 
-    public function __construct($config) {
+    public function __construct($config)
+    {
         $this->pageParam = !empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM;
         $this->limit = !empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT;
         $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
@@ -80,8 +81,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        if (
-            (is_null($this->getLimit($jobConfig)) && empty($data))
+        if ((is_null($this->getLimit($jobConfig)) && empty($data))
             || (count($data) < $this->getLimit($jobConfig))
         ) {
             $this->reset();

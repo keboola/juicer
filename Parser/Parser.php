@@ -16,7 +16,7 @@ class Parser
      */
     protected function getTemp()
     {
-        if(!($this->temp instanceof Temp)) {
+        if (!($this->temp instanceof Temp)) {
             $this->temp = new Temp("ex-parser-data");
         }
         return $this->temp;

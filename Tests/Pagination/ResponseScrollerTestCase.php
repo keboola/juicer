@@ -1,6 +1,9 @@
 <?php
 
+namespace Keboola\Juicer\Tests\Pagination;
+
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class ResponseScrollerTestCase extends ExtractorTestCase
 {

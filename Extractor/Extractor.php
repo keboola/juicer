@@ -2,7 +2,6 @@
 
 namespace Keboola\Juicer\Extractor;
 
-use Keboola\Juicer\Exception\UserException;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 use Keboola\Juicer\Config\Config;

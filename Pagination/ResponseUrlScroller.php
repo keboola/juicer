@@ -2,15 +2,13 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
 use Keboola\Utils\Utils;
 use GuzzleHttp\Query;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
- *
- *
  */
 class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {

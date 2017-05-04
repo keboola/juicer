@@ -1,6 +1,9 @@
 <?php
 
+namespace Keboola\Juicer\Tests\FileSystem;
+
 use Keboola\Juicer\Filesystem\JsonFile;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class JsonFileTest extends ExtractorTestCase
 {
@@ -29,7 +32,7 @@ class JsonFileTest extends ExtractorTestCase
     }
 
     /**
-     * @expectedException Keboola\Juicer\Exception\ApplicationException
+     * @expectedException \Keboola\Juicer\Exception\ApplicationException
      * @expectedExceptionMessage Error creating file '/asd/123'
      */
     public function testCreateWError()

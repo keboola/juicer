@@ -1,15 +1,19 @@
 <?php
 
-use Keboola\Juicer\Client\RestClient,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Pagination\PageScroller,
-    Keboola\Juicer\Pagination\NoScroller,
-    Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
+namespace Keboola\Juicer\Tests\Pagination\Decorator;
+
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\PageScroller;
+use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 
 class ForceStopScrollerDecoratorTest extends ExtractorTestCase
 {
     /**
      * @dataProvider limitProvider
+     * @param array $config
+     * @param $response
      */
     public function testCheckLimits(array $config, $response)
     {
@@ -37,7 +41,7 @@ class ForceStopScrollerDecoratorTest extends ExtractorTestCase
     public function limitProvider()
     {
         $response = [
-            (object) [
+            (object)[
                 'asdf' => 1234
             ]
         ];
@@ -82,4 +86,3 @@ class ForceStopScrollerDecoratorTest extends ExtractorTestCase
         self::assertEquals(3, $i);
     }
 }
-

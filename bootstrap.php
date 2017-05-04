@@ -10,14 +10,13 @@ set_include_path(implode(PATH_SEPARATOR, array(
 ini_set('display_errors', true);
 error_reporting(E_ALL);
 set_error_handler(
-    function ($errno, $errstr, $errfile, $errline, array $errcontext)
-        {
-            // error was suppressed with the @-operator
-            if (0 === error_reporting()) {
-                return false;
-            }
-            throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    function ($errno, $errstr, $errfile, $errline, array $errcontext) {
+        // error was suppressed with the @-operator
+        if (0 === error_reporting()) {
+            return false;
         }
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
 );
 
 if (file_exists(__DIR__ . '/config.php')) {
@@ -25,13 +24,13 @@ if (file_exists(__DIR__ . '/config.php')) {
 }
 
 defined('STORAGE_API_URL')
-    || define('STORAGE_API_URL', getenv('STORAGE_API_URL') ? getenv('STORAGE_API_URL') : 'https://connection.keboola.com');
+    || define('STORAGE_API_URL', getenv('STORAGE_API_URL') ?: 'https://connection.keboola.com');
 
 defined('STORAGE_API_TOKEN')
-    || define('STORAGE_API_TOKEN', getenv('STORAGE_API_TOKEN') ? getenv('STORAGE_API_TOKEN') : 'your_token');
+    || define('STORAGE_API_TOKEN', getenv('STORAGE_API_TOKEN') ?: 'your_token');
 
 defined('STORAGE_API_MAINTENANCE_URL')
-    || define('STORAGE_API_MAINTENANCE_URL', getenv('STORAGE_API_MAINTENANCE_URL') ? getenv('STORAGE_API_MAINTENANCE_URL') : 'https://maintenance-testing.keboola.com/');
+    || define('STORAGE_API_MAINTENANCE_URL', getenv('STORAGE_API_MAINTENANCE_URL') ?: 'https://maintenance-testing.keboola.com/');
 
 
 require_once ROOT_PATH . '/vendor/autoload.php';

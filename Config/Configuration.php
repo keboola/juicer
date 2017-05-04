@@ -3,15 +3,12 @@
 namespace Keboola\Juicer\Config;
 
 use Keboola\Juicer\Filesystem\JsonFile;
-use Keboola\Juicer\Exception\UserException,
-    Keboola\Juicer\Exception\FileNotFoundException,
-    Keboola\Juicer\Exception\NoDataException;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Exception\FileNotFoundException;
+use Keboola\Juicer\Exception\NoDataException;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 
-/**
- *
- */
 class Configuration
 {
     /**
@@ -49,12 +46,12 @@ class Configuration
     {
         try {
             $iterations = $this->getJSON('/config.json', 'parameters', 'iterations');
-        } catch(NoDataException $e) {
+        } catch (NoDataException $e) {
             $iterations = [null];
         }
 
         $configs = [];
-        foreach($iterations as $params) {
+        foreach ($iterations as $params) {
             $configs[] = $this->getConfig($params);
         }
 
@@ -64,12 +61,13 @@ class Configuration
     /**
      * @param array $params Values to override in the config
      * @return Config
+     * @throws UserException
      */
     public function getConfig(array $params = null)
     {
         try {
             $configJson = $this->getJSON('/config.json', 'parameters', 'config');
-        } catch(NoDataException $e) {
+        } catch (NoDataException $e) {
             throw new UserException($e->getMessage(), 0, $e);
         }
 
@@ -86,7 +84,7 @@ class Configuration
 
         $jobs = $configJson['jobs'];
         $jobConfigs = [];
-        foreach($jobs as $job) {
+        foreach ($jobs as $job) {
             $jobConfig = $this->createJob($job);
             $jobConfigs[$jobConfig->getJobId()] = $jobConfig;
         }
@@ -102,6 +100,7 @@ class Configuration
     /**
      * @param object $job
      * @return JobConfig
+     * @throws UserException
      */
     protected function createJob($job)
     {
@@ -130,7 +129,7 @@ class Configuration
         $json = new JsonFile($this->dataDir . "/in/state.json");
         try {
             $json->load();
-        } catch(FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             // log?
         }
         return $json;
@@ -150,7 +149,7 @@ class Configuration
 
     /**
      * @param string $filePath
-     * @param string $path,..
+     * @return mixed
      */
     protected function getJSON($filePath)
     {
@@ -193,7 +192,7 @@ class Configuration
             chgrp($path, filegroup("{$this->dataDir}/out/tables/"));
         }
 
-        foreach($csvFiles as $key => $file) {
+        foreach ($csvFiles as $key => $file) {
             $manifest = [];
 
             if (!is_null($bucketName)) {

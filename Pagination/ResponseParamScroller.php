@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Utils\Utils;
 
 /**
@@ -35,13 +35,15 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
     protected $includeParams;
 
     /**
-     * @param string $responseParam Parameter within the response
+     * @param $config
+     * @internal param string $responseParam Parameter within the response
      *  containing next page info
-     * @param string $queryParam Query parameter to pass the $responseParam
-     * @param bool $includeParams Whether to include params from config
-     * @param array $scrollRequest Override endpoint from config?
+     * @internal param string $queryParam Query parameter to pass the $responseParam
+     * @internal param bool $includeParams Whether to include params from config
+     * @internal param array $scrollRequest Override endpoint from config?
      */
-    public function __construct($config) {
+    public function __construct($config)
+    {
         $this->responseParam = $config['responseParam'];
         $this->queryParam = $config['queryParam'];
         $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;

@@ -2,11 +2,11 @@
 
 namespace Keboola\Juicer\Pagination\Decorator;
 
-use Keboola\Juicer\Pagination\ScrollerInterface,
-    Keboola\Juicer\Pagination\ScrollerFactory,
-    Keboola\Juicer\Client\ClientInterface,
-    Keboola\Juicer\Config\JobConfig,
-    Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Pagination\ScrollerInterface;
+use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 
 /**
  * Adds 'nextPageFlag' option to look at a boolean
@@ -82,4 +82,3 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
         }
     }
 }
-
