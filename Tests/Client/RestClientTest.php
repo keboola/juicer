@@ -240,7 +240,7 @@ class RestClientTest extends ExtractorTestCase
     }
 
     /**
-     * @expectedException UserException
+     * @expectedException \Keboola\Juicer\Exception\UserException
      * @expectedExceptionMessage Invalid JSON response from API: JSON decode error:
      */
     public function testMalformedJson()
