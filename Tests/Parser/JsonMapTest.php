@@ -351,4 +351,63 @@ class JsonMapTest extends ExtractorTestCase
             file($parser->getResults()['tags'])
         );
     }
+
+    public function testMappingSimpleArrayToTable()
+    {
+        $config = new Config('ex', 'test', []);
+
+        $config->setAttributes([
+            'mappings' => [
+                'reports' => [
+                    'rows' => [
+                        'type' => 'table',
+                        'destination' => 'report-rows',
+                        'tableMapping' => [
+                            '0' => [
+                                'type' => 'column',
+                                'mapping' => [
+                                    'destination' => 'date'
+                                ]
+                            ],
+                            '1' => [
+                                'type' => 'column',
+                                'mapping' => [
+                                    'destination' => 'unit_id'
+                                ]
+                            ],
+                            '2' => [
+                                'type' => 'column',
+                                'mapping' => [
+                                    'destination' => 'unit_name'
+                                ]
+                            ],
+                            '3' => [
+                                'type' => 'column',
+                                'mapping' => [
+                                    'destination' => 'clicks'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+        $parser = JsonMap::create($config);
+        $data = json_decode('[{
+            "rows": [
+                ["2017-05-27","1234","article-bot-lef-x","83008"],
+                ["2017-05-27","5678","article-bot-mob-x","105723"]
+            ]
+        }]');
+
+        $parser->process($data, 'reports');
+
+        $expected = [
+            '"date","unit_id","unit_name","clicks","reports_pk"' . PHP_EOL,
+            '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL,
+            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL
+        ];
+
+        $this->assertEquals($expected, file($parser->getResults()['report-rows']));
+    }
 }

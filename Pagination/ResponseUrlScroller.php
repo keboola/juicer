@@ -4,7 +4,6 @@ namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Utils\Utils;
 use GuzzleHttp\Query;
 
 /**
@@ -44,7 +43,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        $nextUrl = Utils::getDataFromPath($this->urlParam, $response, '.');
+        $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, '.');
 
         if (empty($nextUrl)) {
             return false;

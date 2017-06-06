@@ -5,7 +5,6 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Utils\Utils;
 
 /**
  * Scrolls using a parameter within page's response.
@@ -67,7 +66,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        $nextParam = Utils::getDataFromPath($this->responseParam, $response, '.');
+        $nextParam = \Keboola\Utils\getDataFromPath($this->responseParam, $response, '.');
         if (empty($nextParam)) {
             return false;
         } else {

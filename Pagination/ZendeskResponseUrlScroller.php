@@ -8,7 +8,6 @@ namespace Keboola\Juicer\Pagination;
 use GuzzleHttp\Url;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Utils\Utils;
 use GuzzleHttp\Query;
 
 class ZendeskResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
@@ -47,7 +46,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
      */
     public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
     {
-        $nextUrl = Utils::getDataFromPath($this->urlParam, $response, '.');
+        $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, '.');
 
         if (empty($nextUrl)) {
             return false;

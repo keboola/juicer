@@ -9,7 +9,6 @@ use Keboola\Juicer\Parser\ParserInterface;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Filter\Filter;
 use Keboola\Filter\Exception\FilterException;
-use Keboola\Utils\Utils;
 use Keboola\Utils\Exception\NoDataFoundException;
 use Keboola\Code\Builder;
 
@@ -182,7 +181,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
                 throw new UserException("The path for placeholder '{$placeholder}' must be a string value or an object containing 'path' and 'function'.");
             }
 
-            $fn = Utils::arrayToObject($field);
+            $fn = \Keboola\Utils\arrayToObject($field);
             $field = $field['path'];
             unset($fn->path);
         }
@@ -218,7 +217,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
                 throw new UserException("Level " . ++$level . " not found in parent results! Maximum level: " . $maxLevel);
             }
 
-            return Utils::getDataFromPath($field, $parentResults[$level], ".", false);
+            return \Keboola\Utils\getDataFromPath($field, $parentResults[$level], ".", false);
         } catch (NoDataFoundException $e) {
             throw new UserException(
                 "No value found for {$placeholder} in parent result. (level: " . ++$level . ")",

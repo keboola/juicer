@@ -2,7 +2,6 @@
 
 namespace Keboola\Juicer\Parser;
 
-use Keboola\Utils\Utils;
 use Keboola\CsvTable\Table;
 
 /**
@@ -125,7 +124,7 @@ class Wsdl extends Parser implements ParserInterface
     public function parse($data, $type, $path = null, $parent = null, $parentId = null)
     {
         if (!empty($path)) {
-            $data = Utils::getDataFromPath($path, $data);
+            $data = \Keboola\Utils\getDataFromPath($path, $data);
         }
 
         $fileName = $type;
@@ -141,7 +140,7 @@ class Wsdl extends Parser implements ParserInterface
         $handle = $this->csvFiles[$fileName];
         $struct = $this->struct[$type];
 
-        foreach (Utils::to_assoc($data) as $record) {
+        foreach (\Keboola\Utils\objectToArray($data) as $record) {
             $row = [];
 
             foreach ($struct as $key => $valueType) {
@@ -187,5 +186,13 @@ class Wsdl extends Parser implements ParserInterface
     public function getResults()
     {
         return $this->csvFiles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata()
+    {
+        // TODO: Implement getMetadata() method.
     }
 }

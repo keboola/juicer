@@ -5,7 +5,6 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Utils\Utils;
 
 /**
  * Looks within the response **data** for an ID
@@ -95,7 +94,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
             $cursor = 0;
 
             foreach ($data as $item) {
-                $cursorVal = Utils::getDataFromPath($this->idKey, $item, '.');
+                $cursorVal = \Keboola\Utils\getDataFromPath($this->idKey, $item, '.');
 
                 if (is_null($this->max) || $cursorVal > $this->max) {
                     $this->max = $cursorVal;

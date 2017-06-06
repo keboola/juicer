@@ -13,7 +13,6 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Event\ErrorEvent;
-use Keboola\Utils\Utils;
 use Keboola\Utils\Exception\JsonDecodeException;
 
 class RestClient extends AbstractClient implements ClientInterface
@@ -136,7 +135,7 @@ class RestClient extends AbstractClient implements ClientInterface
                 // Sanitize the JSON
                 $body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
                 try {
-                    $decoded = Utils::json_decode($body, false, 512, 0, true, true);
+                    $decoded = \Keboola\Utils\jsonDecode($body, false, 512, 0, true, true);
                 } catch (JsonDecodeException $e) {
                     throw new UserException(
                         "Invalid JSON response from API: " . $e->getMessage(),
@@ -185,7 +184,7 @@ class RestClient extends AbstractClient implements ClientInterface
         switch ($request->getMethod()) {
             case 'GET':
                 $method = $request->getMethod();
-                $endpoint = Utils::buildUrl($request->getEndpoint(), $request->getParams());
+                $endpoint = \Keboola\Utils\buildUrl($request->getEndpoint(), $request->getParams());
                 $options = [];
                 break;
             case 'POST':
@@ -289,7 +288,7 @@ class RestClient extends AbstractClient implements ClientInterface
             }
         }
 
-        if (Utils::isValidDateTimeString($retryAfter, DATE_RFC1123)) {
+        if (\Keboola\Utils\isValidDateTimeString($retryAfter, DATE_RFC1123)) {
             $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
             return $date->getTimestamp() - time();
         }

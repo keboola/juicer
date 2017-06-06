@@ -6,7 +6,6 @@ use Keboola\Juicer\Client\RequestInterface;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Utils\Utils;
 
 /**
  * Adds 'forceStop' option
@@ -63,13 +62,29 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
                     : strtotime($config['forceStop']['time'], 0);
             }
             if (!empty($config['forceStop']['volume'])) {
-                $this->volumeLimit = Utils::return_bytes($config['forceStop']['volume']);
+                $this->volumeLimit = $this->returnBytes($config['forceStop']['volume']);
             }
         }
 
         parent::__construct($scroller, $config);
 
         $this->reset();
+    }
+
+    protected function returnBytes($val)
+    {
+        $val = trim($val);
+        $last = strtolower($val[strlen($val)-1]);
+        switch($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+            case 'k':
+                $val *= 1024;
+        }
+        return $val;
     }
 
     /**
