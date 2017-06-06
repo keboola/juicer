@@ -71,18 +71,23 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         $this->reset();
     }
 
+    // @todo: this is due to BC to old Utils::returnBytes.
+    // This function is weird and should be removed.
     protected function returnBytes($val)
     {
         $val = trim($val);
         $last = strtolower($val[strlen($val)-1]);
-        switch($last) {
+        switch ($last) {
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
                 $val *= 1024;
+                // fall-through
             case 'm':
                 $val *= 1024;
+                // fall-through
             case 'k':
                 $val *= 1024;
+                // fall-through
         }
         return $val;
     }
