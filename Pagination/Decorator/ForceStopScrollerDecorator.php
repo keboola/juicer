@@ -62,34 +62,13 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
                     : strtotime($config['forceStop']['time'], 0);
             }
             if (!empty($config['forceStop']['volume'])) {
-                $this->volumeLimit = $this->returnBytes($config['forceStop']['volume']);
+                $this->volumeLimit = intval($config['forceStop']['volume']);
             }
         }
 
         parent::__construct($scroller, $config);
 
         $this->reset();
-    }
-
-    // @todo: this is due to BC to old Utils::returnBytes.
-    // This function is weird and should be removed.
-    protected function returnBytes($val)
-    {
-        $val = trim($val);
-        $last = strtolower($val[strlen($val)-1]);
-        switch ($last) {
-            // The 'G' modifier is available since PHP 5.1.0
-            case 'g':
-                $val *= 1024;
-                // fall-through
-            case 'm':
-                $val *= 1024;
-                // fall-through
-            case 'k':
-                $val *= 1024;
-                // fall-through
-        }
-        return $val;
     }
 
     /**
