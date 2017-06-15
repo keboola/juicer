@@ -3,19 +3,19 @@
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Message\ResponseInterface;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Exception\ApplicationException;
 use Keboola\Juicer\Common\Logger;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Message\Request as GuzzleRequest;
-use GuzzleHttp\Message\Response;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
 
-class RestClient extends AbstractClient implements ClientInterface
+class RestClient implements ClientInterface
 {
     /**
      * @var Client
@@ -23,19 +23,9 @@ class RestClient extends AbstractClient implements ClientInterface
     protected $client;
 
     /**
-     * override if the server response isn't UTF-8
-     * @var string
+     * @var array
      */
-    protected $responseEncoding = 'UTF-8';
-
-    const JSON = 'json';
-    const XML = 'xml';
-    const RAW = 'raw';
-
-    /**
-     * @var string
-     */
-    protected $responseFormat = self::JSON;
+    protected $defaultRequestOptions = [];
 
     /**
      * RestClient constructor.
@@ -44,6 +34,28 @@ class RestClient extends AbstractClient implements ClientInterface
     public function __construct(Client $guzzle)
     {
         $this->client = $guzzle;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setDefaultRequestOptions(array $options)
+    {
+        $this->defaultRequestOptions = $options;
+    }
+
+    /**
+     * Update request config with default options
+     * @param array $config
+     * @return array
+     */
+    protected function getRequestConfig(array $config)
+    {
+        if (!empty($this->defaultRequestOptions)) {
+            $config = array_replace_recursive($this->defaultRequestOptions, $config);
+        }
+
+        return $config;
     }
 
     /**
@@ -89,7 +101,7 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @param Request|RequestInterface $request
+     * @param RequestInterface $request
      * @return array|object
      * @throws UserException
      * @throws \Exception
@@ -122,51 +134,27 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * @param Response $response
+     * @param ResponseInterface $response
      * @return array|object Should be anything that can result from json_decode
      * @throws ApplicationException
      * @throws UserException
      */
-    protected function getObjectFromResponse(Response $response)
+    protected function getObjectFromResponse(ResponseInterface $response)
     {
-        // Format the response
-        switch ($this->responseFormat) {
-            case self::JSON:
-                // Sanitize the JSON
-                $body = iconv($this->responseEncoding, 'UTF-8//IGNORE', $response->getBody());
-                try {
-                    $decoded = \Keboola\Utils\jsonDecode($body, false, 512, 0, true, true);
-                } catch (JsonDecodeException $e) {
-                    throw new UserException(
-                        "Invalid JSON response from API: " . $e->getMessage(),
-                        0,
-                        null,
-                        $e->getData()
-                    );
-                }
-
-                return $decoded;
-            case self::XML:
-                try {
-                    $xml = new \SimpleXMLElement($response->getBody());
-                } catch (\Exception $e) {
-                    throw new UserException(
-                        "Error decoding the XML response: " . $e->getMessage(),
-                        400,
-                        $e,
-                        ['body' => (string) $response->getBody()]
-                    );
-                }
-                // TODO must be a \stdClass
-                return $xml;
-            case self::RAW:
-                // Or could this be a string?
-                $object = new \stdClass;
-                $object->body = (string) $response->getBody();
-                return $object;
-            default:
-                throw new ApplicationException("Data format {$this->responseFormat} not supported.");
+        // Sanitize the JSON
+        $body = iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody());
+        try {
+            $decoded = \Keboola\Utils\jsonDecode($body, false, 512, 0, true, true);
+        } catch (JsonDecodeException $e) {
+            throw new UserException(
+                "Invalid JSON response from API: " . $e->getMessage(),
+                0,
+                null,
+                $e->getData()
+            );
         }
+
+        return $decoded;
     }
 
     /**
@@ -219,7 +207,7 @@ class RestClient extends AbstractClient implements ClientInterface
     }
 
     /**
-     * Create expontential backoff for GuzzleClient
+     * Create exponential backoff for GuzzleClient
      *
      * options
      *  - maxRetries: (integer) max retries count
@@ -294,21 +282,5 @@ class RestClient extends AbstractClient implements ClientInterface
         }
 
         return RetrySubscriber::exponentialDelay($retries, $event);
-    }
-
-    /**
-     * @param string $format
-     */
-    public function setResponseFormat($format)
-    {
-        $this->responseFormat = $format;
-    }
-
-    /**
-     * @param $encoding
-     */
-    public function setResponseEncoding($encoding)
-    {
-        $this->responseEncoding = $encoding;
     }
 }

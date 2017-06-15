@@ -29,7 +29,7 @@ interface ClientInterface
     public function createRequest(array $config);
 
     /**
-     * @return Client|SoapClient
+     * @return Client
      */
     public function getClient();
 

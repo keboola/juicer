@@ -4,7 +4,7 @@ namespace Keboola\Juicer\Client;
 
 use Keboola\Juicer\Exception\UserException;
 
-class RestRequest extends Request implements RequestInterface
+class RestRequest implements RequestInterface
 {
     /**
      * @var string
@@ -16,11 +16,32 @@ class RestRequest extends Request implements RequestInterface
      */
     protected $headers;
 
+    /**
+     * @var string
+     */
+    protected $endpoint;
+
+    /**
+     * @var array
+     */
+    protected $params;
+
     public function __construct($endpoint, array $params = [], $method = 'GET', array $headers = [])
     {
-        parent::__construct($endpoint, $params);
+        $this->endpoint = $endpoint;
+        $this->params = $params;
         $this->method = $method;
         $this->headers = $headers;
+    }
+
+    public function getEndpoint()
+    {
+        return $this->endpoint;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
     }
 
     /**
