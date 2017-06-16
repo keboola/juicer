@@ -5,6 +5,7 @@ namespace Keboola\Juicer\Tests\Extractor;
 use Keboola\Juicer\Config\Configuration;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Extractor\RecursiveJob;
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
@@ -146,7 +147,7 @@ class RecursiveJobTest extends ExtractorTestCase
      */
     public function testGetPlaceholder($field, $expectedValue)
     {
-        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+        $job = $this->getMockBuilder(RecursiveJob::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -202,7 +203,7 @@ class RecursiveJobTest extends ExtractorTestCase
      */
     public function testGetPlaceholderValue($level, $expected)
     {
-        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+        $job = $this->getMockBuilder(RecursiveJob::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -230,7 +231,7 @@ class RecursiveJobTest extends ExtractorTestCase
      */
     public function testGetPlaceholderValueError($data, $message)
     {
-        $job = $this->getMockBuilder('Keboola\Juicer\Extractor\RecursiveJob')
+        $job = $this->getMockBuilder(RecursiveJob::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -294,8 +295,8 @@ class RecursiveJobTest extends ExtractorTestCase
         $client->getClient()->getEmitter()->attach($history);
 
         $job = $this->getMockForAbstractClass(
-            'Keboola\Juicer\Extractor\RecursiveJob',
-            [$jobConfig, $client, $parser]
+            RecursiveJob::class,
+            [$jobConfig, $client, $parser, new NullLogger()]
         );
 
         return [
