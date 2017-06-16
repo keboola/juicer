@@ -7,10 +7,7 @@ use Keboola\Juicer\Exception\FileNotFoundException;
 use Keboola\Juicer\Exception\NoDataException;
 
 /**
- * Reflects a YAML file in memory
- * @todo try $objectSupport (Yaml::parse() 3rd param) to get an object?
- *  should probably default to object
- * @todo also 2nd param, exceptionOnInvalidType
+ * Reflects a JSON file in memory
  */
 class JsonFile
 {
@@ -60,6 +57,9 @@ class JsonFile
         }
 
         $this->data = json_decode(file_get_contents($this->pathName), true);
+        if (json_last_error() !== 0) {
+            throw new ApplicationException("Invalid JSON " . json_last_error_msg());
+        }
     }
 
     public function save()
