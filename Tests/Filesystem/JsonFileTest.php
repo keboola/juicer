@@ -1,6 +1,6 @@
 <?php
 
-namespace Keboola\Juicer\Tests\FileSystem;
+namespace Keboola\Juicer\Tests\Filesystem;
 
 use Keboola\Juicer\Filesystem\JsonFile;
 use Keboola\Temp\Temp;
