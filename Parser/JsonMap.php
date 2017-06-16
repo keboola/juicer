@@ -77,11 +77,7 @@ class JsonMap implements ParserInterface
     }
 
     /**
-     * Parse the data
-     * @param array $data shall be the response body
-     * @param string $type data type
-     * @param null $parentId
-     * @throws UserException
+     * @inheritdoc
      */
     public function process(array $data, $type, $parentId = null)
     {

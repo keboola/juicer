@@ -10,11 +10,12 @@ use Keboola\CsvTable\Table;
 interface ParserInterface
 {
     /**
-     * @param array $data
-     * @param string $type
-     * @todo add $parentId for recursion links?
+     * Parse the data
+     * @param array $data shall be the response body
+     * @param string $type data type
+     * @param null $parentId
      */
-    public function process(array $data, $type);
+    public function process(array $data, $type, $parentId = null);
 
 
     /**
