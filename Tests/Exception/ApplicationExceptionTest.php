@@ -3,8 +3,9 @@
 namespace Keboola\Juicer\Tests\Exception;
 
 use Keboola\Juicer\Exception\ApplicationException;
+use PHPUnit\Framework\TestCase;
 
-class ApplicationExceptionTest extends \PHPUnit_Framework_TestCase
+class ApplicationExceptionTest extends TestCase
 {
     public function testSetData()
     {

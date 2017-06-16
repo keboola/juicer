@@ -7,9 +7,10 @@ use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Temp\Temp;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-class JsonMapTest extends \PHPUnit_Framework_TestCase
+class JsonMapTest extends TestCase
 {
     public function testProcess()
     {

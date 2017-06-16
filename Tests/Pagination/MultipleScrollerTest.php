@@ -5,9 +5,10 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\MultipleScroller;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-class MultipleScrollerTest extends \PHPUnit_Framework_TestCase
+class MultipleScrollerTest extends TestCase
 {
     public function testGetNextRequest()
     {

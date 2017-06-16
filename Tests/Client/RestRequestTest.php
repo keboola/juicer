@@ -3,8 +3,9 @@
 namespace Keboola\Juicer\Tests\Client;
 
 use Keboola\Juicer\Client\RestRequest;
+use PHPUnit\Framework\TestCase;
 
-class RestRequestTest extends \PHPUnit_Framework_TestCase
+class RestRequestTest extends TestCase
 {
     public function testCreate()
     {

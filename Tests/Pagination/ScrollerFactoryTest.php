@@ -11,8 +11,9 @@ use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
 use Keboola\Juicer\Pagination\ResponseUrlScroller;
 use Keboola\Juicer\Pagination\ScrollerFactory;
+use PHPUnit\Framework\TestCase;
 
-class ScrollerFactoryTest extends \PHPUnit_Framework_TestCase
+class ScrollerFactoryTest extends TestCase
 {
     public function testCreateScroller()
     {

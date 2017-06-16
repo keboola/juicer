@@ -5,9 +5,10 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\OffsetScroller;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-class OffsetScrollerTest extends \PHPUnit_Framework_TestCase
+class OffsetScrollerTest extends TestCase
 {
     public function testGetNextRequest()
     {

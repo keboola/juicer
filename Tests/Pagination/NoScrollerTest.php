@@ -5,9 +5,10 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\NoScroller;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-class NoScrollerTest extends \PHPUnit_Framework_TestCase
+class NoScrollerTest extends TestCase
 {
     public function testGetNextRequest()
     {

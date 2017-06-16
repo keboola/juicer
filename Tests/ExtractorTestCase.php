@@ -2,7 +2,9 @@
 
 namespace Keboola\Juicer\Tests;
 
-class ExtractorTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ExtractorTestCase extends TestCase
 {
     protected static function callMethod($obj, $name, array $args)
     {

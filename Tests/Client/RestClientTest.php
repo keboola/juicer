@@ -18,7 +18,6 @@ use Psr\Log\NullLogger;
 
 class RestClientTest extends ExtractorTestCase
 {
-
     public function testCreateRequest()
     {
         $arr = [
