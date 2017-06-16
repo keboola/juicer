@@ -16,13 +16,12 @@
         "keboola/php-csvtable": "^0.1",
         "keboola/csvmap": "^0.4",
         "keboola/filter": "^0.1",
-        "symfony/yaml": "^2.8",
         "guzzlehttp/retry-subscriber": "dev-master#270393c",
         "guzzlehttp/guzzle": "^5.3",
-        "monolog/monolog": "^1.22",
         "keboola/codebuilder": "^0.2"
     },
     "require-dev": {
+        "monolog/monolog": "^1.22",
 		"phpunit/phpunit": "^6.2",
 		"codeclimate/php-test-reporter": "^0.4",
         "squizlabs/php_codesniffer": "^3.0",
