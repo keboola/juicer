@@ -110,6 +110,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if ($this->checkPages() || $this->checkTime() || $this->checkVolume($response)) {
             return true;
         }
+        return null;
     }
 
     /**
@@ -125,6 +126,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if (++$this->pageCounter > $this->pageLimit) {
             return true;
         }
+        return false;
     }
 
     /**
@@ -140,6 +142,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if (($this->startTime + $this->timeLimit) <= time()) {
             return true;
         }
+        return false;
     }
 
     /**
@@ -157,6 +160,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if ($this->volumeCounter > $this->volumeLimit) {
             return true;
         }
+        return false;
     }
 
     public function reset()
