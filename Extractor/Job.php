@@ -100,7 +100,6 @@ abstract class Job
      *
      * @param array $data
      * @param array $parentId ID (or list thereof) to be passed to parser
-     * @internal param object $response
      */
     protected function parse(array $data, array $parentId = null)
     {
