@@ -48,7 +48,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @var bool
      */
-    protected $limitReached;
+    protected $limitReached = false;
 
     public function __construct(ScrollerInterface $scroller, array $config)
     {
@@ -177,6 +177,6 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      */
     public function getLimitReached()
     {
-        return (bool) $this->limitReached;
+        return $this->limitReached;
     }
 }
