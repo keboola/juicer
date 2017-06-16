@@ -8,7 +8,7 @@ use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\Csv\CsvFile;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Common\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Parse JSON results from REST API to CSV
@@ -26,20 +26,28 @@ class JsonMap implements ParserInterface
     protected $fallback;
 
     /**
-     * @param Mapper[] $mappers
+     * @var LoggerInterface
      */
-    public function __construct(array $mappers)
+    private $logger;
+
+    /**
+     * @param Mapper[] $mappers
+     * @param LoggerInterface $logger
+     */
+    public function __construct(array $mappers, LoggerInterface $logger)
     {
         $this->mappers = $mappers;
+        $this->logger = $logger;
     }
 
     /**
      * @param Config $config
+     * @param LoggerInterface $logger
      * @param ParserInterface|null $fallbackParser
      * @return static
      * @throws UserException
      */
-    public static function create(Config $config, ParserInterface $fallbackParser = null)
+    public static function create(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)
     {
         if (empty($config->getAttribute('mappings'))) {
             throw new UserException("Cannot initialize JSON Mapper with no mapping");
@@ -63,7 +71,7 @@ class JsonMap implements ParserInterface
             }
         }
 
-        $parser = new static($mappers);
+        $parser = new static($mappers, $logger);
         $parser->setFallbackParser($fallbackParser);
         return $parser;
     }
@@ -114,7 +122,7 @@ class JsonMap implements ParserInterface
     {
         foreach ($files as $name => $file) {
             if (array_key_exists($name, $results)) {
-                Logger::log('debug', "Merging results for '{$name}'.");
+                $this->logger->debug("Merging results for '{$name}'.");
 
                 $existingHeader = $results[$name]->getHeader();
                 $newHeader = $file->getHeader();

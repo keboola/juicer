@@ -2,6 +2,7 @@
 
 namespace Keboola\Juicer\Tests\Config;
 
+use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\Configuration;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Tests\ExtractorTestCase;
@@ -74,12 +75,12 @@ class ConfigurationTest extends ExtractorTestCase
         $path = __DIR__ . '/../data/metadataTest';
 
         $configuration = new Configuration($path, 'test', new Temp('test'));
-        $json = $configuration->getConfigMetadata();
+        $json = $configuration->getMetadata()->getData();
 
         self::assertEquals(json_decode('{"some":"data","more": {"woah": "such recursive"}}', true), $json);
 
         $noConfiguration = new Configuration('asdf', 'test', new Temp('test'));
-        self::assertEquals(null, $noConfiguration->getConfigMetadata());
+        self::assertEquals(null, $noConfiguration->getMetadata()->getData());
     }
 
     public function testSaveConfigMetadata()
@@ -126,7 +127,7 @@ class ConfigurationTest extends ExtractorTestCase
             self::assertEquals(array_replace(['id' => $json['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
         }
         self::assertEquals($configs[0]->getJobs(), $configs[1]->getJobs());
-        self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        self::assertContainsOnlyInstancesOf(Config::class, $configs);
         self::assertCount(count($json['parameters']['iterations']), $configs);
     }
 
@@ -137,8 +138,8 @@ class ConfigurationTest extends ExtractorTestCase
         $configs = $configuration->getMultipleConfigs();
 
         $json = json_decode(file_get_contents('./Tests/data/simple_basic/config.json'), true);
-
-        self::assertContainsOnlyInstancesOf('\Keboola\Juicer\Config\Config', $configs);
+        self::assertEquals($json, $configs);
+        self::assertContainsOnlyInstancesOf(Config::class, $configs);
         self::assertCount(1, $configs);
 
         self::assertEquals($configuration->getConfig(), $configs[0]);

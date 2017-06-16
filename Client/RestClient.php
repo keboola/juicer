@@ -6,7 +6,6 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Exception\ApplicationException;
-use Keboola\Juicer\Common\Logger;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Message\Request as GuzzleRequest;
@@ -14,6 +13,7 @@ use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
+use Psr\Log\LoggerInterface;
 
 class RestClient implements ClientInterface
 {
@@ -28,11 +28,18 @@ class RestClient implements ClientInterface
     protected $defaultRequestOptions = [];
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * RestClient constructor.
      * @param Client $guzzle
+     * @param LoggerInterface $logger
      */
-    public function __construct(Client $guzzle)
+    public function __construct(Client $guzzle, LoggerInterface $logger)
     {
+        $this->logger = $logger;
         $this->client = $guzzle;
     }
 
@@ -70,12 +77,13 @@ class RestClient implements ClientInterface
      * - curl
      *      - codes (array) list of error codes to retry on
      *
-     * @return self
+     * @param LoggerInterface $logger
+     * @return RestClient
      */
-    public static function create($guzzleConfig = [], $retryConfig = [])
+    public static function create($guzzleConfig = [], $retryConfig = [], LoggerInterface $logger)
     {
         $guzzle = new Client($guzzleConfig);
-        $guzzle->getEmitter()->attach(self::createBackoff($retryConfig));
+        $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));
 
         $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent) {
             $errno = $errorEvent->getTransferInfo('errno');
@@ -89,7 +97,7 @@ class RestClient implements ClientInterface
                 ));
             }
         }, "last");
-        return new self($guzzle);
+        return new self($guzzle, $logger);
     }
 
     /**
@@ -218,9 +226,10 @@ class RestClient implements ClientInterface
      *      - codes (array) list of error codes to retry on
      *
      * @param array $options
+     * @param LoggerInterface $logger
      * @return RetrySubscriber
      */
-    private static function createBackoff(array $options)
+    private static function createBackoff(array $options, LoggerInterface $logger)
     {
         $headerName = isset($options['http']['retryHeader']) ? $options['http']['retryHeader'] : 'Retry-After';
         $httpRetryCodes = isset($options['http']['codes']) ? $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];
@@ -240,7 +249,7 @@ class RestClient implements ClientInterface
                 RetrySubscriber::createCurlFilter($curlRetryCodes)
             ]),
             'max' => $maxRetries,
-            'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName) {
+            'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName, $logger) {
                 $delay = self::getRetryDelay($retries, $event, $headerName);
 
                 $errData = [
@@ -251,7 +260,7 @@ class RestClient implements ClientInterface
                 if ($event instanceof ErrorEvent) {
                     $errData["message"] = $event->getException()->getMessage();
                 }
-                Logger::log("DEBUG", "Http request failed, retrying in {$delay}s", $errData);
+                $logger->debug("Http request failed, retrying in {$delay}s", $errData);
 
                 // ms > s
                 return 1000 * $delay;

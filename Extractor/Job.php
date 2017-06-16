@@ -7,6 +7,7 @@ use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Client\RequestInterface;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Parser\ParserInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * A generic Job class generally used to set up each API call, handle its pagination and parsing into a CSV ready for SAPI upload
@@ -35,12 +36,19 @@ abstract class Job
     protected $jobId;
 
     /**
-     * @param JobConfig $config
-     * @param ClientInterface $client A client used to communicate with the API (wrapper for Guzzle, SoapClient, ...)
-     * @param ParserInterface $parser A parser to handle the result and convert it into CSV file(s)
+     * @var LoggerInterface
      */
-    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
+    protected $logger;
+
+    /**
+     * @param JobConfig $config
+     * @param ClientInterface $client A client used to communicate with the API (wrapper for Guzzle)
+     * @param ParserInterface $parser A parser to handle the result and convert it into CSV file(s)
+     * @param LoggerInterface $logger
+     */
+    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser, LoggerInterface $logger)
     {
+        $this->logger = $logger;
         $this->config = $config;
         $this->client = $client;
         $this->parser = $parser;

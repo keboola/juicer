@@ -3,16 +3,16 @@
 namespace Keboola\Juicer\Tests\Parser;
 
 use Keboola\Juicer\Parser\Json;
-use Keboola\Juicer\Common\Logger;
 use Keboola\Json\Parser;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Monolog\Handler\TestHandler;
+use Psr\Log\NullLogger;
 
 class JsonTest extends ExtractorTestCase
 {
     public function testProcess()
     {
-        $parser = new Json(Parser::create($this->getLogger('test', true)));
+        $parser = new Json(Parser::create(new NullLogger()), new NullLogger());
 
         $data = json_decode('[
             {
@@ -50,7 +50,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testGetMetadata()
     {
-        $parser = new Json(Parser::create($this->getLogger('test', true)));
+        $parser = new Json(Parser::create(new NullLogger()), new NullLogger());
 
         $data = [
             (object) ['id' => 1]
@@ -71,7 +71,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testUpdateStruct()
     {
-        $parser = new Json(Parser::create($this->getLogger('test', true)));
+        $parser = new Json(Parser::create(new NullLogger()), new NullLogger());
 
         $struct = json_decode(file_get_contents('./Tests/data/outdatedStruct.json'), true);
 
@@ -133,8 +133,7 @@ class JsonTest extends ExtractorTestCase
     {
         $logHandler = new TestHandler();
         $logger = new \Monolog\Logger('test', [$logHandler]);
-        Logger::setLogger($logger);
-        $parser = new Json(Parser::create($logger));
+        $parser = new Json(Parser::create($logger), $logger);
 
         $parser->process([], 'empty');
         self::assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
