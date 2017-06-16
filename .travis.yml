@@ -1,17 +1,13 @@
 language: bash
-
 services:
-  - docker
-
+- docker
 before_script:
-  - docker -v
-  - docker-compose -v
-  - docker-compose build
-
+- docker -v
+- docker-compose -v
+- docker-compose build
 script:
-  - docker-compose run --rm -e CODECLIMATE_REPO_TOKEN tests
-
+- docker-compose run --rm -e CODECLIMATE_REPO_TOKEN tests
 notifications:
   slack:
-    secure: fRVSNiGtTdKQsP+LOVeYlK/Ed2NjB4HoZgBFkBqkirNlS8ZuvyQSto6xr1VNHxRCBx6DjeyXwyHD1OPAX6/CkcTcOaNYFXJnSTmrEjRtA8lK021t6xyCiUtuP3LLC67ukUl59zx2eVMbp3H2AVRUoJQ/rCwxGjFx4HJqQdiQPH65Fj6YGeG/YCyXywYU1GwaEOW0IcioMY+Ltsn34blgfHZ5ZYlEHj79HJu66T/muYi5P+YPwzkn3+/AeRDR0JHb6kAs2EOOtbu55KVtbdpsMEgBFqtMOm74rDQW2gGQ0sw841A/sQ4Yolmi86OKKlQILrIO0rmkMMqNKeotHEeOiT2pQOwwzc82pylj6CQGJKLBU/Id7qI6MUsSGLZZD4iNaxh1kKOCFhdPSPRiSlFXcFDS9wNhY7/ZUKDU2hOAZJDTgSCcgrqPGfN/JwTbIO5UkLw5bMDbCXP9Bw+56JGhiHwMUMc+3cHwQAgR5ueAzajMoQUKpnwAxlyemaCF6d8WU2b0unxFecaYi7n3G8a12biD+imvglBCaE1I0E8goPjmEZJmizNtB8barDIQMMJS1aU95GvO9XfwxG7bJXuk18L0XJkJ7GdIWeItehh4UcWlS0tZbloxbfXXbPlJa/43nnV1ZyA3ud0w7Dzy0GuE8xHacLcKNHguHL2bIhUMIwU=
+    secure: H4NUVG9APUUD7JAnUh/dfhg14e03V/kQBmoQJc5cMyLVUlbW9KO0k84JWAP0Bm+7d0WwIrDHKaJUQBot1Ndu44SR4oWI/5SFSm2W59va+/xYOy9dNfD91/wiuLDl/yqD52hPGEq/71UpXBQUHXa1/CIuGSpkLxDTQB//h5M7FrkSeGg3tVRBTAeODI9wgXO2FGsbefyrhBK6i3b65dplQvsZGL0whP0CESp/oilvYWIjlvkQDADM6cid41Qs84HMxuVMoVGbk781lCyaMugsw0+RESNEaRPONFQfPa/7IGFByunNO2zOfNYYXQSvEGttR23qXIosajjLBRQAFSflRyBCKb5Tmvjvj6tFq3eZ4odsgh60/1uYhLi5jpv/WvMFKdXFqIOR/mDdz/89OrihLGlvB0s7ET1RS7wdE+3LMHTbiUnWyDFmwlEdkKl9Rai9+4LGK4gBV1y5GYZYkMVr1nMaQJPMkCDeavnGAVRAbozXAw96+/s0O4EV99mgg7UK7mPbtdnL6d5aux/YH4RjMGVU+Uc5WOHFIWsiU5+x6mz1a+NwACsa4i1rgUHkDNdMket9+qDXpWOLGX96cydvTnPaf/M3iUAn/qNh0Np6Rq7zsiWJ8FR3AMno37ngAN7oLc15NMrYmxB3PTMiNXRaNiGJK/pBtur24da09OnHlwI=
   email: false
