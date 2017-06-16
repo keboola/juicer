@@ -133,6 +133,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     /**
      * Create a child job with current client and parser
      * @param JobConfig $config
+     * @param array $parentResults
      * @return static
      */
     protected function createChild(JobConfig $config, array $parentResults)

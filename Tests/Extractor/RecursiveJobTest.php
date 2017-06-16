@@ -288,7 +288,7 @@ class RecursiveJobTest extends ExtractorTestCase
 
         $parser = Json::create($configuration->getConfig(), new NullLogger(), $temp);
 
-        $client = RestClient::create([], [], new NullLogger());
+        $client = RestClient::create(new NullLogger());
 
         $history = new History();
         $client->getClient()->getEmitter()->attach($history);

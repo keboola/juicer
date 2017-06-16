@@ -80,7 +80,7 @@ class RestClient implements ClientInterface
      * @param LoggerInterface $logger
      * @return RestClient
      */
-    public static function create($guzzleConfig = [], $retryConfig = [], LoggerInterface $logger)
+    public static function create(LoggerInterface $logger, $guzzleConfig = [], $retryConfig = [])
     {
         $guzzle = new Client($guzzleConfig);
         $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));

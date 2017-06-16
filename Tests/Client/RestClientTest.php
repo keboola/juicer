@@ -145,11 +145,12 @@ class RestClientTest extends ExtractorTestCase
     {
         $sets = [
             'default' => [
-                RestClient::create([], [], new NullLogger()),
+                RestClient::create(new NullLogger()),
                 new Response(429, ['Retry-After' => 5])
             ],
             'custom' => [
                 RestClient::create(
+                    new NullLogger(),
                     [],
                     [
                         'http' => [
@@ -157,13 +158,12 @@ class RestClientTest extends ExtractorTestCase
                             'codes' => [403, 429],
                         ],
                         'maxRetries' => 8
-                    ],
-                    new NullLogger()
+                    ]
                 ),
                 new Response(403, ['X-Rate-Limit-Reset' => 5])
             ],
             'absolute' => [
-                RestClient::create([], [], new NullLogger()),
+                RestClient::create(new NullLogger()),
                 new Response(429, ['Retry-After' => time() + 5])
             ]
         ];
@@ -187,14 +187,14 @@ class RestClientTest extends ExtractorTestCase
         ]);
 
         $client = RestClient::create(
+            $logger,
             [],
             [
                 'maxRetries' => $retries,
                 'curl' => [
                     'codes' => [6],
                 ]
-            ],
-            $logger
+            ]
         );
 
         try {
@@ -221,14 +221,14 @@ class RestClientTest extends ExtractorTestCase
         ]);
 
         $client = RestClient::create(
+            $logger,
             [],
             [
                 'maxRetries' => $retries,
                 'curl' => [
                     'codes' => [77],
                 ]
-            ],
-            $logger
+            ]
         );
 
         try {
@@ -251,7 +251,7 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "d
         ]';
 
-        $restClient = RestClient::create([], [], new NullLogger());
+        $restClient = RestClient::create(new NullLogger());
 
         $mock = new Mock([
             new Response(200, [], Stream::factory($body))
@@ -281,7 +281,7 @@ class RestClientTest extends ExtractorTestCase
             ]
         ];
 
-        $client = RestClient::create([], [], new NullLogger());
+        $client = RestClient::create(new NullLogger());
         $client->setDefaultRequestOptions($defaultOptions);
 
         $requestOptions = [
