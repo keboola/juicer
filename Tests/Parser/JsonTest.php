@@ -6,6 +6,7 @@ use Keboola\Juicer\Parser\Json;
 use Keboola\Json\Parser;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Psr\Log\NullLogger;
 
 class JsonTest extends ExtractorTestCase
@@ -75,7 +76,7 @@ class JsonTest extends ExtractorTestCase
 
         $struct = json_decode(file_get_contents('./Tests/data/outdatedStruct.json'), true);
 
-        $updated = $this->callMethod($parser, 'updateStruct', [$struct]);
+        $updated = self::callMethod($parser, 'updateStruct', [$struct]);
 
         $parser->getParser()->getStruct()->load($updated);
 
@@ -108,7 +109,7 @@ class JsonTest extends ExtractorTestCase
                     'arr' => 'arrayOfobject'
                 ]
             ],
-            $parser->getParser()->getStruct()->getStruct()
+            $parser->getParser()->getStruct()->getData()
         );
 
         self::assertEquals('"id","arr"
@@ -132,7 +133,7 @@ class JsonTest extends ExtractorTestCase
     public function testProcessNoData()
     {
         $logHandler = new TestHandler();
-        $logger = new \Monolog\Logger('test', [$logHandler]);
+        $logger = new Logger('test', [$logHandler]);
         $parser = new Json(Parser::create($logger), $logger);
 
         $parser->process([], 'empty');

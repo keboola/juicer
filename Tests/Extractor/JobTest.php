@@ -7,6 +7,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Parser\Json;
 use Keboola\Json\Parser;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 class JobTest extends ExtractorTestCase
 {
@@ -18,12 +19,12 @@ class JobTest extends ExtractorTestCase
             'Keboola\Juicer\Extractor\Job',
             [
                 $jobConfig,
-                RestClient::create(),
-                new Json(Parser::create($this->getLogger('job', true)))
+                RestClient::create(new NullLogger()),
+                new Json(Parser::create(new NullLogger()), new NullLogger())
             ]
         );
 
-        $this->assertEquals($jobConfig->getDataType(), $this->callMethod($job, 'getDataType', []));
+        self::assertEquals($jobConfig->getDataType(), self::callMethod($job, 'getDataType', []));
     }
 
     public function testGetDataTypeFromEndpoint()
@@ -34,11 +35,11 @@ class JobTest extends ExtractorTestCase
             'Keboola\Juicer\Extractor\Job',
             [
                 $jobConfig,
-                RestClient::create(),
-                new Json(Parser::create($this->getLogger('job', true)))
+                RestClient::create(new NullLogger()),
+                new Json(Parser::create(new NullLogger()), new NullLogger())
             ]
         );
 
-        $this->assertEquals($jobConfig->getEndpoint(), $this->callMethod($job, 'getDataType', []));
+        self::assertEquals($jobConfig->getEndpoint(), self::callMethod($job, 'getDataType', []));
     }
 }

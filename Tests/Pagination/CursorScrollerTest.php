@@ -6,12 +6,13 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\CursorScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 class CursorScrollerTest extends ExtractorTestCase
 {
     public function testGetNextRequest()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test'
         ]);
@@ -39,7 +40,7 @@ class CursorScrollerTest extends ExtractorTestCase
 
     public function testGetNextRequestNested()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test'
         ]);

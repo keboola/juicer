@@ -6,12 +6,13 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 class OffsetScrollerTest extends ExtractorTestCase
 {
     public function testGetNextRequest()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -54,7 +55,7 @@ class OffsetScrollerTest extends ExtractorTestCase
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
         self::assertEquals(false, $next3);
 
-        // this should be in a separete testReset()
+        // this should be in a separate testReset()
         // must match the first one, because #3 should reset the scroller
         $next4 = $scroller->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals($expected, $next4);
@@ -62,7 +63,7 @@ class OffsetScrollerTest extends ExtractorTestCase
 
     public function testGetFirstRequest()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -99,7 +100,7 @@ class OffsetScrollerTest extends ExtractorTestCase
 
     public function testOffsetFromJob()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [

@@ -9,6 +9,7 @@ use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use GuzzleHttp\Subscriber\History;
+use Psr\Log\NullLogger;
 
 /**
  * @todo testCreateChild
@@ -18,7 +19,8 @@ class RecursiveJobTest extends ExtractorTestCase
 {
     public function testParse()
     {
-        list($job, $client, $parser) = $this->getJob('simple_basic');
+        /** @var Json $parser */
+        list($job, $parser) = $this->getJob('simple_basic');
 
         $response = json_decode('{
             "data": [
@@ -35,7 +37,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         }');
 
-        $this->callMethod($job, 'parse', [$response->data, ['userData' => 'hello']]);
+        self::callMethod($job, 'parse', [$response->data, ['userData' => 'hello']]);
 
         self::assertEquals(
             ['tickets_export', 'tickets_export_c'],
@@ -57,12 +59,12 @@ class RecursiveJobTest extends ExtractorTestCase
      */
     public function testSamePlaceholder()
     {
-        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive_same_ph');
+        list($job, $parser, $jobConfig) = $this->getJob('recursive_same_ph');
 
         $children = $jobConfig->getChildJobs();
         $child = reset($children);
 
-        $childJob = $this->callMethod(
+        $childJob = self::callMethod(
             $job,
             'createChild',
             [
@@ -71,11 +73,11 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         );
 
-        $this->assertEquals('root/123', $this->getProperty($childJob, 'config')->getEndpoint());
+        self::assertEquals('root/123', self::getProperty($childJob, 'config')->getEndpoint());
 
         $grandChildren = $child->getChildJobs();
         $grandChild = reset($grandChildren);
-        $grandChildJob = $this->callMethod(
+        $grandChildJob = self::callMethod(
             $childJob,
             'createChild',
             [
@@ -84,17 +86,17 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         );
 
-        $this->assertEquals('root/123/456', $this->getProperty($grandChildJob, 'config')->getEndpoint());
+        self::assertEquals('root/123/456', self::getProperty($grandChildJob, 'config')->getEndpoint());
     }
 
     public function testCreateChild()
     {
-        list($job, $client, $parser, $history, $jobConfig) = $this->getJob('recursive');
+        list($job, $parser, $jobConfig) = $this->getJob('recursive');
 
         $children = $jobConfig->getChildJobs();
         $child = reset($children);
 
-        $childJob = $this->callMethod(
+        $childJob = self::callMethod(
             $job,
             'createChild',
             [
@@ -103,7 +105,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 '1:id' => [
                     'placeholder' => '1:id',
@@ -111,14 +113,14 @@ class RecursiveJobTest extends ExtractorTestCase
                     'value' => 123
                 ]
             ],
-            $this->getProperty($childJob, 'parentParams')
+            self::getProperty($childJob, 'parentParams')
         );
 
-        $this->assertEquals('comments', $this->callMethod($childJob, 'getDataType', []));
+        self::assertEquals('comments', self::callMethod($childJob, 'getDataType', []));
 
         $grandChildren = $child->getChildJobs();
         $grandChild = reset($grandChildren);
-        $grandChildJob = $this->callMethod(
+        $grandChildJob = self::callMethod(
             $childJob,
             'createChild',
             [
@@ -128,17 +130,19 @@ class RecursiveJobTest extends ExtractorTestCase
         );
 
         // Ensure the IDs from 2 parent levels are properly mapped
-        $values = $this->getProperty($grandChildJob, 'parentParams');
-        $this->assertEquals(456, $values['id']['value']);
-        $this->assertEquals(123, $values['2:id']['value']);
+        $values = self::getProperty($grandChildJob, 'parentParams');
+        self::assertEquals(456, $values['id']['value']);
+        self::assertEquals(123, $values['2:id']['value']);
         // Check the dataType from endpoint has placeholders not replaced by values
-        $this->assertEquals('third/level/{2:id}/{id}.json', $this->callMethod($grandChildJob, 'getDataType', []));
+        self::assertEquals('third/level/{2:id}/{id}.json', self::callMethod($grandChildJob, 'getDataType', []));
 
-        $this->assertEquals('third/level/123/456.json', $this->getProperty($grandChildJob, 'config')->getEndpoint());
+        self::assertEquals('third/level/123/456.json', self::getProperty($grandChildJob, 'config')->getEndpoint());
     }
 
     /**
      * @dataProvider placeholderProvider
+     * @param $field
+     * @param $expectedValue
      */
     public function testGetPlaceholder($field, $expectedValue)
     {
@@ -146,7 +150,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $value = $this->callMethod(
+        $value = self::callMethod(
             $job,
             'getPlaceholder',
             [ // $placeholder, $field, $parentResults
@@ -161,7 +165,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'placeholder' => '1:id',
                 'field' => 'id',
@@ -202,7 +206,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $value = $this->callMethod(
+        $value = self::callMethod(
             $job,
             'getPlaceholderValue',
             [ // $field, $parentResults, $level, $placeholder
@@ -216,7 +220,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ]
         );
 
-        $this->assertEquals($expected, $value);
+        self::assertEquals($expected, $value);
     }
 
     /**
@@ -231,7 +235,7 @@ class RecursiveJobTest extends ExtractorTestCase
             ->getMock();
 
         try {
-            $this->callMethod(
+            self::callMethod(
                 $job,
                 'getPlaceholderValue',
                 [ // $field, $parentResults, $level, $placeholder
@@ -241,12 +245,10 @@ class RecursiveJobTest extends ExtractorTestCase
                     '1:id'
                 ]
             );
+            self::fail('UserException was not thrown');
         } catch (UserException $e) {
-            $this->assertEquals($message, $e->getMessage());
-            return;
+            self::assertEquals($message, $e->getMessage());
         }
-
-        $this->fail('UserException was not thrown');
     }
 
     public function placeholderErrorValueProvider()
@@ -277,16 +279,16 @@ class RecursiveJobTest extends ExtractorTestCase
      * @param string $dir
      * @return array
      */
-    public function getJob($dir = 'recursive')
+    public function getJob($dir)
     {
         $temp = new Temp('recursion');
         $configuration = new Configuration(__DIR__ . '/../data/' . $dir, 'test', $temp);
 
         $jobConfig = array_values($configuration->getConfig()->getJobs())[0];
 
-        $parser = Json::create($configuration->getConfig(), $this->getLogger('test', true), $temp);
+        $parser = Json::create($configuration->getConfig(), new NullLogger(), $temp);
 
-        $client = RestClient::create();
+        $client = RestClient::create([], [], new NullLogger());
 
         $history = new History();
         $client->getClient()->getEmitter()->attach($history);
@@ -298,9 +300,7 @@ class RecursiveJobTest extends ExtractorTestCase
 
         return [
             $job,
-            $client,
             $parser,
-            $history,
             $jobConfig
         ];
     }

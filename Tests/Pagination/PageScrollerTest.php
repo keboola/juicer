@@ -6,6 +6,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 /**
  * @todo test with no limit until empty response
@@ -14,7 +15,7 @@ class PageScrollerTest extends ExtractorTestCase
 {
     public function testGetFirstRequest()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -35,7 +36,7 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testGetFirstRequestExplicit()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -56,7 +57,7 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testGetFirstRequestNoParams()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -75,7 +76,7 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testGetNextRequest()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -125,7 +126,7 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testGetNextRequestPost()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', [
             'endpoint' => 'test',
             'params' => [
@@ -154,7 +155,7 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testGetFirstNext()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', ['endpoint' => 'test']);
 
         $scroller = new PageScroller([]);
@@ -172,13 +173,13 @@ class PageScrollerTest extends ExtractorTestCase
 
     public function testSetState()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = new JobConfig('test', ['endpoint' => 'test']);
 
         $scroller = new PageScroller(['pageParam' => 'p']);
 
-        $first = $scroller->getFirstRequest($client, $config);
-        $second = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $scroller->getFirstRequest($client, $config);
+        $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
 
         $state = $scroller->getState();
         $newScroller = new PageScroller([]);

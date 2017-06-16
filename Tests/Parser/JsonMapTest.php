@@ -160,8 +160,8 @@ class JsonMapTest extends ExtractorTestCase
         $parser->process($data, 'first');
         $parser->process($data, 'notfirst');
 
-        $this->assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
-        $this->assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
+        self::assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
+        self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 
     /**
@@ -398,6 +398,6 @@ class JsonMapTest extends ExtractorTestCase
             '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL
         ];
 
-        $this->assertEquals($expected, file($parser->getResults()['report-rows']));
+        self::assertEquals($expected, file($parser->getResults()['report-rows']));
     }
 }

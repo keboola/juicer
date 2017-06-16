@@ -8,12 +8,13 @@ use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
     public function testGetNextRequestHasMore()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $jobConfig = new JobConfig('test', [
             'endpoint' => 'test'
         ]);

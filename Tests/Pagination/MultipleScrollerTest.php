@@ -6,6 +6,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\MultipleScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use Psr\Log\NullLogger;
 
 class MultipleScrollerTest extends ExtractorTestCase
 {
@@ -29,7 +30,7 @@ class MultipleScrollerTest extends ExtractorTestCase
             ]
         ];
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
 
         $paramConfig = new JobConfig('param', [
             'endpoint' => 'structuredData',
@@ -91,7 +92,7 @@ class MultipleScrollerTest extends ExtractorTestCase
             'next_page_id' => 'page2'
         ];
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
 
         $nextParam = $scroller->getNextRequest($client, $paramConfig, $paramResponse, []);
         $expectedParam = $client->createRequest([
@@ -126,7 +127,7 @@ class MultipleScrollerTest extends ExtractorTestCase
             'endpoint' => 'data'
         ]);
 
-        $req = $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
+        $scroller->getFirstRequest(RestClient::create(new NullLogger()), $noScrollerConfig);
     }
 
     /**
@@ -143,7 +144,7 @@ class MultipleScrollerTest extends ExtractorTestCase
             'scroller' => 'nonExistentScroller'
         ]);
 
-        $scroller->getFirstRequest(RestClient::create(), $noScrollerConfig);
+        $scroller->getFirstRequest(RestClient::create(new NullLogger()), $noScrollerConfig);
     }
 
     protected function getScrollerConfig()
