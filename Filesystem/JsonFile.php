@@ -39,9 +39,7 @@ class JsonFile
         if ($mode == self::MODE_READ) {
             $json->load();
         } elseif ($mode == self::MODE_WRITE) {
-            try {
-                touch($pathName);
-            } catch (\ErrorException $e) {
+            if (!@touch($pathName)) {
                 throw new ApplicationException("Error creating file '{$pathName}'");
             }
             $json->load();
@@ -57,7 +55,7 @@ class JsonFile
         }
 
         $this->data = json_decode(file_get_contents($this->pathName), true);
-        if (json_last_error() !== 0) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new ApplicationException("Invalid JSON " . json_last_error_msg());
         }
     }
