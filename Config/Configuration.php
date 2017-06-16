@@ -112,16 +112,6 @@ class Configuration
     }
 
     /**
-     * @return array|null
-     * @deprecated by getMetadata
-     * @todo once YamlFile defaults to object, override it!
-     */
-    public function getConfigMetadata()
-    {
-        return $this->getMetadata()->getData();
-    }
-
-    /**
      * @return JsonFile
      */
     public function getMetadata()

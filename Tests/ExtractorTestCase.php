@@ -2,10 +2,9 @@
 
 namespace Keboola\Juicer\Tests;
 
-use Keboola\Juicer\Common\Logger;
-use Monolog\Handler\NullHandler;
+use PHPUnit\Framework\TestCase;
 
-class ExtractorTestCase extends \PHPUnit_Framework_TestCase
+class ExtractorTestCase extends TestCase
 {
     protected static function callMethod($obj, $name, array $args)
     {
@@ -22,18 +21,5 @@ class ExtractorTestCase extends \PHPUnit_Framework_TestCase
         $property = $class->getProperty($name);
         $property->setAccessible(true);
         return $property->getValue($obj);
-    }
-
-    protected function getLogger($name = 'test', $null = false)
-    {
-        return new \Monolog\Logger(
-            $name,
-            $null ? [new NullHandler()] : []
-        );
-    }
-
-    public function setUp()
-    {
-        Logger::setStrict(false);
     }
 }

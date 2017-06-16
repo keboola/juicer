@@ -1,32 +1,31 @@
 {
     "name": "keboola/juicer",
-    "description": "Keboola Extractor Development Bundle",
-    "keywords": ["keboola", "extractor", "development"],
+    "description": "Generic Extractor Juicer",
+    "keywords": ["json", "rest", "generic extractor"],
     "authors": [
         {
-            "name": "Ondrej Vana",
-            "email": "ondrej.vana@keboola.com"
+            "name": "Keboola",
+            "email": "devel@keboola.com"
         }
     ],
     "require": {
         "php": ">=7.0",
-        "keboola/json-parser": "~1.0.0",
-        "keboola/php-temp": "~0.1.0",
-        "keboola/php-utils": "~1.0.3",
-        "keboola/php-csvtable": "~0.1.6",
+        "keboola/json-parser": "^1.1",
+        "keboola/php-temp": "^0.1",
+        "keboola/php-utils": "^1.0",
+        "keboola/php-csvtable": "^0.1",
         "keboola/csvmap": "^0.4",
-        "keboola/filter": "~0.1.4",
-        "symfony/yaml": "~2.6.3",
+        "keboola/filter": "^0.1",
         "guzzlehttp/retry-subscriber": "dev-master#270393c",
         "guzzlehttp/guzzle": "^5.3",
-        "monolog/monolog": "~1.15.0",
-        "keboola/codebuilder": "~0.2.2"
+        "keboola/codebuilder": "^0.2"
     },
     "require-dev": {
-		"phpunit/phpunit": "^5.2",
-		"codeclimate/php-test-reporter": "dev-master",
-        "squizlabs/php_codesniffer": "2.*",
-        "phpstan/phpstan": "^0.6.4"
+        "monolog/monolog": "^1.22",
+		"phpunit/phpunit": "^6.2",
+		"codeclimate/php-test-reporter": "^0.4",
+        "squizlabs/php_codesniffer": "^3.0",
+        "phpstan/phpstan": "^0.7"
     },
     "autoload": {
         "psr-4": { "Keboola\\Juicer\\": "" }

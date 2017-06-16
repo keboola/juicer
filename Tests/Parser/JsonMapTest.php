@@ -4,13 +4,13 @@ namespace Keboola\Juicer\Tests\Parser;
 
 use Keboola\Juicer\Parser\JsonMap;
 use Keboola\Juicer\Parser\Json;
-use Keboola\Juicer\Common\Logger;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
-class JsonMapTest extends ExtractorTestCase
+class JsonMapTest extends TestCase
 {
     public function testProcess()
     {
@@ -48,7 +48,7 @@ class JsonMapTest extends ExtractorTestCase
                 ]
             ]
         ]);
-        $parser = JsonMap::create($config);
+        $parser = JsonMap::create($config, new NullLogger());
 
         $data = json_decode('[
             {
@@ -115,7 +115,7 @@ class JsonMapTest extends ExtractorTestCase
                 ]
             ]
         ]);
-        $parser = JsonMap::create($config);
+        JsonMap::create($config, new NullLogger());
     }
 
     public function testNoMappingFallback()
@@ -133,8 +133,8 @@ class JsonMapTest extends ExtractorTestCase
             ]
         ]);
 
-        $fallback = Json::create($config, $this->getLogger('test', true), new Temp);
-        $parser = JsonMap::create($config, $fallback);
+        $fallback = Json::create($config, new NullLogger(), new Temp());
+        $parser = JsonMap::create($config, new NullLogger(), $fallback);
 
         $data = json_decode('[
             {
@@ -160,27 +160,19 @@ class JsonMapTest extends ExtractorTestCase
         $parser->process($data, 'first');
         $parser->process($data, 'notfirst');
 
-        $this->assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
-        $this->assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
+        self::assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
+        self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 
-        /**
+    /**
      * @expectedException \Keboola\Juicer\Exception\UserException
      * @expectedExceptionMessage Empty mapping for 'first' in config.
      */
     public function testEmptyMappingError()
     {
         $config = new Config('ex', 'test', []);
-        $config->setAttributes([
-            'mappings' => [
-                'first' => [
-//                     'id' => [
-//                         'type' => 'column',
-//                     ]
-                ]
-            ]
-        ]);
-        $parser = JsonMap::create($config);
+        $config->setAttributes(['mappings' => ['first' => []]]);
+        JsonMap::create($config, new NullLogger());
     }
 
     /**
@@ -199,7 +191,7 @@ class JsonMapTest extends ExtractorTestCase
                 ]
             ]
         ]);
-        $parser = JsonMap::create($config);
+        $parser = JsonMap::create($config, new NullLogger());
 
         $data = json_decode('[
             {
@@ -229,7 +221,7 @@ class JsonMapTest extends ExtractorTestCase
                 ]
             ]
         ]);
-        $parser = JsonMap::create($config);
+        $parser = JsonMap::create($config, new NullLogger());
 
         $data = json_decode('[
             {
@@ -244,8 +236,6 @@ class JsonMapTest extends ExtractorTestCase
 
     public function testMergeResults()
     {
-        Logger::setLogger($this->getLogger('testMergeResults', true));
-
         $configFirst = JobConfig::create([
             'endpoint' => '1st',
             'dataType' => 'first'
@@ -335,7 +325,7 @@ class JsonMapTest extends ExtractorTestCase
             }
         ]');
 
-        $parser = JsonMap::create($config);
+        $parser = JsonMap::create($config, new NullLogger());
 
         $parser->process($firstData, $configFirst->getDataType());
         $parser->process($secondData, $configTags->getDataType());
@@ -392,7 +382,7 @@ class JsonMapTest extends ExtractorTestCase
                 ]
             ]
         ]);
-        $parser = JsonMap::create($config);
+        $parser = JsonMap::create($config, new NullLogger());
         $data = json_decode('[{
             "rows": [
                 ["2017-05-27","1234","article-bot-lef-x","83008"],
@@ -408,6 +398,6 @@ class JsonMapTest extends ExtractorTestCase
             '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL
         ];
 
-        $this->assertEquals($expected, file($parser->getResults()['report-rows']));
+        self::assertEquals($expected, file($parser->getResults()['report-rows']));
     }
 }

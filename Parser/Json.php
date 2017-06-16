@@ -10,9 +10,8 @@ use Keboola\Json\Struct;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Exception\ApplicationException;
-use Keboola\Juicer\Common\Logger;
 use Keboola\Temp\Temp;
-use Monolog\Logger as Monolog;
+use Psr\Log\LoggerInterface;
 
 /**
  * Parse JSON results from REST API to CSV
@@ -25,26 +24,29 @@ class Json implements ParserInterface
     protected $parser;
 
     /**
-     * @param JsonParser $parser
+     * @var LoggerInterface
      */
-    public function __construct(JsonParser $parser)
+    protected $logger;
+
+    /**
+     * @param JsonParser $parser
+     * @param LoggerInterface $logger
+     */
+    public function __construct(JsonParser $parser, LoggerInterface $logger)
     {
         $this->parser = $parser;
+        $this->logger = $logger;
     }
 
     /**
-     * Parse the data
-     * @param array $data shall be the response body
-     * @param string $type data type
-     * @param null $parentId
-     * @throws UserException
+     * @inheritdoc
      */
     public function process(array $data, $type, $parentId = null)
     {
         try {
             $this->parser->process($data, $type, $parentId);
         } catch (NoDataException $e) {
-            Logger::log('debug', "No data returned in '{$type}'");
+            $this->logger->debug("No data returned in '{$type}'");
         } catch (JsonParserException $e) {
             throw new UserException(
                 "Error parsing response JSON: " . $e->getMessage(),
@@ -74,12 +76,12 @@ class Json implements ParserInterface
 
     /**
      * @param Config $config // not used anywhere in real aps (yet? - analyze)
-     * @param Logger|Monolog $logger
+     * @param LoggerInterface $logger
      * @param Temp $temp
      * @param array $metadata
      * @return static
      */
-    public static function create(Config $config, Monolog $logger, Temp $temp, array $metadata = [])
+    public static function create(Config $config, LoggerInterface $logger, Temp $temp, array $metadata = [])
     {
         // TODO move this if to $this->validateStruct altogether
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
@@ -98,7 +100,7 @@ class Json implements ParserInterface
         $rowsToAnalyze = null != $config && !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
         $parser = JsonParser::create($logger, $struct, $rowsToAnalyze);
         $parser->setTemp($temp);
-        return new static($parser);
+        return new static($parser, $logger);
     }
 
     /**
@@ -107,8 +109,8 @@ class Json implements ParserInterface
     public function getMetadata()
     {
         return [
-            'json_parser.struct' => $this->parser->getStruct()->getStruct(),
-            'json_parser.structVersion' => $this->parser->getStructVersion()
+            'json_parser.struct' => $this->parser->getStruct()->getData(),
+            'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
         ];
     }
 

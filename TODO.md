@@ -1,3 +1,0 @@
-- Default request options
-    - Add ClientInterface setter for default options
-    - ClientInterface::createRequest() would then look into these default options ($config param would overwrite those)

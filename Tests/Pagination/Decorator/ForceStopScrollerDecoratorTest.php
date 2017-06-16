@@ -6,9 +6,10 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
-use Keboola\Juicer\Tests\ExtractorTestCase;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
-class ForceStopScrollerDecoratorTest extends ExtractorTestCase
+class ForceStopScrollerDecoratorTest extends TestCase
 {
     /**
      * @dataProvider limitProvider
@@ -17,7 +18,7 @@ class ForceStopScrollerDecoratorTest extends ExtractorTestCase
      */
     public function testCheckLimits(array $config, $response)
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $jobConfig = new JobConfig('test', [
             'endpoint' => 'test'
         ]);
@@ -60,7 +61,7 @@ class ForceStopScrollerDecoratorTest extends ExtractorTestCase
 
     public function testTimeLimit()
     {
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $jobConfig = new JobConfig('test', [
             'endpoint' => 'test'
         ]);

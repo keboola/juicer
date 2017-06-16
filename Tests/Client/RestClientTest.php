@@ -5,7 +5,6 @@ namespace Keboola\Juicer\Tests\Client;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Common\Logger;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
@@ -14,10 +13,11 @@ use GuzzleHttp\Subscriber\History;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Monolog\Handler\TestHandler;
+use Monolog\Logger;
+use Psr\Log\NullLogger;
 
 class RestClientTest extends ExtractorTestCase
 {
-
     public function testCreateRequest()
     {
         $arr = [
@@ -29,7 +29,7 @@ class RestClientTest extends ExtractorTestCase
             'params' => $arr
         ]);
 
-        $client = new RestClient(new Client);
+        $client = new RestClient(new Client, new NullLogger());
         $request = $client->createRequest($jobConfig->getConfig());
 
         $expected = new RestRequest('ep', $arr);
@@ -39,14 +39,14 @@ class RestClientTest extends ExtractorTestCase
 
     public function testGetGuzzleRequest()
     {
-        $client = new RestClient(new Client);
+        $client = new RestClient(new Client, new NullLogger());
         $requestGet = new RestRequest('ep', ['a' => 1]);
         $requestPost = new RestRequest('ep', ['a' => 1], 'POST');
         $requestForm = new RestRequest('ep', ['a' => 1], 'FORM');
 
-        $get = $this->callMethod($client, 'getGuzzleRequest', [$requestGet]);
-        $post = $this->callMethod($client, 'getGuzzleRequest', [$requestPost]);
-        $form = $this->callMethod($client, 'getGuzzleRequest', [$requestForm]);
+        $get = self::callMethod($client, 'getGuzzleRequest', [$requestGet]);
+        $post = self::callMethod($client, 'getGuzzleRequest', [$requestPost]);
+        $form = self::callMethod($client, 'getGuzzleRequest', [$requestForm]);
 
         self::assertEquals('ep?a=1', $get->getUrl());
 
@@ -75,7 +75,7 @@ class RestClientTest extends ExtractorTestCase
         $history = new History();
         $guzzle->getEmitter()->attach($history);
 
-        $restClient = new RestClient($guzzle);
+        $restClient = new RestClient($guzzle, new NullLogger());
 
         $request = new RestRequest('ep', ['a' => 1]);
 
@@ -101,7 +101,7 @@ class RestClientTest extends ExtractorTestCase
         $history = new History();
         $guzzle->getEmitter()->attach($history);
 
-        $restClient = new RestClient($guzzle);
+        $restClient = new RestClient($guzzle, new NullLogger());
 
         $request = new RestRequest('ep', [], 'GET', ['X-RTest' => 'requestHeader']);
         $restClient->download($request);
@@ -132,8 +132,8 @@ class RestClientTest extends ExtractorTestCase
         $restClient->getClient()->getEmitter()->attach($history);
 
         $request = new RestRequest('ep', ['a' => 1]);
-        $this->assertEquals(json_decode($body), $restClient->download($request));
-        $this->assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
+        self::assertEquals(json_decode($body), $restClient->download($request));
+        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
     }
 
     /**
@@ -142,25 +142,27 @@ class RestClientTest extends ExtractorTestCase
      */
     public function testStatusBackoff()
     {
-        Logger::setLogger($this->getLogger('test', true));
-
         $sets = [
             'default' => [
-                RestClient::create(),
+                RestClient::create(new NullLogger()),
                 new Response(429, ['Retry-After' => 5])
             ],
             'custom' => [
-                RestClient::create([], [
-                    'http' => [
-                        'retryHeader' => 'X-Rate-Limit-Reset',
-                        'codes' => [403, 429],
-                    ],
-                    'maxRetries' => 8
-                ]),
+                RestClient::create(
+                    new NullLogger(),
+                    [],
+                    [
+                        'http' => [
+                            'retryHeader' => 'X-Rate-Limit-Reset',
+                            'codes' => [403, 429],
+                        ],
+                        'maxRetries' => 8
+                    ]
+                ),
                 new Response(403, ['X-Rate-Limit-Reset' => 5])
             ],
             'absolute' => [
-                RestClient::create(),
+                RestClient::create(new NullLogger()),
                 new Response(429, ['Retry-After' => time() + 5])
             ]
         ];
@@ -179,63 +181,62 @@ class RestClientTest extends ExtractorTestCase
         // mapped curl error
         $retries = 3;
         $handler = new TestHandler();
-        $logger = new \Monolog\Logger("test", [
+        $logger = new Logger("test", [
             $handler
         ]);
 
-        Logger::setLogger($logger);
-
-        $client = RestClient::create([], [
-            'maxRetries' => $retries,
-            'curl' => [
-                'codes' => [ 6 ],
+        $client = RestClient::create(
+            $logger,
+            [],
+            [
+                'maxRetries' => $retries,
+                'curl' => [
+                    'codes' => [6],
+                ]
             ]
-        ]);
+        );
 
         try {
             $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
-
-            $this->fail("Request shoul fail");
+            self::fail("Request should fail");
         } catch (\Exception $e) {
-            $this->assertCount($retries, $handler->getRecords());
+            self::assertCount($retries, $handler->getRecords());
 
             foreach ($handler->getRecords() as $record) {
-                $this->assertEquals(100, $record['level']);
-                $this->assertRegExp('/retrying/ui', $record['message']);
-                $this->assertRegExp('/curl error 6\:/ui', $record['context']['message']);
+                self::assertEquals(100, $record['level']);
+                self::assertRegExp('/retrying/ui', $record['message']);
+                self::assertRegExp('/curl error 6\:/ui', $record['context']['message']);
             }
 
-
-            $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
-            $this->assertTrue($e instanceof UserException);
+            self::assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            self::assertTrue($e instanceof UserException);
         }
-
 
         // non-mapped curl error
         $retries = 3;
         $handler = new TestHandler();
-        $logger = new \Monolog\Logger("test", [
+        $logger = new Logger("test", [
             $handler
         ]);
 
-        Logger::setLogger($logger);
-
-        $client = RestClient::create([], [
-            'maxRetries' => $retries,
-            'curl' => [
-                'codes' => [ 77 ],
+        $client = RestClient::create(
+            $logger,
+            [],
+            [
+                'maxRetries' => $retries,
+                'curl' => [
+                    'codes' => [77],
+                ]
             ]
-        ]);
+        );
 
         try {
             $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
-
-            $this->fail("Request shoul fail");
+            self::fail("Request should fail");
         } catch (\Exception $e) {
-            $this->assertCount(0, $handler->getRecords());
-
-            $this->assertRegExp('/curl error 6\:/ui', $e->getMessage());
-            $this->assertTrue($e instanceof UserException);
+            self::assertCount(0, $handler->getRecords());
+            self::assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            self::assertTrue($e instanceof UserException);
         }
     }
 
@@ -249,7 +250,7 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "d
         ]';
 
-        $restClient = RestClient::create();
+        $restClient = RestClient::create(new NullLogger());
 
         $mock = new Mock([
             new Response(200, [], Stream::factory($body))
@@ -279,7 +280,7 @@ class RestClientTest extends ExtractorTestCase
             ]
         ];
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $client->setDefaultRequestOptions($defaultOptions);
 
         $requestOptions = [

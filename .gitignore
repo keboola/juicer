@@ -1,11 +1,6 @@
 /data
-.git
 composer.lock
 vendor
-.kdev4
-*.kdev4
-*~
 .idea
-parameters.yml
 /build
-
+/.tmp

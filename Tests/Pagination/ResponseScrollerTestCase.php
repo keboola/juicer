@@ -3,9 +3,9 @@
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Tests\ExtractorTestCase;
+use PHPUnit\Framework\TestCase;
 
-class ResponseScrollerTestCase extends ExtractorTestCase
+class ResponseScrollerTestCase extends TestCase
 {
     protected function getConfig()
     {

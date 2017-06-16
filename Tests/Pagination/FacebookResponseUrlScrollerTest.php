@@ -6,7 +6,9 @@
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\FacebookResponseUrlScroller;
+use Psr\Log\NullLogger;
 
 class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
@@ -16,7 +18,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
         $pagingStart = clone $now;
         $pagingStart->modify('-90 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new FacebookResponseUrlScroller([]);
@@ -33,10 +35,10 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
             $next = $scroller->getNextRequest($client, $config, $response, $response->data);
 
             if ($i == 4) {
-                $this->assertFalse($next);
+                self::assertFalse($next);
             } else {
-                if (!$next instanceof \Keboola\Juicer\Client\RestRequest) {
-                    $this->fail('ZendeskResponseUrlScroller::getNextRequest should return new RestRequest');
+                if (!$next instanceof RestRequest) {
+                    self::fail('ZendeskResponseUrlScroller::getNextRequest should return new RestRequest');
                 }
             }
         }
@@ -48,7 +50,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
         $pagingStart = clone $now;
         $pagingStart->modify('-90 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new FacebookResponseUrlScroller([]);
@@ -79,7 +81,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
         $pagingNext->modify('-30 days');
         $pagingPrev->modify('-90 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new FacebookResponseUrlScroller([]);
@@ -102,7 +104,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
     {
         $pagingNext = (new \DateTime())->modify('-30 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -127,7 +129,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
     {
         $pagingNext = (new \DateTime())->modify('-30 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object)[
@@ -155,7 +157,7 @@ class FacebookResponseUrlScrollerTest extends ResponseScrollerTestCase
     {
         $pagingNext = (new \DateTime())->modify('-30 days');
 
-        $client = RestClient::create();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object)[

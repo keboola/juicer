@@ -1,18 +1,13 @@
-language: php
-php:
-  - 7.0
-
-before_install:
-  - composer install
-
+language: bash
+services:
+- docker
+before_script:
+- docker -v
+- docker-compose -v
+- docker-compose build
 script:
-  - ./vendor/bin/phpcs --standard=psr2 --ignore=vendor -n .
-  - ./vendor/bin/phpstan analyse --level=4 Client Common Config Exception Extractor Filesystem Pagination Parser Tests || true
-  - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
-
-after_success:
-  - ./vendor/bin/test-reporter
-
+- docker-compose run --rm -e CODECLIMATE_REPO_TOKEN tests
 notifications:
+  slack:
+    secure: H4NUVG9APUUD7JAnUh/dfhg14e03V/kQBmoQJc5cMyLVUlbW9KO0k84JWAP0Bm+7d0WwIrDHKaJUQBot1Ndu44SR4oWI/5SFSm2W59va+/xYOy9dNfD91/wiuLDl/yqD52hPGEq/71UpXBQUHXa1/CIuGSpkLxDTQB//h5M7FrkSeGg3tVRBTAeODI9wgXO2FGsbefyrhBK6i3b65dplQvsZGL0whP0CESp/oilvYWIjlvkQDADM6cid41Qs84HMxuVMoVGbk781lCyaMugsw0+RESNEaRPONFQfPa/7IGFByunNO2zOfNYYXQSvEGttR23qXIosajjLBRQAFSflRyBCKb5Tmvjvj6tFq3eZ4odsgh60/1uYhLi5jpv/WvMFKdXFqIOR/mDdz/89OrihLGlvB0s7ET1RS7wdE+3LMHTbiUnWyDFmwlEdkKl9Rai9+4LGK4gBV1y5GYZYkMVr1nMaQJPMkCDeavnGAVRAbozXAw96+/s0O4EV99mgg7UK7mPbtdnL6d5aux/YH4RjMGVU+Uc5WOHFIWsiU5+x6mz1a+NwACsa4i1rgUHkDNdMket9+qDXpWOLGX96cydvTnPaf/M3iUAn/qNh0Np6Rq7zsiWJ8FR3AMno37ngAN7oLc15NMrYmxB3PTMiNXRaNiGJK/pBtur24da09OnHlwI=
   email: false
-  slack: keboola:xNrfNET99b2wBdiF2pbOH3x6

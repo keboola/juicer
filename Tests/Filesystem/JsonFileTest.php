@@ -1,11 +1,13 @@
 <?php
 
-namespace Keboola\Juicer\Tests\FileSystem;
+namespace Keboola\Juicer\Tests\Filesystem;
 
 use Keboola\Juicer\Filesystem\JsonFile;
-use Keboola\Juicer\Tests\ExtractorTestCase;
+use Keboola\Temp\Temp;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
-class JsonFileTest extends ExtractorTestCase
+class JsonFileTest extends TestCase
 {
 
     public function testGet()
@@ -22,13 +24,30 @@ class JsonFileTest extends ExtractorTestCase
 
     public function testCreate()
     {
-        $path = ROOT_PATH . '/Tests/config.yml';
+        $temp = new Temp();
+        $fs = new Filesystem();
+        $path = $temp->getTmpFolder() . DIRECTORY_SEPARATOR . 'test.json';
+        $fs->dumpFile($path, '{"some": {"valid": "JSON"}}');
         $file = JsonFile::create($path);
 
+        self::assertNotEmpty($file->getData());
         self::assertEquals(
             json_decode(file_get_contents($path), true),
             $file->getData()
         );
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\ApplicationException
+     * @expectedExceptionMessage Invalid JSON Syntax error
+     */
+    public function testCreateInvalid()
+    {
+        $temp = new Temp();
+        $fs = new Filesystem();
+        $path = $temp->getTmpFolder() . DIRECTORY_SEPARATOR . 'test.json';
+        $fs->dumpFile($path, 'some-invalid-json');
+        JsonFile::create($path);
     }
 
     /**

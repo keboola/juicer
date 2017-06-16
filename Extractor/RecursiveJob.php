@@ -3,7 +3,6 @@
 namespace Keboola\Juicer\Extractor;
 
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Common\Logger;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Parser\ParserInterface;
 use Keboola\Juicer\Exception\UserException;
@@ -11,6 +10,7 @@ use Keboola\Filter\Filter;
 use Keboola\Filter\Exception\FilterException;
 use Keboola\Utils\Exception\NoDataFoundException;
 use Keboola\Code\Builder;
+use Psr\Log\LoggerInterface;
 
 /**
  * {@inheritdoc}
@@ -39,9 +39,9 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser)
+    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser, LoggerInterface $logger)
     {
-        parent::__construct($config, $client, $parser);
+        parent::__construct($config, $client, $parser, $logger);
         // If no dataType is set, save endpoint as dataType before replacing placeholders
         if (empty($this->config->getConfig()['dataType']) && !empty($this->config->getConfig()['endpoint'])) {
             $this->config->setDataType($this->getDataType());
@@ -133,17 +133,18 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     /**
      * Create a child job with current client and parser
      * @param JobConfig $config
+     * @param array $parentResults
      * @return static
      */
     protected function createChild(JobConfig $config, array $parentResults)
     {
         // Clone the config to prevent overwriting the placeholder(s) in endpoint
-        $job = new static(clone $config, $this->client, $this->parser);
+        $job = new static(clone $config, $this->client, $this->parser, $this->logger);
 
         $params = [];
         $placeholders = !empty($config->getConfig()['placeholders']) ? $config->getConfig()['placeholders'] : [];
         if (empty($placeholders)) {
-            Logger::log("WARNING", "No 'placeholders' set for '" . $config->getConfig()['endpoint'] . "'");
+            $this->logger->warning("No 'placeholders' set for '" . $config->getConfig()['endpoint'] . "'");
         }
 
         foreach ($placeholders as $placeholder => $field) {
@@ -164,7 +165,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
 
     /**
      * @param string $placeholder
-     * @param string|object $field Path or a function with a path
+     * @param string|object|array $field Path or a function with a path
      * @param $parentResults
      * @return array ['placeholder', 'field', 'value']
      * @throws UserException
