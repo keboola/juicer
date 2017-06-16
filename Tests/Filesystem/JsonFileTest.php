@@ -3,11 +3,10 @@
 namespace Keboola\Juicer\Tests\FileSystem;
 
 use Keboola\Juicer\Filesystem\JsonFile;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use Symfony\Component\Filesystem\Filesystem;
 
-class JsonFileTest extends ExtractorTestCase
+class JsonFileTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testGet()

@@ -11,9 +11,8 @@ use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
 use Keboola\Juicer\Pagination\ResponseUrlScroller;
 use Keboola\Juicer\Pagination\ScrollerFactory;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 
-class ScrollerFactoryTest extends ExtractorTestCase
+class ScrollerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreateScroller()
     {

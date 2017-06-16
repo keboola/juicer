@@ -5,10 +5,9 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\CursorScroller;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Psr\Log\NullLogger;
 
-class CursorScrollerTest extends ExtractorTestCase
+class CursorScrollerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetNextRequest()
     {

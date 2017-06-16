@@ -3,9 +3,8 @@
 namespace Keboola\Juicer\Tests\Exception;
 
 use Keboola\Juicer\Exception\ApplicationException;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 
-class ApplicationExceptionTest extends ExtractorTestCase
+class ApplicationExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetData()
     {

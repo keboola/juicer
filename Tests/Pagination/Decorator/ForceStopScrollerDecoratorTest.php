@@ -6,10 +6,9 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Psr\Log\NullLogger;
 
-class ForceStopScrollerDecoratorTest extends ExtractorTestCase
+class ForceStopScrollerDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider limitProvider

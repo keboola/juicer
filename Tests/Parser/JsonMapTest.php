@@ -6,11 +6,10 @@ use Keboola\Juicer\Parser\JsonMap;
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use Psr\Log\NullLogger;
 
-class JsonMapTest extends ExtractorTestCase
+class JsonMapTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {

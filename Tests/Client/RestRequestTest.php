@@ -3,9 +3,8 @@
 namespace Keboola\Juicer\Tests\Client;
 
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 
-class RestRequestTest extends ExtractorTestCase
+class RestRequestTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {

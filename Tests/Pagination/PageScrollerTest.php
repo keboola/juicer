@@ -5,13 +5,12 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
-use Keboola\Juicer\Tests\ExtractorTestCase;
 use Psr\Log\NullLogger;
 
 /**
  * @todo test with no limit until empty response
  */
-class PageScrollerTest extends ExtractorTestCase
+class PageScrollerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetFirstRequest()
     {

@@ -100,7 +100,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams()
     {
-        $client = RestClient::create(new NullLogger();
+        $client = RestClient::create(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
