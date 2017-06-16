@@ -42,7 +42,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configuration->storeResults($files);
 
-        foreach (new \DirectoryIterator('./Tests/data/storeResultsDefaultBucket/out/tables/') as $file) {
+        foreach (new \DirectoryIterator(__DIR__ . '/../data/storeResultsDefaultBucket/out/tables/') as $file) {
             self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $file->getFilename());
         }
 
@@ -63,7 +63,7 @@ class ConfigurationTest extends ExtractorTestCase
 
         $configuration->storeResults($files, $name, true, $incremental);
 
-        foreach (new \DirectoryIterator('./Tests/data/storeResultsTest/out/tables/' . $name) as $file) {
+        foreach (new \DirectoryIterator(__DIR__ . '/../data/storeResultsTest/out/tables/' . $name) as $file) {
             self::assertFileEquals($file->getPathname(), $resultsPath . '/out/tables/' . $name . '/' . $file->getFilename());
         }
 
@@ -96,18 +96,18 @@ class ConfigurationTest extends ExtractorTestCase
             ]
         ]);
 
-        self::assertFileEquals('./Tests/data/metadataTest/out/state.json', $resultsPath . '/out/state.json');
+        self::assertFileEquals(__DIR__ . '/../data/metadataTest/out/state.json', $resultsPath . '/out/state.json');
 
         $this->rmDir($resultsPath);
     }
 
     public function testGetConfig()
     {
-        $configuration = new Configuration('./Tests/data/recursive', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', new Temp('test'));
 
         $config = $configuration->getConfig();
 
-        $json = json_decode(file_get_contents('./Tests/data/recursive/config.json'), true);
+        $json = json_decode(file_get_contents(__DIR__ . '/../data/recursive/config.json'), true);
 
         $jobs = $config->getJobs();
         self::assertEquals(JobConfig::create($json['parameters']['config']['jobs'][0]), reset($jobs));
@@ -117,11 +117,11 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigs()
     {
-        $configuration = new Configuration('./Tests/data/iterations', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/iterations', 'test', new Temp('test'));
 
         $configs = $configuration->getMultipleConfigs();
 
-        $json = json_decode(file_get_contents('./Tests/data/iterations/config.json'), true);
+        $json = json_decode(file_get_contents(__DIR__ . '/../data/iterations/config.json'), true);
 
         foreach ($json['parameters']['iterations'] as $i => $params) {
             self::assertEquals(array_replace(['id' => $json['parameters']['config']['id']], $params), $configs[$i]->getAttributes());
@@ -133,21 +133,16 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigsSingle()
     {
-        $configuration = new Configuration('./Tests/data/simple_basic', 'test', new Temp('test'));
-
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', 'test', new Temp('test'));
         $configs = $configuration->getMultipleConfigs();
-
-        $json = json_decode(file_get_contents('./Tests/data/simple_basic/config.json'), true);
-        self::assertEquals($json, $configs);
         self::assertContainsOnlyInstancesOf(Config::class, $configs);
         self::assertCount(1, $configs);
-
         self::assertEquals($configuration->getConfig(), $configs[0]);
     }
 
     public function testGetJson()
     {
-        $configuration = new Configuration('./Tests/data/simple_basic', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', 'test', new Temp('test'));
 
         $result = self::callMethod($configuration, 'getJson', ['/config.json', 'parameters', 'config', 'id']);
 

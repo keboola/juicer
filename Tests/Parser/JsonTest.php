@@ -74,7 +74,7 @@ class JsonTest extends ExtractorTestCase
     {
         $parser = new Json(Parser::create(new NullLogger()), new NullLogger());
 
-        $struct = json_decode(file_get_contents('./Tests/data/outdatedStruct.json'), true);
+        $struct = json_decode(file_get_contents(__DIR__ . '/../data/outdatedStruct.json'), true);
 
         $updated = self::callMethod($parser, 'updateStruct', [$struct]);
 
