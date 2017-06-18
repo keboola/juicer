@@ -38,8 +38,8 @@ class JsonFileTest extends TestCase
     }
 
     /**
-     * @expectedException \Keboola\Juicer\Exception\ApplicationException
-     * @expectedExceptionMessage Invalid JSON Syntax error
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage Invalid JSON: Syntax error
      */
     public function testCreateInvalid()
     {
