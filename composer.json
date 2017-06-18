@@ -19,7 +19,7 @@
         "keboola/filter": "^0.1",
         "guzzlehttp/retry-subscriber": "dev-master#270393c",
         "guzzlehttp/guzzle": "^5.3",
-        "keboola/codebuilder": "^0.2"
+        "keboola/codebuilder": "^0.3"
     },
     "require-dev": {
         "monolog/monolog": "^1.22",
