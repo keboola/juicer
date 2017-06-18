@@ -5,10 +5,12 @@ namespace Keboola\Juicer\Tests\Config;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\Configuration;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
 use Psr\Log\NullLogger;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ConfigurationTest extends ExtractorTestCase
 {
@@ -148,6 +150,20 @@ class ConfigurationTest extends ExtractorTestCase
         $result = self::callMethod($configuration, 'getJson', ['/config.json', 'parameters', 'config', 'id']);
 
         self::assertEquals('multiCfg', $result);
+    }
+
+    public function testGetInvalidConfig()
+    {
+        $temp = new Temp();
+        $fs = new Filesystem();
+        $fs->dumpFile($temp->getTmpFolder() . '/config.json', 'invalidJSON');
+        $configuration = new Configuration($temp->getTmpFolder(), new Temp(), new NullLogger());
+        try {
+            $configuration->getConfig();
+            self::fail("Invalid JSON must cause exception");
+        } catch (UserException $e) {
+            self::assertContains('Invalid JSON: Syntax error', $e->getMessage());
+        }
     }
 
     protected function rmDir($dirPath)

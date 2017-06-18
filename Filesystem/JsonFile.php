@@ -5,6 +5,7 @@ namespace Keboola\Juicer\Filesystem;
 use Keboola\Juicer\Exception\ApplicationException;
 use Keboola\Juicer\Exception\FileNotFoundException;
 use Keboola\Juicer\Exception\NoDataException;
+use Keboola\Juicer\Exception\UserException;
 
 /**
  * Reflects a JSON file in memory
@@ -56,7 +57,7 @@ class JsonFile
 
         $this->data = json_decode(file_get_contents($this->pathName), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ApplicationException("Invalid JSON " . json_last_error_msg());
+            throw new UserException("Invalid JSON: " . json_last_error_msg());
         }
     }
 
