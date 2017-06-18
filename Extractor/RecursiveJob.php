@@ -92,6 +92,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
     protected function runChildJobs(array $data)
     {
         foreach ($this->config->getChildJobs() as $jobId => $child) {
+            $filter = null;
             if (!empty($child->getConfig()['recursionFilter'])) {
                 try {
                     $filter = Filter::create($child->getConfig()['recursionFilter']);

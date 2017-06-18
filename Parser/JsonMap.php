@@ -146,7 +146,8 @@ class JsonMap implements ParserInterface
         // CsvFile::getHeader resets it to the first line,
         // so we need to forward it back to the end to append it
         // Also, this is a dirty, dirty hack
-        for (; $file1->valid(); $file1->next()) {
+        while ($file1->valid()) {
+            $file1->next();
         }
 
         $header = true;

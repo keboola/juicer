@@ -18,9 +18,15 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
      */
     protected $scroller;
 
+    /**
+     * @var array
+     */
+    protected $config;
+
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         $this->scroller = $scroller;
+        $this->config = $config;
     }
 
     /**
