@@ -10,11 +10,6 @@ class Config
     /**
      * @var string
      */
-    protected $appName;
-
-    /**
-     * @var string
-     */
     protected $configName;
 
     /**
@@ -37,9 +32,8 @@ class Config
      */
     protected $jobs = [];
 
-    public function __construct($appName, $configName, array $runtimeParams)
+    public function __construct($configName, array $runtimeParams)
     {
-        $this->appName = $appName;
         $this->configName = $configName;
         $this->runtimeParams = $runtimeParams;
     }
@@ -99,14 +93,6 @@ class Config
     public function getJobs()
     {
         return $this->jobs;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppName()
-    {
-        return $this->appName;
     }
 
     /**

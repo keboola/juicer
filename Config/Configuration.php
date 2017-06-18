@@ -12,15 +12,9 @@ use Keboola\CsvTable\Table;
 class Configuration
 {
     /**
-     * @var string
-     */
-    protected $appName;
-
-    /**
      * @var Temp
      */
     protected $temp;
-
 
     /**
      * @var string
@@ -32,9 +26,13 @@ class Configuration
      */
     protected $jsonFiles;
 
-    public function __construct($dataDir, $appName, Temp $temp)
+    /**
+     * Configuration constructor.
+     * @param $dataDir
+     * @param Temp $temp
+     */
+    public function __construct($dataDir, Temp $temp)
     {
-        $this->appName = $appName;
         $this->temp = $temp;
         $this->dataDir = $dataDir;
     }
@@ -90,7 +88,7 @@ class Configuration
         }
         unset($configJson['jobs']); // weird
 
-        $config = new Config($this->appName, $configName, $runtimeParams);
+        $config = new Config($configName, $runtimeParams);
         $config->setJobs($jobConfigs);
         $config->setAttributes($configJson);
 
@@ -151,14 +149,6 @@ class Configuration
         }
 
         return call_user_func_array([$this->jsonFiles[$filePath], 'get'], $path);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppName()
-    {
-        return $this->appName;
     }
 
     /**

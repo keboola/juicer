@@ -29,7 +29,7 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $resultsPath = './data/storeResultsDefaultBucket' . uniqid();
 
-        $configuration = new Configuration($resultsPath, 'defaultBucket', new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp('test'));
 
         $files = [
             Table::create('first', ['col1', 'col2']),
@@ -51,7 +51,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     protected function storeResults($resultsPath, $name, $incremental)
     {
-        $configuration = new Configuration($resultsPath, $name, new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp('test'));
 
         $files = [
             Table::create('first', ['col1', 'col2']),
@@ -74,12 +74,12 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $path = __DIR__ . '/../data/metadataTest';
 
-        $configuration = new Configuration($path, 'test', new Temp('test'));
+        $configuration = new Configuration($path, new Temp('test'));
         $json = $configuration->getMetadata()->getData();
 
         self::assertEquals(json_decode('{"some":"data","more": {"woah": "such recursive"}}', true), $json);
 
-        $noConfiguration = new Configuration('asdf', 'test', new Temp('test'));
+        $noConfiguration = new Configuration('asdf', new Temp('test'));
         self::assertEquals(null, $noConfiguration->getMetadata()->getData());
     }
 
@@ -87,7 +87,7 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $resultsPath = './data/metadataTest' . uniqid();
 
-        $configuration = new Configuration($resultsPath, 'test', new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp('test'));
 
         $configuration->saveConfigMetadata([
             'some' => 'data',
@@ -103,7 +103,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetConfig()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/recursive', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/recursive', new Temp('test'));
 
         $config = $configuration->getConfig();
 
@@ -117,7 +117,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigs()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/iterations', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/iterations', new Temp('test'));
 
         $configs = $configuration->getMultipleConfigs();
 
@@ -133,7 +133,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigsSingle()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp('test'));
         $configs = $configuration->getMultipleConfigs();
         self::assertContainsOnlyInstancesOf(Config::class, $configs);
         self::assertCount(1, $configs);
@@ -142,7 +142,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetJson()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', 'test', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp('test'));
 
         $result = self::callMethod($configuration, 'getJson', ['/config.json', 'parameters', 'config', 'id']);
 

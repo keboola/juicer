@@ -283,7 +283,7 @@ class RecursiveJobTest extends ExtractorTestCase
     public function getJob($dir)
     {
         $temp = new Temp('recursion');
-        $configuration = new Configuration(__DIR__ . '/../data/' . $dir, 'test', $temp);
+        $configuration = new Configuration(__DIR__ . '/../data/' . $dir, $temp);
 
         $jobConfig = array_values($configuration->getConfig()->getJobs())[0];
 

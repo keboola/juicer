@@ -14,7 +14,7 @@ class JsonMapTest extends TestCase
 {
     public function testProcess()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
 
         $config->setAttributes([
             'mappings' => [
@@ -99,7 +99,7 @@ class JsonMapTest extends TestCase
      */
     public function testNoMapping()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setJobs([
             JobConfig::create([
                 'endpoint' => '1st',
@@ -120,7 +120,7 @@ class JsonMapTest extends TestCase
 
     public function testNoMappingFallback()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setAttributes([
             'mappings' => [
                 'notfirst' => [
@@ -170,7 +170,7 @@ class JsonMapTest extends TestCase
      */
     public function testEmptyMappingError()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setAttributes(['mappings' => ['first' => []]]);
         JsonMap::create($config, new NullLogger());
     }
@@ -181,7 +181,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadMapping()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -209,7 +209,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadData()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -246,7 +246,7 @@ class JsonMapTest extends TestCase
             'dataType' => 'tags'
         ]);
 
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -344,7 +344,7 @@ class JsonMapTest extends TestCase
 
     public function testMappingSimpleArrayToTable()
     {
-        $config = new Config('ex', 'test', []);
+        $config = new Config('ex', []);
 
         $config->setAttributes([
             'mappings' => [
