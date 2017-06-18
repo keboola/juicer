@@ -8,6 +8,7 @@ use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
+use Psr\Log\NullLogger;
 
 class ConfigurationTest extends ExtractorTestCase
 {
@@ -29,7 +30,7 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $resultsPath = './data/storeResultsDefaultBucket' . uniqid();
 
-        $configuration = new Configuration($resultsPath, new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp(), new NullLogger());
 
         $files = [
             Table::create('first', ['col1', 'col2']),
@@ -51,7 +52,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     protected function storeResults($resultsPath, $name, $incremental)
     {
-        $configuration = new Configuration($resultsPath, new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp('test'), new NullLogger());
 
         $files = [
             Table::create('first', ['col1', 'col2']),
@@ -74,12 +75,12 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $path = __DIR__ . '/../data/metadataTest';
 
-        $configuration = new Configuration($path, new Temp('test'));
+        $configuration = new Configuration($path, new Temp('test'), new NullLogger());
         $json = $configuration->getMetadata()->getData();
 
         self::assertEquals(json_decode('{"some":"data","more": {"woah": "such recursive"}}', true), $json);
 
-        $noConfiguration = new Configuration('asdf', new Temp('test'));
+        $noConfiguration = new Configuration('asdf', new Temp('test'), new NullLogger());
         self::assertEquals(null, $noConfiguration->getMetadata()->getData());
     }
 
@@ -87,7 +88,7 @@ class ConfigurationTest extends ExtractorTestCase
     {
         $resultsPath = './data/metadataTest' . uniqid();
 
-        $configuration = new Configuration($resultsPath, new Temp('test'));
+        $configuration = new Configuration($resultsPath, new Temp('test'), new NullLogger());
 
         $configuration->saveConfigMetadata([
             'some' => 'data',
@@ -103,7 +104,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetConfig()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/recursive', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/recursive', new Temp('test'), new NullLogger());
 
         $config = $configuration->getConfig();
 
@@ -117,7 +118,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigs()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/iterations', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/iterations', new Temp('test'), new NullLogger());
 
         $configs = $configuration->getMultipleConfigs();
 
@@ -133,7 +134,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetMultipleConfigsSingle()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp(), new NullLogger());
         $configs = $configuration->getMultipleConfigs();
         self::assertContainsOnlyInstancesOf(Config::class, $configs);
         self::assertCount(1, $configs);
@@ -142,7 +143,7 @@ class ConfigurationTest extends ExtractorTestCase
 
     public function testGetJson()
     {
-        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp('test'));
+        $configuration = new Configuration(__DIR__ . '/../data/simple_basic', new Temp(), new NullLogger());
 
         $result = self::callMethod($configuration, 'getJson', ['/config.json', 'parameters', 'config', 'id']);
 

@@ -8,6 +8,7 @@ use Keboola\Juicer\Exception\FileNotFoundException;
 use Keboola\Juicer\Exception\NoDataException;
 use Keboola\Temp\Temp;
 use Keboola\CsvTable\Table;
+use Psr\Log\LoggerInterface;
 
 class Configuration
 {
@@ -27,14 +28,21 @@ class Configuration
     protected $jsonFiles;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Configuration constructor.
      * @param $dataDir
      * @param Temp $temp
+     * @param LoggerInterface $logger
      */
-    public function __construct($dataDir, Temp $temp)
+    public function __construct($dataDir, Temp $temp, LoggerInterface $logger)
     {
         $this->temp = $temp;
         $this->dataDir = $dataDir;
+        $this->logger = $logger;
     }
 
     /**
