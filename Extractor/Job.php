@@ -18,18 +18,22 @@ abstract class Job
      * @var JobConfig
      */
     protected $config;
+
     /**
      * @var ClientInterface
      */
     protected $client;
+
     /**
      * @var ParserInterface
      */
     protected $parser;
+
     /**
      * @var ScrollerInterface
      */
     protected $scroller;
+
     /**
      * @var string
      */

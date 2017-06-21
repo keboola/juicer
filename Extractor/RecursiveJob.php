@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
  * Expects the configuration to use 'endpoint' column to store
  * the API endpoint
  */
-abstract class RecursiveJob extends Job implements RecursiveJobInterface
+abstract class RecursiveJob extends Job
 {
     /**
      * Used to save necessary parents' data to child's output
