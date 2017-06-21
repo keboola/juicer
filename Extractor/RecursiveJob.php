@@ -2,11 +2,11 @@
 
 namespace Keboola\Juicer\Extractor;
 
+use Keboola\Filter\FilterFactory;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Parser\ParserInterface;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Filter\Filter;
 use Keboola\Filter\Exception\FilterException;
 use Keboola\Utils\Exception\NoDataFoundException;
 use Keboola\Code\Builder;
@@ -95,7 +95,7 @@ abstract class RecursiveJob extends Job implements RecursiveJobInterface
             $filter = null;
             if (!empty($child->getConfig()['recursionFilter'])) {
                 try {
-                    $filter = Filter::create($child->getConfig()['recursionFilter']);
+                    $filter = FilterFactory::create($child->getConfig()['recursionFilter']);
                 } catch (FilterException $e) {
                     throw new UserException($e->getMessage(), 0, $e);
                 }
