@@ -4,6 +4,8 @@ engines:
     config:
       languages:
       - php
+    exclude_paths:
+      - tests/      
   fixme:
     enabled: true
   phpmd:
@@ -11,3 +13,5 @@ engines:
     checks:
       CleanCode/ElseExpression:
         enabled: false
+      Naming/ShortVariable:
+        enabled: false        
