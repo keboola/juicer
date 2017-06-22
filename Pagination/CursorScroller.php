@@ -2,8 +2,8 @@
 
 namespace Keboola\Juicer\Pagination;
 
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -77,7 +77,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $client->createRequest($jobConfig->getConfig());
     }
@@ -85,7 +85,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * {@inheritdoc}
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         if (empty($data)) {
             $this->reset();

@@ -2,10 +2,10 @@
 
 namespace Keboola\Juicer\Pagination\Decorator;
 
-use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Pagination\ScrollerFactory;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -30,23 +30,23 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     }
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $this->scroller->getFirstRequest($client, $jobConfig);
     }
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
      * @param mixed $response
      * @param array $data
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);
     }

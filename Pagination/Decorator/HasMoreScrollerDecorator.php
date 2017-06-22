@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Pagination\Decorator;
 
-use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 
@@ -44,13 +44,13 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
      * @param mixed $response
      * @param array $data
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         if (false === $this->hasMore($response)) {
             return false;

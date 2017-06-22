@@ -3,8 +3,8 @@
 namespace Keboola\Juicer\Extractor;
 
 use Keboola\Filter\FilterFactory;
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Parser\ParserInterface;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Filter\Exception\FilterException;
@@ -39,7 +39,7 @@ abstract class RecursiveJob extends Job
     /**
      * {@inheritdoc}
      */
-    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser, LoggerInterface $logger)
+    public function __construct(JobConfig $config, RestClient $client, ParserInterface $parser, LoggerInterface $logger)
     {
         parent::__construct($config, $client, $parser, $logger);
         // If no dataType is set, save endpoint as dataType before replacing placeholders

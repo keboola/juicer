@@ -15,7 +15,7 @@ use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
 use Psr\Log\LoggerInterface;
 
-class RestClient implements ClientInterface
+class RestClient
 {
     /**
      * @var Client
@@ -109,12 +109,13 @@ class RestClient implements ClientInterface
     }
 
     /**
-     * @param RequestInterface $request
-     * @return array|object
+     * @param RestRequest $request
+     * @return mixed Raw response as it comes from the client
      * @throws UserException
      * @throws \Exception
      */
-    public function download(RequestInterface $request)
+
+    public function download(RestRequest $request)
     {
         try {
             $response = $this->client->send($this->getGuzzleRequest($request));
@@ -166,12 +167,12 @@ class RestClient implements ClientInterface
     }
 
     /**
-     * @param RequestInterface $request
+     * @param RestRequest $request
      * @return GuzzleRequest
      * @throws ApplicationException
      * @throws UserException
      */
-    protected function getGuzzleRequest(RequestInterface $request)
+    protected function getGuzzleRequest(RestRequest $request)
     {
         if (!$request instanceof RestRequest) {
             throw new ApplicationException("RestClient requires a RestRequest!");
@@ -206,9 +207,20 @@ class RestClient implements ClientInterface
     }
 
     /**
+     * Create a request from a JobConfig->getConfig() array
+     * [
+     *    'endpoint' => 'resource', // Required
+     *    'params' => [
+     *        'some' => 'parameter'
+     *    ],
+     *    'method' => 'GET', // REST only
+     *    'options' => [], // SOAP only
+     *    'inputHeader' => '' // SOAP only
+     * ]
      * @param array $config
      * @return RestRequest
      */
+
     public function createRequest(array $config)
     {
         return RestRequest::create($this->getRequestConfig($config));

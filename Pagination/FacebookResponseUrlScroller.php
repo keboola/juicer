@@ -6,7 +6,7 @@
 namespace Keboola\Juicer\Pagination;
 
 use GuzzleHttp\Url;
-use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use GuzzleHttp\Query;
 
@@ -42,7 +42,7 @@ class FacebookResponseUrlScroller extends AbstractResponseScroller implements Sc
     /**
      * {@inheritdoc}
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, '.');
 

@@ -4,7 +4,7 @@ namespace Keboola\Juicer\Client;
 
 use Keboola\Juicer\Exception\UserException;
 
-class RestRequest implements RequestInterface
+class RestRequest
 {
     /**
      * @var string

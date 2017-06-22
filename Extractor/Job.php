@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Extractor;
 
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Client\ClientInterface;
-use Keboola\Juicer\Client\RequestInterface;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Parser\ParserInterface;
 use Psr\Log\LoggerInterface;
@@ -20,7 +20,7 @@ abstract class Job
     protected $config;
 
     /**
-     * @var ClientInterface
+     * @var RestClient
      */
     protected $client;
 
@@ -46,11 +46,11 @@ abstract class Job
 
     /**
      * @param JobConfig $config
-     * @param ClientInterface $client A client used to communicate with the API (wrapper for Guzzle)
+     * @param RestClient $client A client used to communicate with the API (wrapper for Guzzle)
      * @param ParserInterface $parser A parser to handle the result and convert it into CSV file(s)
      * @param LoggerInterface $logger
      */
-    public function __construct(JobConfig $config, ClientInterface $client, ParserInterface $parser, LoggerInterface $logger)
+    public function __construct(JobConfig $config, RestClient $client, ParserInterface $parser, LoggerInterface $logger)
     {
         $this->logger = $logger;
         $this->config = $config;
@@ -72,7 +72,7 @@ abstract class Job
      * Return a download request
      *
      * @param JobConfig $config
-     * @return RequestInterface | false
+     * @return RestRequest | false
      */
     abstract protected function firstPage(JobConfig $config);
 
@@ -83,7 +83,7 @@ abstract class Job
      * @param JobConfig $config
      * @param mixed $response
      * @param array|null $data
-     * @return RequestInterface | false
+     * @return RestRequest | false
      */
     abstract protected function nextPage(JobConfig $config, $response, $data);
 
@@ -91,10 +91,10 @@ abstract class Job
      *  Download an URL from REST or SOAP API and return its body as an object.
      * should handle the API call, backoff and response decoding
      *
-     * @param RequestInterface $request
+     * @param RestRequest $request
      * @return \StdClass $response
      */
-    protected function download(RequestInterface $request)
+    protected function download(RestRequest $request)
     {
         return $this->client->download($request);
     }

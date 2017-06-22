@@ -2,8 +2,8 @@
 
 namespace Keboola\Juicer\Pagination;
 
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -77,7 +77,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         if ($this->offsetFromJob && !empty($jobConfig->getParams()[$this->offsetParam])) {
             $this->pointer = $jobConfig->getParams()[$this->offsetParam];
@@ -96,7 +96,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      * {@inheritdoc}
      * @todo increase by count($data) instead of limit? Could make limit optional then
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         if (count($data) < $this->getLimit($jobConfig)) {
             $this->reset();

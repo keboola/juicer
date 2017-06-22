@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -13,7 +13,7 @@ abstract class AbstractResponseScroller extends AbstractScroller
     /**
      * {@inheritdoc}
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $client->createRequest($jobConfig->getConfig());
     }

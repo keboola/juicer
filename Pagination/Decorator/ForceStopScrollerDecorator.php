@@ -2,9 +2,9 @@
 
 namespace Keboola\Juicer\Pagination\Decorator;
 
-use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -72,11 +72,11 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
-     * @return RequestInterface
+     * @return RestRequest
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         $this->startTime = time();
         $this->pageCounter = 1;
@@ -85,13 +85,13 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
      * @param mixed $response
      * @param array $data
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         if ($this->checkLimits($response)) {
             $this->limitReached = true;
