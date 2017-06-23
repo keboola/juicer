@@ -34,7 +34,7 @@ class ScrollerFactory
     private static function createScroller(array $config)
     {
         if (empty($config['method'])) {
-            return new NoScroller([]);
+            return new NoScroller();
         }
 
         switch ($config['method']) {

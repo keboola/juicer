@@ -5,14 +5,6 @@ namespace Keboola\Juicer\Pagination;
 abstract class AbstractScroller
 {
     /**
-     * AbstractScroller constructor.
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-    }
-
-    /**
      * Get object vars by default
      */
     public function getState()

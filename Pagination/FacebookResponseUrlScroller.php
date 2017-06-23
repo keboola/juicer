@@ -35,7 +35,6 @@ class FacebookResponseUrlScroller extends AbstractResponseScroller implements Sc
      */
     public function __construct(array $config)
     {
-        parent::__construct($config);
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];
         }
