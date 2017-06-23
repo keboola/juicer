@@ -75,17 +75,17 @@ class JsonMapTest extends TestCase
 
         self::assertEquals(
             [
-                '"item_id","tags","parent_id"' . PHP_EOL,
-                '"1","","iAreId"' . PHP_EOL,
-                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . PHP_EOL
+                '"item_id","tags","parent_id"' . "\n",
+                '"1","","iAreId"' . "\n",
+                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n"
             ],
             file($parser->getResults()['first'])
         );
         self::assertEquals(
             [
-                '"user","tag","first_pk"' . PHP_EOL,
-                '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL,
-                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL
+                '"user","tag","first_pk"' . "\n",
+                '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
+                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n"
             ],
             file($parser->getResults()['tags'])
         );
@@ -332,11 +332,11 @@ class JsonMapTest extends TestCase
 
         self::assertEquals(
             [
-                '"user","tag"' . PHP_EOL,
-                '"asd","tag1"' . PHP_EOL,
-                '"asd","tag2"' . PHP_EOL,
-                '"asd","tag3"' . PHP_EOL,
-                '"asd","tag4"' . PHP_EOL
+                '"user","tag"' . "\n",
+                '"asd","tag1"' . "\n",
+                '"asd","tag2"' . "\n",
+                '"asd","tag3"' . "\n",
+                '"asd","tag4"' . "\n"
             ],
             file($parser->getResults()['tags'])
         );
@@ -393,9 +393,9 @@ class JsonMapTest extends TestCase
         $parser->process($data, 'reports');
 
         $expected = [
-            '"date","unit_id","unit_name","clicks","reports_pk"' . PHP_EOL,
-            '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL,
-            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL
+            '"date","unit_id","unit_name","clicks","reports_pk"' . "\n",
+            '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . "\n",
+            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n"
         ];
 
         self::assertEquals($expected, file($parser->getResults()['report-rows']));
