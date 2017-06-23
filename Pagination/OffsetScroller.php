@@ -8,9 +8,9 @@ use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Scrolls using simple "limit" and "offset" query parameters.
- * Limit can be overriden in job's config's query parameters
+ * Limit can be overridden in job's config's query parameters
  * and it will be used instead of extractor's default.
- * Offset can be overriden if 'offsetFromJob' is enabled
+ * Offset can be overridden if 'offsetFromJob' is enabled
  */
 class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {

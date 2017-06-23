@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -124,5 +125,16 @@ class OffsetScrollerTest extends TestCase
 
         $second = $scroller->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
+    }
+
+    public function testInvalid()
+    {
+        try {
+            OffsetScroller::create([]);
+            self::fail("Must cause exception");
+        } catch (UserException $e) {
+            self::assertContains('Missing \'pagination.limit\' attribute required for offset pagination', $e->getMessage());
+        }
+        OffsetScroller::create(['limit' => 'foo']);
     }
 }

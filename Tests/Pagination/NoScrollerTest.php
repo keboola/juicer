@@ -47,4 +47,14 @@ class NoScrollerTest extends TestCase
         $expected = $client->createRequest($config->getConfig());
         self::assertEquals($expected, $req);
     }
+
+    public function testState()
+    {
+        $scroller = new NoScroller();
+        self::assertEquals([], $scroller->getState());
+        $scroller->setState(['foo' => 'bar']);
+        self::assertEquals([], $scroller->getState());
+        $scroller->reset();
+        self::assertEquals([], $scroller->getState());
+    }
 }

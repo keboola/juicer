@@ -29,6 +29,9 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         }
 
         foreach ($config['scrollers'] as $id => $scrollerCfg) {
+            if (!is_array($scrollerCfg)) {
+                throw new UserException('Scroller configuration for ' . $id . 'must be array.');
+            }
             $this->scrollers[$id] = ScrollerFactory::getScroller($scrollerCfg);
         }
 
