@@ -15,18 +15,18 @@ class MultipleScrollerTest extends TestCase
         $scroller = new MultipleScroller($this->getScrollerConfig());
 
         $cursorResponse = [
-            (object) ['id' => 2],
-            (object) ['id' => 1]
+            (object)['id' => 2],
+            (object)['id' => 1]
         ];
 
-        $paramResponse = (object) [
+        $paramResponse = (object)[
             'next_page_id' => 'page2'
         ];
 
-        $noScrollerResponse = (object) [
+        $noScrollerResponse = (object)[
             'results' => [
-                (object) ['data' => 'val1'],
-                (object) ['data' => 'val2']
+                (object)['data' => 'val1'],
+                (object)['data' => 'val2']
             ]
         ];
 
@@ -84,11 +84,11 @@ class MultipleScrollerTest extends TestCase
         ]);
 
         $cursorResponse = [
-            (object) ['id' => 2],
-            (object) ['id' => 1]
+            (object)['id' => 2],
+            (object)['id' => 1]
         ];
 
-        $paramResponse = (object) [
+        $paramResponse = (object)[
             'next_page_id' => 'page2'
         ];
 
