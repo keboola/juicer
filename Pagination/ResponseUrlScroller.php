@@ -14,32 +14,42 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
     /**
      * @var string
      */
-    protected $urlParam;
+    protected $urlParam = 'next_page';
 
     /**
      * @var bool
      */
-    protected $includeParams;
+    protected $includeParams = false;
 
     /**
      * @var bool
      */
     protected $paramIsQuery = false;
 
+    /**
+     * ResponseUrlScroller constructor.
+     * @param array $config
+     *      [
+     *          'urlKey' => string // Key in the JSON response containing the URL
+     *          'includeParams' => bool // Whether to include params from config
+     *          'paramIsQuery' => bool // Pick parameters from the scroll URL and use them with job configuration
+     *      ]
+     */
     public function __construct($config)
     {
-        $this->urlParam = !empty($config['urlKey']) ? $config['urlKey'] : 'next_page';
-        $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
-        $this->paramIsQuery = !empty($config['paramIsQuery']) ? (bool) $config['paramIsQuery'] : false;
-    }
-
-    public static function create(array $config)
-    {
-        return new self($config);
+        if (!empty($config['urlKey'])) {
+            $this->urlParam = $config['urlKey'];
+        }
+        if (isset($config['includeParams'])) {
+            $this->includeParams = (bool)$config['includeParams'];
+        }
+        if (isset($config['paramIsQuery'])) {
+            $this->paramIsQuery = (bool)$config['paramIsQuery'];
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {

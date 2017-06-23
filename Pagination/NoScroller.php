@@ -11,7 +11,7 @@ use Keboola\Juicer\Config\JobConfig;
 class NoScroller implements ScrollerInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
@@ -19,7 +19,7 @@ class NoScroller implements ScrollerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -27,25 +27,23 @@ class NoScroller implements ScrollerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset()
     {
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public static function create(array $config)
-    {
-        return new self;
-    }
-
     public function getState()
     {
         return [];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setState(array $state)
     {
     }

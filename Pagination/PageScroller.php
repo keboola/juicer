@@ -8,62 +8,77 @@ use Keboola\Juicer\Config\JobConfig;
 /**
  * Scrolls using simple "limit" and "page" query parameters.
  *
- * Limit can be overriden in job's config's query parameters
+ * Limit can be overridden in job's config's query parameters
  * and it will be used instead of extractor's default.
  * Pagination will stop if an empty response is received,
  * or when $limit is set and
  */
 class PageScroller extends AbstractScroller implements ScrollerInterface
 {
-    const DEFAULT_PAGE_PARAM = 'page';
-    const DEFAULT_LIMIT = null;
-    const DEFAULT_LIMIT_PARAM = 'limit';
-    const DEFAULT_FIRST_PAGE = 1;
-    const FIRST_PAGE_PARAMS = true;
+    /**
+     * @var int
+     */
+    protected $limit = null;
+
+    /**
+     * @var string
+     */
+    protected $limitParam = 'limit';
+
+    /**
+     * @var string
+     */
+    protected $pageParam = 'page';
 
     /**
      * @var int
      */
-    protected $limit;
-    /**
-     * @var string
-     */
-    protected $limitParam;
-    /**
-     * @var string
-     */
-    protected $pageParam;
-    /**
-     * @var int
-     */
-    protected $firstPage;
+    protected $firstPage = 1;
+
     /**
      * @var bool
      */
-    protected $firstPageParams;
+    protected $firstPageParams = true;
+
     /**
      * @var int
      */
     protected $page;
 
-    public function __construct($config)
+    /**
+     * PageScroller constructor.
+     * @param array $config
+     *      [
+     *          'pageParam' => string // the page parameter
+     *          'limit' => int // page size limit
+     *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
+     *          'firstPage' => int // number of the first page
+     *          'firstPageParams` => bool // whether to include the limit and offset in the first request (default = true)
+     *      ]
+     */
+    public function __construct(array $config)
     {
-        $this->pageParam = !empty($config['pageParam']) ? $config['pageParam'] : self::DEFAULT_PAGE_PARAM;
-        $this->limit = !empty($config['limit']) ? $config['limit'] : self::DEFAULT_LIMIT;
-        $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
-        $this->firstPage = isset($config['firstPage']) ? $config['firstPage'] : self::DEFAULT_FIRST_PAGE;
-        $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
+        if (!empty($config['pageParam'])) {
+            $this->pageParam = $config['pageParam'];
+        }
+        if (!empty($config['limit'])) {
+            $this->limit = $config['limit'];
+        }
+        if (!empty($config['limitParam'])) {
+            $this->limitParam = $config['limitParam'];
+        }
+        if (isset($config['firstPage'])) {
+            $this->firstPage = $config['firstPage'];
+        }
+        if (isset($config['firstPageParams'])) {
+            $this->firstPageParams = $config['firstPageParams'];
+        }
 
         $this->reset();
     }
 
-    public static function create(array $config)
-    {
-        return new self($config);
-    }
-
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
@@ -77,7 +92,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -93,6 +108,9 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function reset()
     {
         $this->page = $this->firstPage;
@@ -103,7 +121,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      * @param JobConfig $jobConfig
      * @return array
      */
-    protected function getParams(JobConfig $jobConfig)
+    private function getParams(JobConfig $jobConfig)
     {
         $params = [$this->pageParam => $this->page];
         if (!empty($this->limitParam) && !is_null($this->getLimit($jobConfig))) {
@@ -122,7 +140,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      * @param JobConfig $jobConfig
      * @return int
      */
-    protected function getLimit(JobConfig $jobConfig)
+    private function getLimit(JobConfig $jobConfig)
     {
         $params = $jobConfig->getParams();
         return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];

@@ -8,39 +8,40 @@ use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
+ * Class ForceStopScrollerDecorator
  * Adds 'forceStop' option
- * config:
- * pagination:
- *   forceStop:
- *     field: hasMore #name of the bool field
  */
 class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 {
     /**
-     * @var int
+     * @var int|null
      */
-    protected $pageLimit;
+    protected $pageLimit = null;
+
     /**
-     * seconds
-     * @var int
+     * Time in seconds
+     * @var int|null
      */
-    protected $timeLimit;
+    protected $timeLimit = null;
+
     /**
-     * bytes
-     * @var int
+     * Size in bytes
+     * @var int|null
      */
-    protected $volumeLimit;
+    protected $volumeLimit = null;
 
     /**
      * @var int
      */
     protected $pageCounter;
+
     /**
      * @var int
      */
     protected $volumeCounter;
+
     /**
-     * timestamp
+     * Timestamp
      * @var int
      */
     protected $startTime;
@@ -50,8 +51,14 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      */
     protected $limitReached = false;
 
+    /**
+     * ForceStopScrollerDecorator constructor.
+     * @param ScrollerInterface $scroller
+     * @param array $config
+     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
+        parent::__construct($scroller);
         if (!empty($config['forceStop'])) {
             if (!empty($config['forceStop']['pages'])) {
                 $this->pageLimit = $config['forceStop']['pages'];
@@ -65,9 +72,6 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
                 $this->volumeLimit = intval($config['forceStop']['volume']);
             }
         }
-
-        parent::__construct($scroller, $config);
-
         $this->reset();
     }
 
@@ -85,11 +89,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     * @param RestClient $client
-     * @param $jobConfig $jobConfig
-     * @param mixed $response
-     * @param array $data
-     * @return RestRequest|false
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -103,21 +103,21 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * @param mixed $response
-     * @return bool|null Returns true if a limit is reached
+     * @return bool Returns true if a limit is reached
      */
-    protected function checkLimits($response)
+    private function checkLimits($response)
     {
         if ($this->checkPages() || $this->checkTime() || $this->checkVolume($response)) {
             return true;
         }
-        return null;
+        return false;
     }
 
     /**
      * Uses internal counter to check page limit
      * @return bool
      */
-    protected function checkPages()
+    private function checkPages()
     {
         if (is_null($this->pageLimit)) {
             return false;
@@ -133,7 +133,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * Checks time between first and current request
      * @return bool
      */
-    protected function checkTime()
+    private function checkTime()
     {
         if (is_null($this->timeLimit)) {
             return false;
@@ -150,7 +150,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * @param object|array $response
      * @return bool
      */
-    protected function checkVolume($response)
+    private function checkVolume($response)
     {
         if (is_null($this->volumeLimit)) {
             return false;
@@ -163,13 +163,15 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function reset()
     {
         $this->pageCounter = 0;
         $this->volumeCounter = 0;
         $this->startTime = time();
-
-        return parent::reset();
+        parent::reset();
     }
 
     /**

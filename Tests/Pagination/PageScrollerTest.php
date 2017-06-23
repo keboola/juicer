@@ -24,7 +24,7 @@ class PageScrollerTest extends TestCase
             ]
         ]);
 
-        $scroller = PageScroller::create(['limit' => 500]);
+        $scroller = new PageScroller(['limit' => 500]);
 
         $req = $scroller->getFirstRequest($client, $config);
 
@@ -45,7 +45,7 @@ class PageScrollerTest extends TestCase
             ]
         ]);
 
-        $scroller = PageScroller::create(['limit' => 500, 'firstPage' => 0]);
+        $scroller = new PageScroller(['limit' => 500, 'firstPage' => 0]);
 
         $req = $scroller->getFirstRequest($client, $config);
 
@@ -66,7 +66,7 @@ class PageScrollerTest extends TestCase
             ]
         ]);
 
-        $scroller = PageScroller::create([
+        $scroller = new PageScroller([
             'firstPageParams' => false
         ]);
 

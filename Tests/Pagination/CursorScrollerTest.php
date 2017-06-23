@@ -71,17 +71,18 @@ class CursorScrollerTest extends TestCase
     public function testInvalid()
     {
         try {
-            CursorScroller::create([]);
+            new CursorScroller([]);
             self::fail("Must raise exception");
         } catch (UserException $e) {
             self::assertContains('Missing \'pagination.idKey\' attribute required for cursor pagination', $e->getMessage());
         }
         try {
-            CursorScroller::create(['idKey' => 'foo']);
+            new CursorScroller(['idKey' => 'foo']);
             self::fail("Must raise exception");
         } catch (UserException $e) {
             self::assertContains('Missing \'pagination.param\' attribute required for cursor pagination', $e->getMessage());
         }
+        new CursorScroller(['idKey' => 'foo', 'param' => 'bar']);
     }
 
     public function testInvalidScroll()

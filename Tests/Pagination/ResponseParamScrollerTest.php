@@ -2,7 +2,6 @@
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use GuzzleHttp\Message\Response;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
@@ -153,17 +152,17 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
     public function testInvalid()
     {
         try {
-            ResponseParamScroller::create([]);
+            new ResponseParamScroller([]);
             self::fail("Must raise exception");
         } catch (UserException $e) {
             self::assertContains('Missing required \'pagination.responseParam\' parameter', $e->getMessage());
         }
         try {
-            ResponseParamScroller::create(['responseParam' => 'foo']);
+            new ResponseParamScroller(['responseParam' => 'foo']);
             self::fail("Must raise exception");
         } catch (UserException $e) {
             self::assertContains('Missing required \'pagination.queryParam\' parameter', $e->getMessage());
         }
-        ResponseParamScroller::create(['responseParam' => 'foo', 'queryParam' => 'bar']);
+        new ResponseParamScroller(['responseParam' => 'foo', 'queryParam' => 'bar']);
     }
 }

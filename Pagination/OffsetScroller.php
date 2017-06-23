@@ -14,68 +14,70 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {
-    const DEFAULT_LIMIT_PARAM = 'limit';
-    const DEFAULT_OFFSET_PARAM = 'offset';
-    const FIRST_PAGE_PARAMS = true;
-
     /**
      * @var int
      */
     protected $limit;
+
     /**
      * @var string
      */
-    protected $limitParam;
+    protected $limitParam = 'limit';
+
     /**
      * @var string
      */
-    protected $offsetParam;
+    protected $offsetParam = 'offset';
+
     /**
      * @var bool
      */
-    protected $firstPageParams;
+    protected $firstPageParams = true;
+
     /**
      * @var int
      */
     protected $pointer = 0;
+
     /**
      * @var bool
      */
     protected $offsetFromJob = false;
 
-    public function __construct(array $config)
-    {
-        $this->limit = $config['limit'];
-        $this->limitParam = !empty($config['limitParam']) ? $config['limitParam'] : self::DEFAULT_LIMIT_PARAM;
-        $this->offsetParam = !empty($config['offsetParam']) ? $config['offsetParam'] : self::DEFAULT_OFFSET_PARAM;
-        $this->firstPageParams = isset($config['firstPageParams']) ? $config['firstPageParams'] : self::FIRST_PAGE_PARAMS;
-        if (!empty($config['offsetFromJob'])) {
-            $this->offsetFromJob = true;
-        }
-    }
-
     /**
+     * OffsetScroller constructor.
      * @param array $config
-     *     [
-     *        'limit' => int // mandatory parameter; size of each page
-     *         'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
-     *         'offsetParam' => string // the offset parameter
-     *         'firstPageParams' => bool // whether to include the limit and offset in the first request (default = true)
-     *     ]
-     * @return static
+     *      [
+     *          'limit' => int // mandatory parameter; size of each page
+     *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
+     *          'offsetParam' => string // the offset parameter
+     *          'firstPageParams' => bool // whether to include the limit and offset in the first request (default = true)
+     *          'offsetFromJob' => bool // use offset parameter provided in the job parameters
+     *      ]
      * @throws UserException
      */
-    public static function create(array $config)
+    public function __construct(array $config)
     {
         if (empty($config['limit'])) {
             throw new UserException("Missing 'pagination.limit' attribute required for offset pagination");
         }
-
-        return new self($config);
+        $this->limit = $config['limit'];
+        if (!empty($config['limitParam'])) {
+            $this->limitParam = $config['limitParam'];
+        }
+        if (!empty($config['offsetParam'])) {
+            $this->offsetParam = $config['offsetParam'];
+        }
+        if (isset($config['firstPageParams'])) {
+            $this->firstPageParams = (bool)$config['firstPageParams'];
+        }
+        if (isset($config['offsetFromJob'])) {
+            $this->offsetFromJob = (bool)$config['offsetFromJob'];
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
@@ -93,8 +95,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @todo increase by count($data) instead of limit? Could make limit optional then
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -118,7 +119,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      * @param JobConfig $jobConfig
      * @return array
      */
-    protected function getParams(JobConfig $jobConfig)
+    private function getParams(JobConfig $jobConfig)
     {
         $config = $jobConfig->getConfig();
         $scrollParams = [
@@ -134,7 +135,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      * @param JobConfig $jobConfig
      * @return int
      */
-    protected function getLimit(JobConfig $jobConfig)
+    private function getLimit(JobConfig $jobConfig)
     {
         $params = $jobConfig->getParams();
         return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];

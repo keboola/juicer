@@ -11,13 +11,16 @@ use Keboola\Juicer\Config\JobConfig;
 abstract class AbstractResponseScroller extends AbstractScroller
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $client->createRequest($jobConfig->getConfig());
     }
 
+    /**
+     * @inheritdoc
+     */
     public function reset()
     {
     }

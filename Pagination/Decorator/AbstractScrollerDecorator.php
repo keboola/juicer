@@ -3,14 +3,9 @@
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
-use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
-use Keboola\Juicer\Pagination\ScrollerFactory;
 use Keboola\Juicer\Config\JobConfig;
 
-/**
- * @todo $config should be the config for the Decorator itself
- */
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
     /**
@@ -19,20 +14,16 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     protected $scroller;
 
     /**
-     * @var array
+     * AbstractScrollerDecorator constructor.
+     * @param ScrollerInterface $scroller
      */
-    protected $config;
-
-    public function __construct(ScrollerInterface $scroller, array $config)
+    public function __construct(ScrollerInterface $scroller)
     {
         $this->scroller = $scroller;
-        $this->config = $config;
     }
 
     /**
-     * @param RestClient $client
-     * @param $jobConfig $jobConfig
-     * @return RestRequest|false
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
@@ -40,11 +31,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     }
 
     /**
-     * @param RestClient $client
-     * @param $jobConfig $jobConfig
-     * @param mixed $response
-     * @param array $data
-     * @return RestRequest|false
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -52,30 +39,24 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     }
 
     /**
-     * Reset the pagination pointer
+     * @inheritdoc
      */
     public function reset()
     {
-        return $this->scroller->reset();
+        $this->scroller->reset();
     }
 
     /**
-     * @deprecated
-     * @param array $config
+     * Get decorated scroller
      * @return ScrollerInterface
      */
-    public static function create(array $config)
-    {
-        return ScrollerFactory::getScroller($config);
-    }
-
     public function getScroller()
     {
         return $this->scroller;
     }
 
     /**
-     * Get object vars by default
+     * @inheritdoc
      */
     public function getState()
     {
@@ -85,6 +66,9 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setState(array $state)
     {
         if (isset($state['scroller'])) {

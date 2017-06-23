@@ -3,25 +3,42 @@
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
-use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 
 /**
- * Adds 'nextPageFlag' option to look at a boolean
- * field in response to continue/stop scrolling
- * config:
- * pagination:
- *   nextPageFlag:
- *     field: hasMore #name of the bool field
- *     stopOn: false #whether to stop once the value is true or false
- *     ifNotSet: false #optional, what value to assume if the field is not present
+ * Class HasMoreScrollerDecorator
+ * Adds 'nextPageFlag' option to look at a boolean field in response to continue/stop scrolling
  */
 class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 {
-    protected $nextPageFlag = null;
+    /**
+     * @var string
+     */
+    protected $field = null;
 
+    /**
+     * @var bool
+     */
+    protected $stopOn = false;
+
+    /**
+     * @var bool
+     */
+    protected $ifNotSet = false;
+
+    /**
+     * HasMoreScrollerDecorator constructor.
+     * @param ScrollerInterface $scroller
+     * @param array $config array with `nextPageFlag` item which is:
+     *      [
+     *          'field' => string // name of the boolean field
+     *          'stopOn' => bool // whether to stop if the field value is true or false
+     *          'ifNotSet' => bool // what value to assume if the field is not present
+     *      ]
+     * @throws UserException
+     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         if (!empty($config['nextPageFlag'])) {
@@ -33,22 +50,20 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
                 throw new UserException("'stopOn' value must be set to a boolean value for 'nextPageFlag'");
             }
 
-            if (!isset($config['nextPageFlag']['ifNotSet'])) {
-                $config['nextPageFlag']['ifNotSet'] = $config['nextPageFlag']['stopOn'];
+            $this->field = $config['nextPageFlag']['field'];
+            $this->stopOn = $config['nextPageFlag']['stopOn'];
+            if (isset($config['nextPageFlag']['ifNotSet'])) {
+                $this->ifNotSet = $config['nextPageFlag']['ifNotSet'];
+            } else {
+                $this->ifNotSet = $this->stopOn;
             }
-
-            $this->nextPageFlag = $config['nextPageFlag'];
         }
 
-        parent::__construct($scroller, $config);
+        parent::__construct($scroller);
     }
 
     /**
-     * @param RestClient $client
-     * @param $jobConfig $jobConfig
-     * @param mixed $response
-     * @param array $data
-     * @return RestRequest|false
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
@@ -65,17 +80,17 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
      */
     protected function hasMore($response)
     {
-        if (empty($this->nextPageFlag)) {
+        if (empty($this->field)) {
             return null;
         }
 
-        if (!isset($response->{$this->nextPageFlag['field']})) {
-            $value = $this->nextPageFlag['ifNotSet'];
+        if (!isset($response->{$this->field})) {
+            $value = $this->ifNotSet;
         } else {
-            $value = $response->{$this->nextPageFlag['field']};
+            $value = $response->{$this->field};
         }
 
-        if ((bool) $value === $this->nextPageFlag['stopOn']) {
+        if ((bool)$value === $this->stopOn) {
             return false;
         } else {
             return true;

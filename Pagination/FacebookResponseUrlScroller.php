@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Erik Zigo <erik.zigo@keboola.com>
- */
 
 namespace Keboola\Juicer\Pagination;
 
@@ -15,32 +12,43 @@ class FacebookResponseUrlScroller extends AbstractResponseScroller implements Sc
     /**
      * @var string
      */
-    protected $urlParam;
+    protected $urlParam = 'paging.next';
 
     /**
      * @var bool
      */
-    protected $includeParams;
+    protected $includeParams = false;
 
     /**
      * @var bool
      */
     protected $paramIsQuery = false;
 
-    public function __construct($config)
+    /**
+     * FacebookResponseUrlScroller constructor.
+     * @param array $config
+     *      [
+     *          'urlKey' => string // Key in the JSON response containing the URL
+     *          'includeParams' => bool // Whether to include params from config
+     *          'paramIsQuery' => bool // Pick parameters from the scroll URL and use them with job configuration
+     *      ]
+     */
+    public function __construct(array $config)
     {
-        $this->urlParam = !empty($config['urlKey']) ? $config['urlKey'] : 'paging.next';
-        $this->includeParams = !empty($config['includeParams']) ? (bool)$config['includeParams'] : false;
-        $this->paramIsQuery = !empty($config['paramIsQuery']) ? (bool)$config['paramIsQuery'] : false;
-    }
-
-    public static function create(array $config)
-    {
-        return new self($config);
+        parent::__construct($config);
+        if (!empty($config['urlKey'])) {
+            $this->urlParam = $config['urlKey'];
+        }
+        if (isset($config['includeParams'])) {
+            $this->includeParams = (bool)$config['includeParams'];
+        }
+        if (isset($config['paramIsQuery'])) {
+            $this->paramIsQuery = (bool)$config['paramIsQuery'];
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {

@@ -81,8 +81,8 @@ class OffsetScrollerTest extends TestCase
             'params' => array_merge(
                 $config->getParams(),
                 [
-                    OffsetScroller::DEFAULT_LIMIT_PARAM => $limit,
-                    OffsetScroller::DEFAULT_OFFSET_PARAM => 0
+                    'limit' => $limit,
+                    'offset' => 0
                 ]
             )
         ]);
@@ -130,11 +130,11 @@ class OffsetScrollerTest extends TestCase
     public function testInvalid()
     {
         try {
-            OffsetScroller::create([]);
+            new OffsetScroller([]);
             self::fail("Must cause exception");
         } catch (UserException $e) {
             self::assertContains('Missing \'pagination.limit\' attribute required for offset pagination', $e->getMessage());
         }
-        OffsetScroller::create(['limit' => 'foo']);
+        new OffsetScroller(['limit' => 'foo']);
     }
 }

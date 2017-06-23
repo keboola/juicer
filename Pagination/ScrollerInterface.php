@@ -1,4 +1,5 @@
 <?php
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -39,6 +40,4 @@ interface ScrollerInterface
      * @param array $state
      */
     public function setState(array $state);
-
-    public static function create(array $config);
 }

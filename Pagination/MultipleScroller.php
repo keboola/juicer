@@ -15,13 +15,22 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @var ScrollerInterface[]
      */
-    protected $scrollers = [];
+    private $scrollers = [];
 
     /**
      * @var string
      */
-    protected $defaultScroller;
+    private $defaultScroller;
 
+    /**
+     * MultipleScroller constructor.
+     * @param array $config
+     *      [
+     *          'scrollers' => array // named definitions of scrollers
+     *          'default' => string // name of default scroller
+     *      ]
+     * @throws UserException
+     */
     public function __construct(array $config)
     {
         if (empty($config['scrollers'])) {
@@ -41,16 +50,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     }
 
     /**
-     * @param array $config
-     * @return static
-     */
-    public static function create(array $config)
-    {
-        return new self($config);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
@@ -58,13 +58,16 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         return $this->getScrollerForJob($jobConfig)->getNextRequest($client, $jobConfig, $response, $data);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function reset()
     {
         foreach ($this->scrollers as $scroller) {
@@ -72,6 +75,10 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
+    /**
+     * Get configured scrollers
+     * @return ScrollerInterface[]
+     */
     public function getScrollers()
     {
         return $this->scrollers;
@@ -82,7 +89,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
      * @return ScrollerInterface
      * @throws UserException
      */
-    public function getScrollerForJob(JobConfig $jobConfig)
+    private function getScrollerForJob(JobConfig $jobConfig)
     {
         if (empty($jobConfig->getConfig()['scroller'])) {
             if (empty($this->defaultScroller)) {

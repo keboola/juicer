@@ -77,7 +77,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response = (object)[
             'pagination' => (object)[
                 'next' => 'test?page=2',
-                'prev' => 'test?page=0' // Not used, just for usecase demo
+                'prev' => 'test?page=0' // Not used, just for demo
             ]
         ];
 
