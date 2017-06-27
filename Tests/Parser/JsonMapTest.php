@@ -14,7 +14,7 @@ class JsonMapTest extends TestCase
 {
     public function testProcess()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'first']]]);
 
         $config->setAttributes([
             'mappings' => [
@@ -99,13 +99,7 @@ class JsonMapTest extends TestCase
      */
     public function testNoMapping()
     {
-        $config = new Config('ex', []);
-        $config->setJobs([
-            JobConfig::create([
-                'endpoint' => '1st',
-                'dataType' => 'first'
-            ])
-        ]);
+        $config = new Config('ex', ['jobs' => [['endpoint' => '1st', 'dataType' => 'first']]]);
         $config->setAttributes([
             'mappings' => [
                 'notfirst' => [
@@ -120,7 +114,7 @@ class JsonMapTest extends TestCase
 
     public function testNoMappingFallback()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'fooBar']]]);
         $config->setAttributes([
             'mappings' => [
                 'notfirst' => [
@@ -170,7 +164,7 @@ class JsonMapTest extends TestCase
      */
     public function testEmptyMappingError()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'fooBar']]]);
         $config->setAttributes(['mappings' => ['first' => []]]);
         JsonMap::create($config, new NullLogger());
     }
@@ -181,7 +175,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadMapping()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'first']]]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -209,7 +203,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadData()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'first']]]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -236,17 +230,17 @@ class JsonMapTest extends TestCase
 
     public function testMergeResults()
     {
-        $configFirst = JobConfig::create([
+        $configFirst = new JobConfig([
             'endpoint' => '1st',
             'dataType' => 'first'
         ]);
 
-        $configTags = JobConfig::create([
+        $configTags = new JobConfig([
             'endpoint' => '2nd',
             'dataType' => 'tags'
         ]);
 
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'first']]]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
@@ -344,7 +338,7 @@ class JsonMapTest extends TestCase
 
     public function testMappingSimpleArrayToTable()
     {
-        $config = new Config('ex', []);
+        $config = new Config('ex', ['jobs' => [['endpoint' => 'reports']]]);
 
         $config->setAttributes([
             'mappings' => [

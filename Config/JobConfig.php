@@ -25,62 +25,41 @@ class JobConfig
     protected $config;
 
     /**
-     * @param string $jobId
-     * @param array $config
-     */
-    public function __construct($jobId, array $config)
-    {
-        $this->jobId = $jobId;
-        $this->config = $config;
-    }
-
-    /**
-     * Create an instance of config from config assoc. array
+     * Create an instance of Job configuration from configuration associative array
      * @param array $config
      *     example:
      *         [
      *            'id' => 'id',
      *            'endpoint' => ...
      *        ]
-     * where accountId is a placeholder used as {accountId} in child job's endpoint
-     * and account_id points to a key in a single response object (within an array)
-     * @return JobConfig
      * @throws UserException
-     * @internal param array $configs Array of all configs to create recursion
      */
-    public static function create(array $config)
+    public function __construct(array $config)
     {
         if (empty($config['id'])) {
-            // This'll change if the job settings change FIXME
             $config['id'] = md5(serialize($config));
         }
+        $this->jobId = $config['id'];
+        $this->config = $config;
 
         if (empty($config['endpoint'])) {
-            throw new UserException("'endpoint' must be set in each job!", 0, null, [$config]);
+            throw new UserException("The 'endpoint' property must be set in job.", 0, null, [$config]);
         }
-
-        $job = new self($config['id'], $config);
         if (!empty($config['children'])) {
             foreach ($config['children'] as $child) {
-                $job->addChildJob(self::create($child));
+                if (!is_array($child)) {
+                    throw new UserException("Job configuration must be an array: " . var_export($child));
+                }
+                $child = new JobConfig($child);
+                $this->childJobs[$child->getJobId()] = $child;
             }
         }
-
-        return $job;
-    }
-
-    /**
-     * @param JobConfig $job
-     */
-    public function addChildJob(self $job)
-    {
-        $this->childJobs[$job->getJobId()] = $job;
     }
 
     /**
      * @return JobConfig[]
      */
-    public function getChildJobs()
+    public function getChildJobs() : array
     {
         return $this->childJobs;
     }
@@ -88,7 +67,7 @@ class JobConfig
     /**
      * @return string
      */
-    public function getJobId()
+    public function getJobId() : string
     {
         return $this->jobId;
     }
@@ -96,7 +75,7 @@ class JobConfig
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig() : array
     {
         return $this->config;
     }

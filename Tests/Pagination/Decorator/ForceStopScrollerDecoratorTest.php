@@ -19,7 +19,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
     public function testCheckLimits(array $config, $response)
     {
         $client = RestClient::create(new NullLogger());
-        $jobConfig = new JobConfig('test', [
+        $jobConfig = new JobConfig([
             'endpoint' => 'test'
         ]);
 
@@ -62,7 +62,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
     public function testTimeLimit()
     {
         $client = RestClient::create(new NullLogger());
-        $jobConfig = new JobConfig('test', [
+        $jobConfig = new JobConfig([
             'endpoint' => 'test'
         ]);
 

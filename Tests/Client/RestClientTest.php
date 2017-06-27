@@ -24,7 +24,7 @@ class RestClientTest extends ExtractorTestCase
             'first' => 1,
             'second' => 'two'
         ];
-        $jobConfig = JobConfig::create([
+        $jobConfig = new JobConfig([
             'endpoint' => 'ep',
             'params' => $arr
         ]);

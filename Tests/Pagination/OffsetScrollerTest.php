@@ -14,7 +14,7 @@ class OffsetScrollerTest extends TestCase
     public function testGetNextRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -65,7 +65,7 @@ class OffsetScrollerTest extends TestCase
     public function testGetFirstRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -102,7 +102,7 @@ class OffsetScrollerTest extends TestCase
     public function testOffsetFromJob()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'startAt' => 3

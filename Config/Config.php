@@ -2,6 +2,8 @@
 
 namespace Keboola\Juicer\Config;
 
+use Keboola\Juicer\Exception\UserException;
+
 /**
  * Carries the extractor configuration
  */
@@ -10,32 +12,47 @@ class Config
     /**
      * @var string
      */
-    protected $configName;
+    private $configName;
 
     /**
      * @var string
      */
-    protected $runId = null;
+    private $runId = null;
 
     /**
      * @var array
      */
-    protected $attributes = [];
-
-    /**
-     * @var array
-     */
-    protected $runtimeParams = [];
+    private $attributes = [];
 
     /**
      * @var JobConfig[]
      */
-    protected $jobs = [];
+    private $jobs = [];
 
-    public function __construct($configName, array $runtimeParams)
+    /**
+     * Config constructor.
+     * @param string $configName
+     * @param array $configuration
+     * @throws UserException
+     */
+    public function __construct(string $configName, array $configuration)
     {
+        if (empty($configuration['jobs']) || !is_array($configuration['jobs'])) {
+            throw new UserException("The 'jobs' section is required in the configuration.");
+        }
+
         $this->configName = $configName;
-        $this->runtimeParams = $runtimeParams;
+        $jobConfigs = [];
+        foreach ($configuration['jobs'] as $job) {
+            if (!is_array($job)) {
+                throw new UserException("Job configuration must be an array: " . var_export($job));
+            }
+            $jobConfig = new JobConfig($job);
+            $jobConfigs[$jobConfig->getJobId()] = $jobConfig;
+        }
+        $this->setJobs($jobConfigs);
+        unset($configuration['jobs']);
+        $this->setAttributes($configuration);
     }
 
     /**
@@ -101,13 +118,5 @@ class Config
     public function getConfigName()
     {
         return $this->configName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRuntimeParams()
-    {
-        return $this->runtimeParams;
     }
 }

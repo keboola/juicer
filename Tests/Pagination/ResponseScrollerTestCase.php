@@ -9,7 +9,7 @@ class ResponseScrollerTestCase extends TestCase
 {
     protected function getConfig()
     {
-        return new JobConfig('test', [
+        return new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,

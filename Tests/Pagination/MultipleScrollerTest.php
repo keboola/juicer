@@ -33,17 +33,17 @@ class MultipleScrollerTest extends TestCase
 
         $client = RestClient::create(new NullLogger());
 
-        $paramConfig = new JobConfig('param', [
+        $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
             'scroller' => 'param'
         ]);
 
-        $cursorConfig = new JobConfig('cursor', [
+        $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
             'scroller' => 'cursor'
         ]);
 
-        $noScrollerConfig = new JobConfig('none', [
+        $noScrollerConfig = new JobConfig([
             'endpoint' => 'data'
         ]);
 
@@ -75,12 +75,12 @@ class MultipleScrollerTest extends TestCase
         $config['default'] = 'cursor';
         $scroller = new MultipleScroller($config);
 
-        $paramConfig = new JobConfig('param', [
+        $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
             'scroller' => 'param'
         ]);
 
-        $noScrollerConfig = new JobConfig('none', [
+        $noScrollerConfig = new JobConfig([
             'endpoint' => 'data'
         ]);
 
@@ -124,7 +124,7 @@ class MultipleScrollerTest extends TestCase
         $config['default'] = 'def';
         $scroller = new MultipleScroller($config);
 
-        $noScrollerConfig = new JobConfig('none', [
+        $noScrollerConfig = new JobConfig([
             'endpoint' => 'data'
         ]);
 
@@ -140,7 +140,7 @@ class MultipleScrollerTest extends TestCase
         $config = $this->getScrollerConfig();
         $scroller = new MultipleScroller($config);
 
-        $noScrollerConfig = new JobConfig('none', [
+        $noScrollerConfig = new JobConfig([
             'endpoint' => 'data',
             'scroller' => 'nonExistentScroller'
         ]);
@@ -202,11 +202,11 @@ class MultipleScrollerTest extends TestCase
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
         $client = RestClient::create(new NullLogger());
-        $cursorConfig = new JobConfig('cursor', [
+        $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
             'scroller' => 'cursor'
         ]);
-        $pageConfig = new JobConfig('page', [
+        $pageConfig = new JobConfig([
             'endpoint' => 'someData',
             'scroller' => 'page'
         ]);

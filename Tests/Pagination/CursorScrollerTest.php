@@ -14,7 +14,7 @@ class CursorScrollerTest extends TestCase
     public function testGetNextRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test'
         ]);
 
@@ -44,7 +44,7 @@ class CursorScrollerTest extends TestCase
     public function testGetNextRequestNested()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test'
         ]);
 
@@ -88,7 +88,7 @@ class CursorScrollerTest extends TestCase
     public function testInvalidScroll()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test'
         ]);
 
