@@ -203,7 +203,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadData()
     {
-        $config = new Config('ex', ['jobs' => [['endpoint' => 'first']]]);
+        $config = new Config( 'ex', ['jobs' => [['endpoint' => 'first']]]);
         $config->setAttributes([
             'mappings' => [
                 'first' => [
