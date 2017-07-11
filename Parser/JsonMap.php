@@ -6,6 +6,7 @@ use Keboola\CsvMap\Mapper;
 use Keboola\CsvMap\Exception\BadConfigException;
 use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\Csv\CsvFile;
+use Keboola\CsvTable\Table;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Exception\UserException;
 use Psr\Log\LoggerInterface;
@@ -98,6 +99,9 @@ class JsonMap implements ParserInterface
         }
     }
 
+    /**
+     * @return Table[]
+     */
     public function getResults()
     {
         $results = [];
