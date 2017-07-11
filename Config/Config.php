@@ -10,16 +10,6 @@ use Keboola\Juicer\Exception\UserException;
 class Config
 {
     /**
-     * @var string
-     */
-    private $configName;
-
-    /**
-     * @var string
-     */
-    private $runId = null;
-
-    /**
      * @var array
      */
     private $attributes = [];
@@ -31,17 +21,15 @@ class Config
 
     /**
      * Config constructor.
-     * @param string $configName
      * @param array $configuration
      * @throws UserException
      */
-    public function __construct(string $configName, array $configuration)
+    public function __construct(array $configuration)
     {
         if (empty($configuration['jobs']) || !is_array($configuration['jobs'])) {
             throw new UserException("The 'jobs' section is required in the configuration.");
         }
 
-        $this->configName = $configName;
         $jobConfigs = [];
         foreach ($configuration['jobs'] as $job) {
             if (!is_array($job)) {
@@ -50,33 +38,9 @@ class Config
             $jobConfig = new JobConfig($job);
             $jobConfigs[$jobConfig->getJobId()] = $jobConfig;
         }
-        $this->setJobs($jobConfigs);
+        $this->jobs = $jobConfigs;
         unset($configuration['jobs']);
-        $this->setAttributes($configuration);
-    }
-
-    /**
-     * @param string $runId
-     */
-    public function setRunId($runId)
-    {
-        $this->runId = $runId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRunId()
-    {
-        return $this->runId;
-    }
-
-    /**
-     * @param array $attributes
-     */
-    public function setAttributes(array $attributes)
-    {
-        $this->attributes = $attributes;
+        $this->attributes = $configuration;
     }
 
     /**
@@ -97,26 +61,10 @@ class Config
     }
 
     /**
-     * @param JobConfig[] $jobs
-     */
-    public function setJobs(array $jobs)
-    {
-        $this->jobs = $jobs;
-    }
-
-    /**
      * @return JobConfig[]
      */
     public function getJobs()
     {
         return $this->jobs;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigName()
-    {
-        return $this->configName;
     }
 }
