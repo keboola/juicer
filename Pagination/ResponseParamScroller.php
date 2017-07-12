@@ -2,14 +2,12 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 
 /**
  * Scrolls using a parameter within page's response.
- *
- * @todo scollRequest could be in endpoint's configuration
  */
 class ResponseParamScroller extends AbstractResponseScroller implements ScrollerInterface
 {
@@ -26,30 +24,25 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
     /**
      * @var array
      */
-    protected $scrollRequest;
+    protected $scrollRequest = [];
 
     /**
      * @var bool
      */
-    protected $includeParams;
+    private $includeParams = false;
 
     /**
-     * @param $config
-     * @internal param string $responseParam Parameter within the response
-     *  containing next page info
-     * @internal param string $queryParam Query parameter to pass the $responseParam
-     * @internal param bool $includeParams Whether to include params from config
-     * @internal param array $scrollRequest Override endpoint from config?
+     * ResponseParamScroller constructor.
+     * @param array $config
+     *      [
+     *          'responseParam' => string // Parameter within the response containing next page info
+     *          'queryParam' => string // Query parameter to pass the $responseParam
+     *          'includeParams' => bool // Whether to include params from config
+     *          'scrollRequest' => array // Override endpoint from config
+     *      ]
+     * @throws UserException
      */
     public function __construct($config)
-    {
-        $this->responseParam = $config['responseParam'];
-        $this->queryParam = $config['queryParam'];
-        $this->includeParams = !empty($config['includeParams']) ? (bool) $config['includeParams'] : false;
-        $this->scrollRequest = !empty($config['scrollRequest']) ? $config['scrollRequest'] : null;
-    }
-
-    public static function create(array $config)
     {
         if (empty($config['responseParam'])) {
             throw new UserException("Missing required 'pagination.responseParam' parameter.");
@@ -57,14 +50,23 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
         if (empty($config['queryParam'])) {
             throw new UserException("Missing required 'pagination.queryParam' parameter.");
         }
-
-        return new self($config);
+        if (!empty($config['scrollRequest']) && !is_array($config['scrollRequest'])) {
+            throw new UserException("'pagination.scrollRequest' must be a job-like array.");
+        }
+        $this->responseParam = $config['responseParam'];
+        $this->queryParam = $config['queryParam'];
+        if (isset($config['includeParams'])) {
+            $this->includeParams = (bool)$config['includeParams'];
+        }
+        if (!empty($config['scrollRequest'])) {
+            $this->scrollRequest = $config['scrollRequest'];
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         $nextParam = \Keboola\Utils\getDataFromPath($this->responseParam, $response, '.');
         if (empty($nextParam)) {
@@ -76,7 +78,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
                 $config['params'] = [];
             }
 
-            if (!is_null($this->scrollRequest)) {
+            if ($this->scrollRequest) {
                 $config = $this->createScrollRequest($config, $this->scrollRequest);
             }
 
@@ -87,14 +89,14 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
     }
 
     /**
-     * Overwrite oriiginal endpoint settings with endpoint,
+     * Overwrite original endpoint settings with endpoint,
      * params and method from scrollRequest
      *
      * @param array $originalConfig
      * @param array $newConfig
      * @return array
      */
-    protected function createScrollRequest(array $originalConfig, array $newConfig)
+    private function createScrollRequest(array $originalConfig, array $newConfig)
     {
         return array_replace_recursive($originalConfig, $newConfig);
     }

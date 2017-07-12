@@ -14,9 +14,7 @@ class JsonMapTest extends TestCase
 {
     public function testProcess()
     {
-        $config = new Config('ex', []);
-
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
@@ -46,8 +44,10 @@ class JsonMapTest extends TestCase
                         'mapping' => ['destination' => 'parent_id']
                     ],
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => 'first']]
+        ];
+        $config = new Config($data);
         $parser = JsonMap::create($config, new NullLogger());
 
         $data = json_decode('[
@@ -75,17 +75,17 @@ class JsonMapTest extends TestCase
 
         self::assertEquals(
             [
-                '"item_id","tags","parent_id"' . PHP_EOL,
-                '"1","","iAreId"' . PHP_EOL,
-                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . PHP_EOL
+                '"item_id","tags","parent_id"' . "\n",
+                '"1","","iAreId"' . "\n",
+                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n"
             ],
             file($parser->getResults()['first'])
         );
         self::assertEquals(
             [
-                '"user","tag","first_pk"' . PHP_EOL,
-                '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL,
-                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . PHP_EOL
+                '"user","tag","first_pk"' . "\n",
+                '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
+                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n"
             ],
             file($parser->getResults()['tags'])
         );
@@ -99,29 +99,23 @@ class JsonMapTest extends TestCase
      */
     public function testNoMapping()
     {
-        $config = new Config('ex', []);
-        $config->setJobs([
-            JobConfig::create([
-                'endpoint' => '1st',
-                'dataType' => 'first'
-            ])
-        ]);
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'notfirst' => [
                     'id' => [
                         'type' => 'column',
                     ]
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
+        ];
+        $config = new Config($data);
         JsonMap::create($config, new NullLogger());
     }
 
     public function testNoMappingFallback()
     {
-        $config = new Config('ex', []);
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'notfirst' => [
                     'id' => [
@@ -130,9 +124,10 @@ class JsonMapTest extends TestCase
                         ]
                     ]
                 ]
-            ]
-        ]);
-
+            ],
+            'jobs' => [['endpoint' => 'fooBar']]
+        ];
+        $config = new Config($data);
         $fallback = Json::create($config, new NullLogger(), new Temp());
         $parser = JsonMap::create($config, new NullLogger(), $fallback);
 
@@ -170,8 +165,11 @@ class JsonMapTest extends TestCase
      */
     public function testEmptyMappingError()
     {
-        $config = new Config('ex', []);
-        $config->setAttributes(['mappings' => ['first' => []]]);
+        $data = [
+            'mappings' => ['first' => []],
+            'jobs' => [['endpoint' => 'fooBar']]
+        ];
+        $config = new Config($data);
         JsonMap::create($config, new NullLogger());
     }
 
@@ -181,18 +179,18 @@ class JsonMapTest extends TestCase
      */
     public function testBadMapping()
     {
-        $config = new Config('ex', []);
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
                         'type' => 'column',
                     ]
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => 'first']]
+        ];
+        $config = new Config($data);
         $parser = JsonMap::create($config, new NullLogger());
-
         $data = json_decode('[
             {
                 "id": 1,
@@ -209,8 +207,7 @@ class JsonMapTest extends TestCase
      */
     public function testBadData()
     {
-        $config = new Config('ex', []);
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'first' => [
                     'obj' => [
@@ -219,10 +216,11 @@ class JsonMapTest extends TestCase
                         ]
                     ]
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => 'first']]
+        ];
+        $config = new Config($data);
         $parser = JsonMap::create($config, new NullLogger());
-
         $data = json_decode('[
             {
                 "obj": {
@@ -236,18 +234,16 @@ class JsonMapTest extends TestCase
 
     public function testMergeResults()
     {
-        $configFirst = JobConfig::create([
+        $configFirst = new JobConfig([
             'endpoint' => '1st',
             'dataType' => 'first'
         ]);
 
-        $configTags = JobConfig::create([
+        $configTags = new JobConfig([
             'endpoint' => '2nd',
             'dataType' => 'tags'
         ]);
-
-        $config = new Config('ex', []);
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
@@ -290,9 +286,11 @@ class JsonMapTest extends TestCase
                         ]
                     ]
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => 'first']]
+        ];
 
+        $config = new Config($data);
         $firstData = json_decode('[
             {
                 "id": 1,
@@ -326,17 +324,16 @@ class JsonMapTest extends TestCase
         ]');
 
         $parser = JsonMap::create($config, new NullLogger());
-
         $parser->process($firstData, $configFirst->getDataType());
         $parser->process($secondData, $configTags->getDataType());
 
         self::assertEquals(
             [
-                '"user","tag"' . PHP_EOL,
-                '"asd","tag1"' . PHP_EOL,
-                '"asd","tag2"' . PHP_EOL,
-                '"asd","tag3"' . PHP_EOL,
-                '"asd","tag4"' . PHP_EOL
+                '"user","tag"' . "\n",
+                '"asd","tag1"' . "\n",
+                '"asd","tag2"' . "\n",
+                '"asd","tag3"' . "\n",
+                '"asd","tag4"' . "\n"
             ],
             file($parser->getResults()['tags'])
         );
@@ -344,9 +341,7 @@ class JsonMapTest extends TestCase
 
     public function testMappingSimpleArrayToTable()
     {
-        $config = new Config('ex', []);
-
-        $config->setAttributes([
+        $data = [
             'mappings' => [
                 'reports' => [
                     'rows' => [
@@ -380,8 +375,10 @@ class JsonMapTest extends TestCase
                         ]
                     ]
                 ]
-            ]
-        ]);
+            ],
+            'jobs' => [['endpoint' => 'reports']]
+        ];
+        $config = new Config($data);
         $parser = JsonMap::create($config, new NullLogger());
         $data = json_decode('[{
             "rows": [
@@ -393,9 +390,9 @@ class JsonMapTest extends TestCase
         $parser->process($data, 'reports');
 
         $expected = [
-            '"date","unit_id","unit_name","clicks","reports_pk"' . PHP_EOL,
-            '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL,
-            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . PHP_EOL
+            '"date","unit_id","unit_name","clicks","reports_pk"' . "\n",
+            '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . "\n",
+            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n"
         ];
 
         self::assertEquals($expected, file($parser->getResults()['report-rows']));

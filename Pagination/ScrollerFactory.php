@@ -14,13 +14,11 @@ class ScrollerFactory
     public static function getScroller(array $config)
     {
         $scroller = self::createScroller($config);
-
         $scroller = self::decorateScroller($scroller, $config);
-
         return $scroller;
     }
 
-    protected static function decorateScroller($scroller, $config)
+    private static function decorateScroller(ScrollerInterface $scroller, array $config)
     {
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
@@ -33,29 +31,29 @@ class ScrollerFactory
         return $scroller;
     }
 
-    protected static function createScroller(array $config)
+    private static function createScroller(array $config)
     {
         if (empty($config['method'])) {
-            return NoScroller::create([]);
+            return new NoScroller();
         }
 
         switch ($config['method']) {
             case 'offset':
-                return OffsetScroller::create($config);
+                return new OffsetScroller($config);
             case 'response.param':
-                return ResponseParamScroller::create($config);
+                return new ResponseParamScroller($config);
             case 'response.url':
-                return ResponseUrlScroller::create($config);
+                return new ResponseUrlScroller($config);
             case 'zendesk.response.url':
-                return ZendeskResponseUrlScroller::create($config);
+                return new ZendeskResponseUrlScroller($config);
             case 'facebook.response.url':
-                return FacebookResponseUrlScroller::create($config);
+                return new FacebookResponseUrlScroller($config);
             case 'pagenum':
-                return PageScroller::create($config);
+                return new PageScroller($config);
             case 'cursor':
-                return CursorScroller::create($config);
+                return new CursorScroller($config);
             case 'multiple':
-                return MultipleScroller::create($config);
+                return new MultipleScroller($config);
             default:
                 $method = is_string($config['method'])
                     ? $config['method']

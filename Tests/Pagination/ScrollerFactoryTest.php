@@ -2,8 +2,11 @@
 
 namespace Keboola\Juicer\Tests\Pagination;
 
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
+use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
+use Keboola\Juicer\Pagination\FacebookResponseUrlScroller;
 use Keboola\Juicer\Pagination\MultipleScroller;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\OffsetScroller;
@@ -11,6 +14,7 @@ use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
 use Keboola\Juicer\Pagination\ResponseUrlScroller;
 use Keboola\Juicer\Pagination\ScrollerFactory;
+use Keboola\Juicer\Pagination\ZendeskResponseUrlScroller;
 use PHPUnit\Framework\TestCase;
 
 class ScrollerFactoryTest extends TestCase
@@ -42,6 +46,12 @@ class ScrollerFactoryTest extends TestCase
             'method' => 'multiple',
             'scrollers' => ['none' => []]
         ]));
+        self::assertInstanceOf(ZendeskResponseUrlScroller::class, ScrollerFactory::getScroller([
+            'method' => 'zendesk.response.url'
+        ]));
+        self::assertInstanceOf(FacebookResponseUrlScroller::class, ScrollerFactory::getScroller([
+            'method' => 'facebook.response.url'
+        ]));
     }
 
     public function testDecorateScroller()
@@ -53,5 +63,26 @@ class ScrollerFactoryTest extends TestCase
             ],
             'method' => 'pagenum'
         ]));
+        self::assertInstanceOf(ForceStopScrollerDecorator::class, ScrollerFactory::getScroller([
+            'forceStop' => [
+                'pages' => 2
+            ]
+        ]));
+    }
+
+    public function testInvalid()
+    {
+        try {
+            ScrollerFactory::getScroller(['method' => 'fooBar']);
+            self::fail("Must raise exception");
+        } catch (UserException $e) {
+            self::assertContains('Unknown pagination method \'fooBar\'', $e->getMessage());
+        }
+        try {
+            ScrollerFactory::getScroller(['method' => ['foo' => 'bar']]);
+            self::fail("Must raise exception");
+        } catch (UserException $e) {
+            self::assertContains('Unknown pagination method \'{"foo":"bar"}\'', $e->getMessage());
+        }
     }
 }

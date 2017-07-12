@@ -2,8 +2,8 @@
 
 namespace Keboola\Juicer\Pagination;
 
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Client\ClientInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -16,33 +16,56 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      * @var int|null
      */
     protected $max = null;
+
     /**
      * @var int|null
      */
     protected $min = null;
+
     /**
      * @var string
      */
     protected $idKey;
+
     /**
      * @var string
      */
     protected $param;
+
     /**
      * @var bool
      */
     protected $reverse = false;
+
     /**
      * @var int
      */
     protected $increment = 0;
 
+    /**
+     * FacebookResponseUrlScroller constructor.
+     * @param array $config
+     *      [
+     *          'idKey' => string // mandatory parameter; key containing the "cursor"
+     *          'param' => string // the cursor parameter
+     *          'reverse' => bool // if true, the scroller looks for the lowest ID
+     *          'increment'  => int // add (or subtract using a negative number) from the **numeric** cursor value
+     *      ]
+     * @throws UserException
+     */
     public function __construct(array $config)
     {
+        if (empty($config['idKey'])) {
+            throw new UserException("Missing 'pagination.idKey' attribute required for cursor pagination");
+        }
+        if (empty($config['param'])) {
+            throw new UserException("Missing 'pagination.param' attribute required for cursor pagination");
+        }
+
         $this->idKey = $config['idKey'];
         $this->param = $config['param'];
-        if (!empty($config['reverse'])) {
-            $this->reverse = (bool) $config['reverse'];
+        if (isset($config['reverse'])) {
+            $this->reverse = (bool)$config['reverse'];
         }
         if (!empty($config['increment'])) {
             $this->increment = $config['increment'];
@@ -50,42 +73,17 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     }
 
     /**
-     * @param array $config
-     *     [
-     *         'idKey' => string // mandatory parameter; key containing the "cursor"
-     *         'param' => string // the cursor parameter
-     *         'reverse' => bool // if true, the scroller looks for the lowest ID
-     *         'increment' => int // add (or subtract using a negative number)
-     *                               from the **numeric** cursor value
-     *     ]
-     * @return static
-     * @throws UserException
+     * @inheritdoc
      */
-    public static function create(array $config)
-    {
-        if (empty($config['idKey'])) {
-            throw new UserException("Missing 'pagination.idKey' attribute required for cursor pagination");
-        }
-
-        if (empty($config['param'])) {
-            throw new UserException("Missing 'pagination.param' attribute required for cursor pagination");
-        }
-
-        return new self($config);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $client->createRequest($jobConfig->getConfig());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         if (empty($data)) {
             $this->reset();
@@ -121,6 +119,9 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function reset()
     {
         $this->max = $this->min = null;

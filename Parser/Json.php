@@ -97,8 +97,7 @@ class Json implements ParserInterface
             $struct = [];
         }
 
-        $rowsToAnalyze = null != $config && !empty($config->getRuntimeParams()["analyze"]) ? $config->getRuntimeParams()["analyze"] : -1;
-        $parser = JsonParser::create($logger, $struct, $rowsToAnalyze);
+        $parser = JsonParser::create($logger, $struct);
         $parser->setTemp($temp);
         return new static($parser, $logger);
     }

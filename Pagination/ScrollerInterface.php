@@ -1,27 +1,28 @@
 <?php
+
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface;
-use Keboola\Juicer\Client\RequestInterface;
+use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 
 interface ScrollerInterface
 {
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig);
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig);
 
     /**
-     * @param ClientInterface $client
+     * @param RestClient $client
      * @param $jobConfig $jobConfig
      * @param array|object $response
      * @param array $data
-     * @return RequestInterface|false
+     * @return RestRequest|false
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data);
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data);
 
     /**
      * Reset the pagination pointer
@@ -39,6 +40,4 @@ interface ScrollerInterface
      * @param array $state
      */
     public function setState(array $state);
-
-    public static function create(array $config);
 }

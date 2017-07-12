@@ -2,64 +2,45 @@
 
 namespace Keboola\Juicer\Config;
 
+use Keboola\Juicer\Exception\UserException;
+
 /**
  * Carries the extractor configuration
  */
 class Config
 {
     /**
-     * @var string
-     */
-    protected $configName;
-
-    /**
-     * @var string
-     */
-    protected $runId = null;
-
-    /**
      * @var array
      */
-    protected $attributes = [];
-
-    /**
-     * @var array
-     */
-    protected $runtimeParams = [];
+    private $attributes = [];
 
     /**
      * @var JobConfig[]
      */
-    protected $jobs = [];
-
-    public function __construct($configName, array $runtimeParams)
-    {
-        $this->configName = $configName;
-        $this->runtimeParams = $runtimeParams;
-    }
+    private $jobs = [];
 
     /**
-     * @param string $runId
+     * Config constructor.
+     * @param array $configuration
+     * @throws UserException
      */
-    public function setRunId($runId)
+    public function __construct(array $configuration)
     {
-        $this->runId = $runId;
-    }
+        if (empty($configuration['jobs']) || !is_array($configuration['jobs'])) {
+            throw new UserException("The 'jobs' section is required in the configuration.");
+        }
 
-    /**
-     * @return string
-     */
-    public function getRunId()
-    {
-        return $this->runId;
-    }
-
-    /**
-     * @param array $attributes
-     */
-    public function setAttributes(array $attributes)
-    {
-        $this->attributes = $attributes;
+        $jobConfigs = [];
+        foreach ($configuration['jobs'] as $job) {
+            if (!is_array($job)) {
+                throw new UserException("Job configuration must be an array: " . var_export($job));
+            }
+            $jobConfig = new JobConfig($job);
+            $jobConfigs[$jobConfig->getJobId()] = $jobConfig;
+        }
+        $this->jobs = $jobConfigs;
+        unset($configuration['jobs']);
+        $this->attributes = $configuration;
     }
 
     /**
@@ -80,34 +61,10 @@ class Config
     }
 
     /**
-     * @param JobConfig[] $jobs
-     */
-    public function setJobs(array $jobs)
-    {
-        $this->jobs = $jobs;
-    }
-
-    /**
      * @return JobConfig[]
      */
     public function getJobs()
     {
         return $this->jobs;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigName()
-    {
-        return $this->configName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRuntimeParams()
-    {
-        return $this->runtimeParams;
     }
 }

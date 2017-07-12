@@ -12,6 +12,9 @@ abstract class AbstractScroller
         return get_object_vars($this);
     }
 
+    /**
+     * @param array $state
+     */
     public function setState(array $state)
     {
         foreach (array_keys(get_object_vars($this)) as $key) {

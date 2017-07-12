@@ -13,7 +13,7 @@ class NoScrollerTest extends TestCase
     public function testGetNextRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -34,7 +34,7 @@ class NoScrollerTest extends TestCase
     public function testGetFirstRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -46,5 +46,15 @@ class NoScrollerTest extends TestCase
         $req = $scroller->getFirstRequest($client, $config);
         $expected = $client->createRequest($config->getConfig());
         self::assertEquals($expected, $req);
+    }
+
+    public function testState()
+    {
+        $scroller = new NoScroller();
+        self::assertEquals([], $scroller->getState());
+        $scroller->setState(['foo' => 'bar']);
+        self::assertEquals([], $scroller->getState());
+        $scroller->reset();
+        self::assertEquals([], $scroller->getState());
     }
 }

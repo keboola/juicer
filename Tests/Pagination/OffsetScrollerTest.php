@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -13,7 +14,7 @@ class OffsetScrollerTest extends TestCase
     public function testGetNextRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -64,7 +65,7 @@ class OffsetScrollerTest extends TestCase
     public function testGetFirstRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
@@ -80,8 +81,8 @@ class OffsetScrollerTest extends TestCase
             'params' => array_merge(
                 $config->getParams(),
                 [
-                    OffsetScroller::DEFAULT_LIMIT_PARAM => $limit,
-                    OffsetScroller::DEFAULT_OFFSET_PARAM => 0
+                    'limit' => $limit,
+                    'offset' => 0
                 ]
             )
         ]);
@@ -101,7 +102,7 @@ class OffsetScrollerTest extends TestCase
     public function testOffsetFromJob()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'startAt' => 3
@@ -124,5 +125,16 @@ class OffsetScrollerTest extends TestCase
 
         $second = $scroller->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
+    }
+
+    public function testInvalid()
+    {
+        try {
+            new OffsetScroller([]);
+            self::fail("Must cause exception");
+        } catch (UserException $e) {
+            self::assertContains('Missing \'pagination.limit\' attribute required for offset pagination', $e->getMessage());
+        }
+        new OffsetScroller(['limit' => 'foo']);
     }
 }

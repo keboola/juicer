@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -13,7 +14,7 @@ class CursorScrollerTest extends TestCase
     public function testGetNextRequest()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test'
         ]);
 
@@ -24,6 +25,7 @@ class CursorScrollerTest extends TestCase
             (object) ['id' => 2]
         ];
 
+        $first = $scroller->getNextRequest($client, $config, $response, $response);
         $next = $scroller->getNextRequest($client, $config, $response, $response);
         $expected = $client->createRequest([
             'endpoint' => 'test',
@@ -31,6 +33,7 @@ class CursorScrollerTest extends TestCase
                 'max_id' => 1
             ]
         ]);
+        self::assertEquals($expected, $first);
         self::assertEquals($expected, $next);
 
         $emptyResponse = [];
@@ -41,7 +44,7 @@ class CursorScrollerTest extends TestCase
     public function testGetNextRequestNested()
     {
         $client = RestClient::create(new NullLogger());
-        $config = new JobConfig('test', [
+        $config = new JobConfig([
             'endpoint' => 'test'
         ]);
 
@@ -63,5 +66,44 @@ class CursorScrollerTest extends TestCase
             ]
         ]);
         self::assertEquals($expected, $next);
+    }
+
+    public function testInvalid()
+    {
+        try {
+            new CursorScroller([]);
+            self::fail("Must raise exception");
+        } catch (UserException $e) {
+            self::assertContains('Missing \'pagination.idKey\' attribute required for cursor pagination', $e->getMessage());
+        }
+        try {
+            new CursorScroller(['idKey' => 'foo']);
+            self::fail("Must raise exception");
+        } catch (UserException $e) {
+            self::assertContains('Missing \'pagination.param\' attribute required for cursor pagination', $e->getMessage());
+        }
+        new CursorScroller(['idKey' => 'foo', 'param' => 'bar']);
+    }
+
+    public function testInvalidScroll()
+    {
+        $client = RestClient::create(new NullLogger());
+        $config = new JobConfig([
+            'endpoint' => 'test'
+        ]);
+
+        $scroller = new CursorScroller(['idKey' => 'id', 'param' => 'max_id', 'increment' => 1]);
+
+        $response = [
+            (object) ['id' => 'foo'],
+            (object) ['id' => 'bar']
+        ];
+
+        try {
+            $scroller->getNextRequest($client, $config, $response, $response);
+            self::fail("Must raise exception.");
+        } catch (UserException $e) {
+            self::assertContains('Trying to increment a pointer that is not numeric.', $e->getMessage());
+        }
     }
 }

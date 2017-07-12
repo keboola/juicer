@@ -2,7 +2,7 @@
 
 namespace Keboola\Juicer\Pagination;
 
-use Keboola\Juicer\Client\ClientInterface;
+use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -11,41 +11,39 @@ use Keboola\Juicer\Config\JobConfig;
 class NoScroller implements ScrollerInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getFirstRequest(ClientInterface $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
         return $client->createRequest($jobConfig->getConfig());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getNextRequest(ClientInterface $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
         return false;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function reset()
     {
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public static function create(array $config)
-    {
-        return new self;
-    }
-
     public function getState()
     {
         return [];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setState(array $state)
     {
     }
