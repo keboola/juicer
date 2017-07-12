@@ -5,7 +5,7 @@ engines:
       languages:
       - php
     exclude_paths:
-      - tests/      
+      - Tests/      
   fixme:
     enabled: true
   phpmd:
