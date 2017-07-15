@@ -252,7 +252,8 @@ class RestClient
             CURLE_COULDNT_RESOLVE_HOST,
             CURLE_COULDNT_CONNECT,
             CURLE_SSL_CONNECT_ERROR,
-            CURLE_GOT_NOTHING
+            CURLE_GOT_NOTHING,
+            CURLE_RECV_ERROR
         ];
 
         return new RetrySubscriber([
