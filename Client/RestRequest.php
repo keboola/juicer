@@ -9,12 +9,12 @@ class RestRequest
     /**
      * @var string
      */
-    protected $method;
+    protected $method = 'GET';
 
     /**
      * @var array
      */
-    protected $headers;
+    protected $headers = [];
 
     /**
      * @var string
@@ -24,22 +24,57 @@ class RestRequest
     /**
      * @var array
      */
-    protected $params;
+    protected $params = [];
 
-    public function __construct($endpoint, array $params = [], $method = 'GET', array $headers = [])
+    /**
+     * RestRequest constructor.
+     * @param array $config
+     * [
+     *   'endpoint' => string, required
+     *   'params' => array,
+     *   'method' => *GET*|POST|FORM
+     *   'headers' => array
+     * ]
+     * @throws UserException
+     */
+    public function __construct(array $config)
     {
-        $this->endpoint = $endpoint;
-        $this->params = $params;
-        $this->method = $method;
-        $this->headers = $headers;
+        if (empty($config['endpoint']) || !is_string($config['endpoint'])) {
+            throw new UserException('The "endpoint" property must be specified in request as a string.');
+        }
+        $this->endpoint = $config['endpoint'];
+        if (!empty($config['params'])) {
+            if (!is_array($config['params'])) {
+                throw new UserException('The "params" property must be an array.');
+            }
+            $this->params = $config['params'];
+        }
+        if (!empty($config['headers'])) {
+            if (!is_array($config['headers'])) {
+                throw new UserException('The "headers" property must be an array.');
+            }
+            $this->headers = $config['headers'];
+        }
+        if (!empty($config['method'])) {
+            if (!is_string($config['method']) || !in_array(strtoupper($config['method']), ['GET', 'POST', 'FORM'])) {
+                throw new UserException('The "method" property must be on of "GET", "POST", "FORM".');
+            }
+            $this->method = strtoupper($config['method']);
+        }
     }
 
-    public function getEndpoint()
+    /**
+     * @return string
+     */
+    public function getEndpoint() : string
     {
         return $this->endpoint;
     }
 
-    public function getParams()
+    /**
+     * @return array
+     */
+    public function getParams() : array
     {
         return $this->params;
     }
@@ -47,7 +82,7 @@ class RestRequest
     /**
      * @return string
      */
-    public function getMethod()
+    public function getMethod() : string
     {
         return $this->method;
     }
@@ -55,51 +90,25 @@ class RestRequest
     /**
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders() : array
     {
         return $this->headers;
     }
 
     /**
-     * [
-     *   'endpoint' => string, required
-     *   'params' => array,
-     *   'method' => *GET*|POST|FORM
-     *   'headers' => array
-     * ]
+
      * @param array $config
      * @return static
      */
     public static function create(array $config)
     {
-        self::validateConfig($config);
 
-        return new static(
-            $config['endpoint'],
-            empty($config['params']) ? [] : $config['params'],
-            empty($config['method']) ? 'GET' : $config['method'],
-            empty($config['headers']) ? [] : $config['headers']
-        );
-    }
-
-    protected static function validateConfig(array $config)
-    {
-        foreach ([
-            'params' => 'array',
-            'headers' => 'array',
-            'endpoint' => 'string',
-            'method' => 'string'
-        ] as $key => $type) {
-            if (!empty($config[$key]) && gettype($config[$key]) != $type) {
-                throw new UserException("Request {$key} must be an {$type}");
-            }
-        }
     }
 
     /**
      * @return string METHOD endpoint query/JSON params
      */
-    public function __toString()
+    public function __toString() : string
     {
         return join(' ', [
             $this->getMethod(),

@@ -9,26 +9,53 @@ class RestRequestTest extends TestCase
 {
     public function testCreate()
     {
-        $arr = [
-            'first' => 1,
-            'second' => 'two'
-        ];
-        $request = RestRequest::create([
+        $request = new RestRequest([
             'endpoint' => 'ep',
-            'params' => $arr
+            'params' => [
+                'first' => 1,
+                'second' => 'two'
+            ]
         ]);
 
-        $expected = RestRequest::create(['endpoint' => 'ep', 'params' => $arr]);
-
-        self::assertEquals($expected, $request);
+        self::assertEquals([], $request->getHeaders());
+        self::assertEquals('ep', $request->getEndpoint());
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals(['first' => 1, 'second' => 'two'], $request->getParams());
     }
 
     /**
      * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Request params must be an array
+     * @expectedExceptionMessage The "params" property must be an array.
      */
-    public function testValidateConfig()
+    public function testValidateConfig1()
     {
-        RestRequest::create(['endpoint' => 'ep', 'params' => 'string']);
+        new RestRequest(['endpoint' => 'ep', 'params' => 'string']);
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage The "endpoint" property must be specified in request as a string.
+     */
+    public function testValidateConfig2()
+    {
+        new RestRequest(['params' => ['string']]);
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage The "headers" property must be an array.
+     */
+    public function testValidateConfig3()
+    {
+        new RestRequest(['endpoint' => 'foo', 'headers' => 'string']);
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage The "method" property must be on of "GET", "POST", "FORM".
+     */
+    public function testValidateConfig4()
+    {
+        new RestRequest(['endpoint' => 'foo', 'method' => 'string']);
     }
 }

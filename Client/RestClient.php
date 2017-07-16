@@ -223,7 +223,7 @@ class RestClient
 
     public function createRequest(array $config)
     {
-        return RestRequest::create($this->getRequestConfig($config));
+        return new RestRequest($this->getRequestConfig($config));
     }
 
     /**
