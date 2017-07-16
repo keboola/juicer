@@ -46,8 +46,6 @@ class ScrollerFactory
                 return new ResponseUrlScroller($config);
             case 'zendesk.response.url':
                 return new ZendeskResponseUrlScroller($config);
-            case 'facebook.response.url':
-                return new FacebookResponseUrlScroller($config);
             case 'pagenum':
                 return new PageScroller($config);
             case 'cursor':

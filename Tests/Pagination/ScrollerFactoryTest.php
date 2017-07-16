@@ -6,7 +6,6 @@ use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
-use Keboola\Juicer\Pagination\FacebookResponseUrlScroller;
 use Keboola\Juicer\Pagination\MultipleScroller;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\OffsetScroller;
@@ -48,9 +47,6 @@ class ScrollerFactoryTest extends TestCase
         ]));
         self::assertInstanceOf(ZendeskResponseUrlScroller::class, ScrollerFactory::getScroller([
             'method' => 'zendesk.response.url'
-        ]));
-        self::assertInstanceOf(FacebookResponseUrlScroller::class, ScrollerFactory::getScroller([
-            'method' => 'facebook.response.url'
         ]));
     }
 
