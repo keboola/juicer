@@ -17,7 +17,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $now = new \DateTime();
         $pagingStart = clone $now;
 
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next_page']);
@@ -45,7 +45,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next']);
@@ -69,7 +69,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'pagination.next']);
@@ -90,7 +90,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -112,7 +112,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQuery()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object)[
@@ -138,7 +138,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQueryParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object)[

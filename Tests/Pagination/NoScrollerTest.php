@@ -12,7 +12,7 @@ class NoScrollerTest extends TestCase
 {
     public function testGetNextRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -33,7 +33,7 @@ class NoScrollerTest extends TestCase
 
     public function testGetFirstRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [

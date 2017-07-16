@@ -10,7 +10,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
     public function testGetNextRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'next']);
@@ -34,7 +34,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'pagination.next']);
@@ -55,7 +55,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -77,7 +77,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQuery()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object) [
@@ -103,7 +103,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQueryParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object) [

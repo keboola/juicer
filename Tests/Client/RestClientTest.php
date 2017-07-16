@@ -5,7 +5,6 @@ namespace Keboola\Juicer\Tests\Client;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
-use GuzzleHttp\Client;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
@@ -29,7 +28,7 @@ class RestClientTest extends ExtractorTestCase
             'params' => $arr
         ]);
 
-        $client = RestClient::create(new NullLogger(), [], []);
+        $client = new RestClient(new NullLogger(), [], []);
         $request = $client->createRequest($jobConfig->getConfig());
 
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
@@ -39,7 +38,7 @@ class RestClientTest extends ExtractorTestCase
 
     public function testGetGuzzleRequest()
     {
-        $client = RestClient::create(new NullLogger(), [], []);
+        $client = new RestClient(new NullLogger(), [], []);
         $requestGet = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
         $requestPost = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST']);
         $requestForm = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM']);
@@ -70,7 +69,7 @@ class RestClientTest extends ExtractorTestCase
 
         $history = new History();
 
-        $restClient = RestClient::create(new NullLogger(), [], []);
+        $restClient = new RestClient(new NullLogger(), [], []);
         $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
         $restClient->getClient()->getEmitter()->attach($mock);
         $restClient->getClient()->getEmitter()->attach($history);
@@ -92,7 +91,7 @@ class RestClientTest extends ExtractorTestCase
             new Response(200, [], Stream::factory('{}'))
         ]);
         $history = new History();
-        $restClient = RestClient::create(new NullLogger(), [], []);
+        $restClient = new RestClient(new NullLogger(), [], []);
         $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
         $restClient->getClient()->getEmitter()->attach($mock);
         $restClient->getClient()->getEmitter()->attach($history);
@@ -138,11 +137,11 @@ class RestClientTest extends ExtractorTestCase
     {
         $sets = [
             'default' => [
-                RestClient::create(new NullLogger()),
+                new RestClient(new NullLogger()),
                 new Response(429, ['Retry-After' => 5])
             ],
             'custom' => [
-                RestClient::create(
+                new RestClient(
                     new NullLogger(),
                     [],
                     [
@@ -156,7 +155,7 @@ class RestClientTest extends ExtractorTestCase
                 new Response(403, ['X-Rate-Limit-Reset' => 5])
             ],
             'absolute' => [
-                RestClient::create(new NullLogger()),
+                new RestClient(new NullLogger()),
                 new Response(429, ['Retry-After' => time() + 5])
             ]
         ];
@@ -179,7 +178,7 @@ class RestClientTest extends ExtractorTestCase
             $handler
         ]);
 
-        $client = RestClient::create(
+        $client = new RestClient(
             $logger,
             [],
             [
@@ -213,7 +212,7 @@ class RestClientTest extends ExtractorTestCase
             $handler
         ]);
 
-        $client = RestClient::create(
+        $client = new RestClient(
             $logger,
             [],
             [
@@ -244,7 +243,7 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "d
         ]';
 
-        $restClient = RestClient::create(new NullLogger());
+        $restClient = new RestClient(new NullLogger());
 
         $mock = new Mock([
             new Response(200, [], Stream::factory($body))
@@ -274,9 +273,7 @@ class RestClientTest extends ExtractorTestCase
             ]
         ];
 
-        $client = RestClient::create(new NullLogger());
-        $client->setDefaultRequestOptions($defaultOptions);
-
+        $client = new RestClient(new NullLogger(), [], [], $defaultOptions);
         $requestOptions = [
             'endpoint' => 'ep',
             'params' => [

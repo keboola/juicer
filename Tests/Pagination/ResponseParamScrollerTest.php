@@ -11,7 +11,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {
     public function testGetNextRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -41,7 +41,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -67,7 +67,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestOverride()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -101,7 +101,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -134,7 +134,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetFirstRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller(['responseParam' => '_scroll_id', 'queryParam' => 'scroll_id', 'includeParams' => false, 'scrollRequest' => [

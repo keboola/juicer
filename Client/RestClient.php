@@ -5,7 +5,6 @@ namespace Keboola\Juicer\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Exception\ApplicationException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Message\Request as GuzzleRequest;
@@ -32,38 +31,6 @@ class RestClient
      */
     private $logger;
 
-    /**
-     * RestClient constructor.
-     * @param Client $guzzle
-     * @param LoggerInterface $logger
-     */
-    public function __construct(Client $guzzle, LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->client = $guzzle;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setDefaultRequestOptions(array $options)
-    {
-        $this->defaultRequestOptions = $options;
-    }
-
-    /**
-     * Update request config with default options
-     * @param array $config
-     * @return array
-     */
-    protected function getRequestConfig(array $config)
-    {
-        if (!empty($this->defaultRequestOptions)) {
-            $config = array_replace_recursive($this->defaultRequestOptions, $config);
-        }
-
-        return $config;
-    }
 
     /**
      * @param array $guzzleConfig GuzzleHttp\Client defaults
@@ -80,7 +47,7 @@ class RestClient
      * @param LoggerInterface $logger
      * @return RestClient
      */
-    public static function create(LoggerInterface $logger, $guzzleConfig = [], $retryConfig = [])
+    public function __construct(LoggerInterface $logger, $guzzleConfig = [], $retryConfig = [], $defaultOptions = [])
     {
         $guzzle = new Client($guzzleConfig);
         $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));
@@ -88,22 +55,33 @@ class RestClient
         $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent) {
             $errno = $errorEvent->getTransferInfo('errno');
             $error = $errorEvent->getTransferInfo('error');
-
             if ($errno > 0) {
-                throw new UserException(sprintf(
-                    "CURL error %d: %s",
-                    $errno,
-                    $error
-                ));
+                throw new UserException(sprintf("CURL error %d: %s", $errno, $error));
             }
         }, "last");
-        return new self($guzzle, $logger);
+        $this->logger = $logger;
+        $this->client = $guzzle;
+        $this->defaultRequestOptions = $defaultOptions;
+    }
+
+    /**
+     * Update request config with default options
+     * @param array $config
+     * @return array
+     */
+    protected function getRequestConfig(array $config) : array
+    {
+        if (!empty($this->defaultRequestOptions)) {
+            $config = array_replace_recursive($this->defaultRequestOptions, $config);
+        }
+
+        return $config;
     }
 
     /**
      * @return Client
      */
-    public function getClient()
+    public function getClient() : Client
     {
         return $this->client;
     }
@@ -145,7 +123,6 @@ class RestClient
     /**
      * @param ResponseInterface $response
      * @return array|object Should be anything that can result from json_decode
-     * @throws ApplicationException
      * @throws UserException
      */
     protected function getObjectFromResponse(ResponseInterface $response)
@@ -169,15 +146,10 @@ class RestClient
     /**
      * @param RestRequest $request
      * @return GuzzleRequest
-     * @throws ApplicationException
      * @throws UserException
      */
     protected function getGuzzleRequest(RestRequest $request)
     {
-        if (!$request instanceof RestRequest) {
-            throw new ApplicationException("RestClient requires a RestRequest!");
-        }
-
         switch ($request->getMethod()) {
             case 'GET':
                 $method = $request->getMethod();
@@ -220,7 +192,6 @@ class RestClient
      * @param array $config
      * @return RestRequest
      */
-
     public function createRequest(array $config)
     {
         return new RestRequest($this->getRequestConfig($config));

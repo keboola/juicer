@@ -31,7 +31,7 @@ class MultipleScrollerTest extends TestCase
             ]
         ];
 
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
 
         $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
@@ -93,7 +93,7 @@ class MultipleScrollerTest extends TestCase
             'next_page_id' => 'page2'
         ];
 
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
 
         $nextParam = $scroller->getNextRequest($client, $paramConfig, $paramResponse, []);
         $expectedParam = $client->createRequest([
@@ -128,7 +128,7 @@ class MultipleScrollerTest extends TestCase
             'endpoint' => 'data'
         ]);
 
-        $scroller->getFirstRequest(RestClient::create(new NullLogger()), $noScrollerConfig);
+        $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
     /**
@@ -145,7 +145,7 @@ class MultipleScrollerTest extends TestCase
             'scroller' => 'nonExistentScroller'
         ]);
 
-        $scroller->getFirstRequest(RestClient::create(new NullLogger()), $noScrollerConfig);
+        $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
     protected function getScrollerConfig()
@@ -201,7 +201,7 @@ class MultipleScrollerTest extends TestCase
     public function testReset()
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
             'scroller' => 'cursor'

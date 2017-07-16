@@ -14,7 +14,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
     public function testGetNextRequestHasMore()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = [

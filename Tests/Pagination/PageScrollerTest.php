@@ -15,7 +15,7 @@ class PageScrollerTest extends TestCase
 {
     public function testGetFirstRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -36,7 +36,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstRequestExplicit()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -57,7 +57,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstRequestNoParams()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -76,7 +76,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetNextRequest()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -126,7 +126,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetNextRequestPost()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -155,7 +155,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstNext()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig(['endpoint' => 'test']);
 
         $scroller = new PageScroller([]);
@@ -173,7 +173,7 @@ class PageScrollerTest extends TestCase
 
     public function testSetState()
     {
-        $client = RestClient::create(new NullLogger());
+        $client = new RestClient(new NullLogger());
         $config = new JobConfig(['endpoint' => 'test']);
 
         $scroller = new PageScroller(['pageParam' => 'p']);
