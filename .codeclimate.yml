@@ -4,13 +4,12 @@ languages:
   - "vendor"
 engines:
   duplication:
-    enabled: false
+    enabled: true
     config:
       languages:
       - php
     exclude_paths:
-    - "Tests"
-    - "tests"
+    - "Tests/"
   fixme:
     enabled: true
   phpmd:
