@@ -29,7 +29,7 @@ class RestClientTest extends ExtractorTestCase
             'params' => $arr
         ]);
 
-        $client = new RestClient(new Client, new NullLogger());
+        $client = RestClient::create(new NullLogger(), [], []);
         $request = $client->createRequest($jobConfig->getConfig());
 
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
@@ -39,7 +39,7 @@ class RestClientTest extends ExtractorTestCase
 
     public function testGetGuzzleRequest()
     {
-        $client = new RestClient(new Client, new NullLogger());
+        $client = RestClient::create(new NullLogger(), [], []);
         $requestGet = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
         $requestPost = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST']);
         $requestForm = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM']);
@@ -64,18 +64,16 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "more"}
         ]';
 
-        $guzzle = new Client();
-        $guzzle->setDefaultOption('headers', ['X-Test' => '1234']);
-
         $mock = new Mock([
             new Response(200, [], Stream::factory($body))
         ]);
-        $guzzle->getEmitter()->attach($mock);
 
         $history = new History();
-        $guzzle->getEmitter()->attach($history);
 
-        $restClient = new RestClient($guzzle, new NullLogger());
+        $restClient = RestClient::create(new NullLogger(), [], []);
+        $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
+        $restClient->getClient()->getEmitter()->attach($mock);
+        $restClient->getClient()->getEmitter()->attach($history);
 
         $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
 
@@ -90,18 +88,14 @@ class RestClientTest extends ExtractorTestCase
 
     public function testRequestHeaders()
     {
-        $guzzle = new Client();
-        $guzzle->setDefaultOption('headers', ['X-Test' => '1234']);
-
         $mock = new Mock([
             new Response(200, [], Stream::factory('{}'))
         ]);
-        $guzzle->getEmitter()->attach($mock);
-
         $history = new History();
-        $guzzle->getEmitter()->attach($history);
-
-        $restClient = new RestClient($guzzle, new NullLogger());
+        $restClient = RestClient::create(new NullLogger(), [], []);
+        $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
+        $restClient->getClient()->getEmitter()->attach($mock);
+        $restClient->getClient()->getEmitter()->attach($history);
 
         $request = new RestRequest(['endpoint' => 'ep', 'params' => [], 'method' => 'GET', 'headers' => ['X-RTest' => 'requestHeader']]);
         $restClient->download($request);
