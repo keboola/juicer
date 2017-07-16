@@ -9,7 +9,7 @@ engines:
       languages:
       - php
     exclude_paths:
-      - Tests/      
+    - "Tests/"
   fixme:
     enabled: true
   phpmd:
