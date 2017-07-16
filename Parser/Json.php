@@ -75,13 +75,12 @@ class Json implements ParserInterface
     }
 
     /**
-     * @param Config $config // not used anywhere in real aps (yet? - analyze)
      * @param LoggerInterface $logger
      * @param Temp $temp
      * @param array $metadata
      * @return static
      */
-    public static function create(Config $config, LoggerInterface $logger, Temp $temp, array $metadata = [])
+    public static function create(LoggerInterface $logger, Temp $temp, array $metadata = [])
     {
         // TODO move this if to $this->validateStruct altogether
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {

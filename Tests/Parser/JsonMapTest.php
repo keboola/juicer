@@ -128,7 +128,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'fooBar']]
         ];
         $config = new Config($data);
-        $fallback = Json::create($config, new NullLogger(), new Temp());
+        $fallback = Json::create(new NullLogger(), new Temp());
         $parser = JsonMap::create($config, new NullLogger(), $fallback);
 
         $data = json_decode('[
