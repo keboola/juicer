@@ -18,7 +18,7 @@ class RestRequestTest extends TestCase
             'params' => $arr
         ]);
 
-        $expected = new RestRequest('ep', $arr);
+        $expected = RestRequest::create(['endpoint' => 'ep', 'params' => $arr]);
 
         self::assertEquals($expected, $request);
     }

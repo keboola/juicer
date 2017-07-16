@@ -32,7 +32,7 @@ class RestClientTest extends ExtractorTestCase
         $client = new RestClient(new Client, new NullLogger());
         $request = $client->createRequest($jobConfig->getConfig());
 
-        $expected = new RestRequest('ep', $arr);
+        $expected = RestRequest::create(['endpoint' => 'ep', 'params' => $arr]);
 
         self::assertEquals($expected, $request);
     }
@@ -40,9 +40,9 @@ class RestClientTest extends ExtractorTestCase
     public function testGetGuzzleRequest()
     {
         $client = new RestClient(new Client, new NullLogger());
-        $requestGet = new RestRequest('ep', ['a' => 1]);
-        $requestPost = new RestRequest('ep', ['a' => 1], 'POST');
-        $requestForm = new RestRequest('ep', ['a' => 1], 'FORM');
+        $requestGet = RestRequest::create(['endpoint' => 'ep', 'params' => ['a' => 1]]);
+        $requestPost = RestRequest::create(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST']);
+        $requestForm = RestRequest::create(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM']);
 
         $get = self::callMethod($client, 'getGuzzleRequest', [$requestGet]);
         $post = self::callMethod($client, 'getGuzzleRequest', [$requestPost]);
@@ -77,7 +77,7 @@ class RestClientTest extends ExtractorTestCase
 
         $restClient = new RestClient($guzzle, new NullLogger());
 
-        $request = new RestRequest('ep', ['a' => 1]);
+        $request = RestRequest::create(['endpoint' => 'ep', 'params' => ['a' => 1]]);
 
         self::assertEquals(json_decode($body), $restClient->download($request));
         self::assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
@@ -103,7 +103,7 @@ class RestClientTest extends ExtractorTestCase
 
         $restClient = new RestClient($guzzle, new NullLogger());
 
-        $request = new RestRequest('ep', [], 'GET', ['X-RTest' => 'requestHeader']);
+        $request = RestRequest::create(['endpoint' => 'ep', 'params' => [], 'method' => 'GET', 'headers' => ['X-RTest' => 'requestHeader']]);
         $restClient->download($request);
 
         self::assertEquals(
@@ -131,7 +131,7 @@ class RestClientTest extends ExtractorTestCase
         $history = new History();
         $restClient->getClient()->getEmitter()->attach($history);
 
-        $request = new RestRequest('ep', ['a' => 1]);
+        $request = RestRequest::create(['endpoint' => 'ep', 'params' => ['a' => 1]]);
         self::assertEquals(json_decode($body), $restClient->download($request));
         self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
     }
@@ -197,7 +197,7 @@ class RestClientTest extends ExtractorTestCase
         );
 
         try {
-            $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
+            $client->download(RestRequest::create(['endpoint' => 'http://keboolakeboolakeboola.com']));
             self::fail("Request should fail");
         } catch (\Exception $e) {
             self::assertCount($retries, $handler->getRecords());
@@ -231,7 +231,7 @@ class RestClientTest extends ExtractorTestCase
         );
 
         try {
-            $client->download(new RestRequest('http://keboolakeboolakeboola.com'));
+            $client->download(RestRequest::create(['endpoint' => 'http://keboolakeboolakeboola.com']));
             self::fail("Request should fail");
         } catch (\Exception $e) {
             self::assertCount(0, $handler->getRecords());
@@ -257,7 +257,7 @@ class RestClientTest extends ExtractorTestCase
         ]);
         $restClient->getClient()->getEmitter()->attach($mock);
 
-        $request = new RestRequest('ep');
+        $request = RestRequest::create(['endpoint' => 'ep']);
 
         try {
             $restClient->download($request);
