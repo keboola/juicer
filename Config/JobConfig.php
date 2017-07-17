@@ -46,9 +46,12 @@ class JobConfig
             throw new UserException("The 'endpoint' property must be set in job.", 0, null, [$config]);
         }
         if (!empty($config['children'])) {
+            if (!is_array($config['children'])) {
+                throw new UserException("The 'children' property must an array of jobs.", 0, null, [$config]);
+            }
             foreach ($config['children'] as $child) {
                 if (!is_array($child)) {
-                    throw new UserException("Job configuration must be an array: " . var_export($child));
+                    throw new UserException("Job configuration must be an array: " . var_export($child, true));
                 }
                 $child = new JobConfig($child);
                 $this->childJobs[$child->getJobId()] = $child;
@@ -82,7 +85,6 @@ class JobConfig
 
     /**
      * @return string
-     * @todo should JobConfig store endpoint and params separately?
      */
     public function getEndpoint()
     {
@@ -114,31 +116,10 @@ class JobConfig
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function setParam($name, $value)
-    {
-        if (!isset($this->config['params'])) {
-            $this->config['params'] = [];
-        }
-
-        $this->config['params'][$name] = $value;
-    }
-
-    /**
      * @return string
      */
     public function getDataType()
     {
         return empty($this->config['dataType']) ? $this->config['endpoint'] : $this->config['dataType'];
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setDataType($type)
-    {
-        $this->config['dataType'] = $type;
     }
 }
