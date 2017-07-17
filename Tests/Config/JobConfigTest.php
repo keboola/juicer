@@ -25,7 +25,7 @@ class JobConfigTest extends TestCase
         $cfg = $job->getConfig();
         self::assertArrayHasKey('id', $cfg);
         unset($cfg['id']);
-        self::assertEquals(['endpoint' => 'fooBar'], $cfg);
+        self::assertEquals(['endpoint' => 'fooBar', 'params' => []], $cfg);
         self::assertEquals('fooBar', $job->getDataType());
         self::assertNotEmpty($job->getJobId());
     }
@@ -67,6 +67,15 @@ class JobConfigTest extends TestCase
     public function testConstructChildrenInvalid3()
     {
         new JobConfig(['endpoint' => 'fooBar', 'children' => [['invalid']]]);
+    }
+
+    /**
+     * @expectedException \Keboola\Juicer\Exception\UserException
+     * @expectedExceptionMessage The 'params' property must be an array.
+     */
+    public function testConstructChildrenInvalid4()
+    {
+        new JobConfig(['endpoint' => 'fooBar', 'params' => 'invalid']);
     }
 
     public function testConstructChildren()

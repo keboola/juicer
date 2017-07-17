@@ -39,15 +39,22 @@ class JobConfig
         if (empty($config['id'])) {
             $config['id'] = md5(serialize($config));
         }
+        if (empty($config['params'])) {
+            $config['params'] = [];
+        }
+        if (!is_array($config['params'])) {
+            throw new UserException("The 'params' property must be an array.", 0, null, $config);
+        }
+
         $this->jobId = $config['id'];
         $this->config = $config;
 
         if (empty($config['endpoint'])) {
-            throw new UserException("The 'endpoint' property must be set in job.", 0, null, [$config]);
+            throw new UserException("The 'endpoint' property must be set in job.", 0, null, $config);
         }
         if (!empty($config['children'])) {
             if (!is_array($config['children'])) {
-                throw new UserException("The 'children' property must an array of jobs.", 0, null, [$config]);
+                throw new UserException("The 'children' property must an array of jobs.", 0, null, $config);
             }
             foreach ($config['children'] as $child) {
                 if (!is_array($child)) {
@@ -104,7 +111,7 @@ class JobConfig
      */
     public function getParams()
     {
-        return empty($this->config['params']) ? [] : (array) $this->config['params'];
+        return $this->config['params'];
     }
 
     /**
@@ -121,10 +128,6 @@ class JobConfig
      */
     public function setParam($name, $value)
     {
-        if (!isset($this->config['params'])) {
-            $this->config['params'] = [];
-        }
-
         $this->config['params'][$name] = $value;
     }
 
