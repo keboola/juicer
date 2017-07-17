@@ -29,12 +29,28 @@ class Json implements ParserInterface
     protected $logger;
 
     /**
-     * @param JsonParser $parser
+     * Json constructor.
      * @param LoggerInterface $logger
+     * @param Temp $temp
+     * @param array $metadata
      */
-    public function __construct(JsonParser $parser, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, Temp $temp, array $metadata = [])
     {
-        $this->parser = $parser;
+        if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
+            if (empty($metadata['json_parser.structVersion'])
+                || $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
+            ) {
+                // temporary
+                $metadata['json_parser.struct'] = self::updateStruct($metadata['json_parser.struct']);
+            }
+
+            $struct = $metadata['json_parser.struct'];
+        } else {
+            $struct = [];
+        }
+
+        $this->parser = JsonParser::create($logger, $struct);
+        $this->parser->setTemp($temp);
         $this->logger = $logger;
     }
 
@@ -72,33 +88,6 @@ class Json implements ParserInterface
     public function getParser()
     {
         return $this->parser;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @param Temp $temp
-     * @param array $metadata
-     * @return static
-     */
-    public static function create(LoggerInterface $logger, Temp $temp, array $metadata = [])
-    {
-        // TODO move this if to $this->validateStruct altogether
-        if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
-            if (empty($metadata['json_parser.structVersion'])
-                || $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
-            ) {
-                // temporary
-                $metadata['json_parser.struct'] = self::updateStruct($metadata['json_parser.struct']);
-            }
-
-            $struct = $metadata['json_parser.struct'];
-        } else {
-            $struct = [];
-        }
-
-        $parser = JsonParser::create($logger, $struct);
-        $parser->setTemp($temp);
-        return new static($parser, $logger);
     }
 
     /**

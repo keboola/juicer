@@ -96,16 +96,6 @@ class RestRequest
     }
 
     /**
-
-     * @param array $config
-     * @return static
-     */
-    public static function create(array $config)
-    {
-
-    }
-
-    /**
      * @return string METHOD endpoint query/JSON params
      */
     public function __toString() : string
