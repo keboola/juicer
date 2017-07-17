@@ -32,23 +32,12 @@ class JsonMap implements ParserInterface
     private $logger;
 
     /**
-     * @param Mapper[] $mappers
-     * @param LoggerInterface $logger
-     */
-    public function __construct(array $mappers, LoggerInterface $logger)
-    {
-        $this->mappers = $mappers;
-        $this->logger = $logger;
-    }
-
-    /**
      * @param Config $config
      * @param LoggerInterface $logger
      * @param ParserInterface|null $fallbackParser
-     * @return static
      * @throws UserException
      */
-    public static function create(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)
+    public function __construct(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)
     {
         if (empty($config->getAttribute('mappings'))) {
             throw new UserException("Cannot initialize JSON Mapper with no mapping");
@@ -71,10 +60,9 @@ class JsonMap implements ParserInterface
                 }
             }
         }
-
-        $parser = new static($mappers, $logger);
-        $parser->setFallbackParser($fallbackParser);
-        return $parser;
+        $this->mappers = $mappers;
+        $this->logger = $logger;
+        $this->fallback = $fallbackParser;
     }
 
     /**
@@ -167,11 +155,6 @@ class JsonMap implements ParserInterface
     public function getMappers()
     {
         return $this->mappers;
-    }
-
-    public function setFallbackParser(ParserInterface $fallback = null)
-    {
-        $this->fallback = $fallback;
     }
 
     public function getMetadata()

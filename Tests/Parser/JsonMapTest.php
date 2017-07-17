@@ -48,7 +48,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'first']]
         ];
         $config = new Config($data);
-        $parser = JsonMap::create($config, new NullLogger());
+        $parser = new JsonMap($config, new NullLogger());
 
         $data = json_decode('[
             {
@@ -110,7 +110,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
         ];
         $config = new Config($data);
-        JsonMap::create($config, new NullLogger());
+        new JsonMap($config, new NullLogger());
     }
 
     public function testNoMappingFallback()
@@ -129,7 +129,7 @@ class JsonMapTest extends TestCase
         ];
         $config = new Config($data);
         $fallback = Json::create(new NullLogger(), new Temp());
-        $parser = JsonMap::create($config, new NullLogger(), $fallback);
+        $parser = new JsonMap($config, new NullLogger(), $fallback);
 
         $data = json_decode('[
             {
@@ -170,7 +170,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'fooBar']]
         ];
         $config = new Config($data);
-        JsonMap::create($config, new NullLogger());
+        new JsonMap($config, new NullLogger());
     }
 
     /**
@@ -190,7 +190,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'first']]
         ];
         $config = new Config($data);
-        $parser = JsonMap::create($config, new NullLogger());
+        $parser = new JsonMap($config, new NullLogger());
         $data = json_decode('[
             {
                 "id": 1,
@@ -220,7 +220,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'first']]
         ];
         $config = new Config($data);
-        $parser = JsonMap::create($config, new NullLogger());
+        $parser = new JsonMap($config, new NullLogger());
         $data = json_decode('[
             {
                 "obj": {
@@ -323,7 +323,7 @@ class JsonMapTest extends TestCase
             }
         ]');
 
-        $parser = JsonMap::create($config, new NullLogger());
+        $parser = new JsonMap($config, new NullLogger());
         $parser->process($firstData, $configFirst->getDataType());
         $parser->process($secondData, $configTags->getDataType());
 
@@ -379,7 +379,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'reports']]
         ];
         $config = new Config($data);
-        $parser = JsonMap::create($config, new NullLogger());
+        $parser = new JsonMap($config, new NullLogger());
         $data = json_decode('[{
             "rows": [
                 ["2017-05-27","1234","article-bot-lef-x","83008"],
