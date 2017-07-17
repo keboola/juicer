@@ -45,13 +45,16 @@ class JobConfig
         if (!is_array($config['params'])) {
             throw new UserException("The 'params' property must be an array.", 0, null, $config);
         }
+        if (empty($config['endpoint'])) {
+            throw new UserException("The 'endpoint' property must be set in job.", 0, null, $config);
+        }
+        if (empty($config['dataType'])) {
+            $config['dataType'] = $config['endpoint'];
+        }
 
         $this->jobId = $config['id'];
         $this->config = $config;
 
-        if (empty($config['endpoint'])) {
-            throw new UserException("The 'endpoint' property must be set in job.", 0, null, $config);
-        }
         if (!empty($config['children'])) {
             if (!is_array($config['children'])) {
                 throw new UserException("The 'children' property must an array of jobs.", 0, null, $config);
@@ -93,7 +96,7 @@ class JobConfig
     /**
      * @return string
      */
-    public function getEndpoint()
+    public function getEndpoint() : string
     {
         return $this->config['endpoint'];
     }
@@ -109,7 +112,7 @@ class JobConfig
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams() : array
     {
         return $this->config['params'];
     }
@@ -134,8 +137,8 @@ class JobConfig
     /**
      * @return string
      */
-    public function getDataType()
+    public function getDataType() : string
     {
-        return empty($this->config['dataType']) ? $this->config['endpoint'] : $this->config['dataType'];
+        return $this->config['dataType'];
     }
 }

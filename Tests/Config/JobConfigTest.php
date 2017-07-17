@@ -25,7 +25,7 @@ class JobConfigTest extends TestCase
         $cfg = $job->getConfig();
         self::assertArrayHasKey('id', $cfg);
         unset($cfg['id']);
-        self::assertEquals(['endpoint' => 'fooBar', 'params' => []], $cfg);
+        self::assertEquals(['endpoint' => 'fooBar', 'params' => [], 'dataType' => 'fooBar'], $cfg);
         self::assertEquals('fooBar', $job->getDataType());
         self::assertNotEmpty($job->getJobId());
     }
