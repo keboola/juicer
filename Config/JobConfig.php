@@ -127,7 +127,7 @@ class JobConfig
 
         $this->config['params'][$name] = $value;
     }
-    
+
     /**
      * @return string
      */

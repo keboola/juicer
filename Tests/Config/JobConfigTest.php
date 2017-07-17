@@ -86,5 +86,8 @@ class JobConfigTest extends TestCase
         self::assertEquals([], $job->getChildJobs());
         self::assertEquals('dt', $job->getDataType());
         self::assertEquals('baz', $job->getJobId());
+        $job->setParam('a', 'bar');
+        $job->setParam('b', 'baz');
+        self::assertEquals(['b' => 'baz', 'a' => 'bar'], $job->getParams());
     }
 }
