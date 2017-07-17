@@ -116,6 +116,19 @@ class JobConfig
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function setParam($name, $value)
+    {
+        if (!isset($this->config['params'])) {
+            $this->config['params'] = [];
+        }
+
+        $this->config['params'][$name] = $value;
+    }
+    
+    /**
      * @return string
      */
     public function getDataType()
