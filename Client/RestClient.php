@@ -99,7 +99,6 @@ class RestClient
             $response = $this->client->send($this->getGuzzleRequest($request));
             return $this->getObjectFromResponse($response);
         } catch (BadResponseException $e) {
-            // TODO try XML if JSON fails
             $data = json_decode($e->getResponse()->getBody(), true);
             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
                 $data = (string) $e->getResponse()->getBody();
