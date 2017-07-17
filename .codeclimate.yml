@@ -15,6 +15,8 @@ engines:
   phpmd:
     enabled: true
     checks:
+      CleanCode/StaticAccess:
+        exceptions: ScrollerFactory
       CleanCode/ElseExpression:
         enabled: false
       Naming/ShortVariable:
