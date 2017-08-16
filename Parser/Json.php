@@ -3,11 +3,11 @@
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvTable\Table;
+use Keboola\Json\Analyzer;
 use Keboola\Json\Parser as JsonParser;
 use Keboola\Json\Exception\JsonParserException;
 use Keboola\Json\Exception\NoDataException;
-use Keboola\Json\Struct;
-use Keboola\Juicer\Config\Config;
+use Keboola\Json\Structure;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Exception\ApplicationException;
 use Keboola\Temp\Temp;
@@ -36,9 +36,10 @@ class Json implements ParserInterface
      */
     public function __construct(LoggerInterface $logger, Temp $temp, array $metadata = [])
     {
+        $structure = new Structure();
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
             if (empty($metadata['json_parser.structVersion'])
-                || $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
+                || $metadata['json_parser.structVersion'] != $structure->getVersion()
             ) {
                 // temporary
                 $metadata['json_parser.struct'] = self::updateStruct($metadata['json_parser.struct']);
@@ -49,8 +50,8 @@ class Json implements ParserInterface
             $struct = [];
         }
 
-        $this->parser = JsonParser::create($logger, $struct);
-        $this->parser->setTemp($temp);
+        $structure->load($struct);
+        $this->parser = new JsonParser(new Analyzer($logger, $structure));
         $this->logger = $logger;
     }
 
@@ -96,8 +97,8 @@ class Json implements ParserInterface
     public function getMetadata()
     {
         return [
-            'json_parser.struct' => $this->parser->getStruct()->getData(),
-            'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
+            'json_parser.struct' => $this->parser->getAnalyzer()->getStructure()->getData(),
+            'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion()
         ];
     }
 
