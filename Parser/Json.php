@@ -31,10 +31,9 @@ class Json implements ParserInterface
     /**
      * Json constructor.
      * @param LoggerInterface $logger
-     * @param Temp $temp
      * @param array $metadata
      */
-    public function __construct(LoggerInterface $logger, Temp $temp, array $metadata = [])
+    public function __construct(LoggerInterface $logger, array $metadata = [])
     {
         $structure = new Structure();
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
