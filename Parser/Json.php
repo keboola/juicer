@@ -10,7 +10,6 @@ use Keboola\Json\Exception\NoDataException;
 use Keboola\Json\Structure;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Exception\ApplicationException;
-use Keboola\Temp\Temp;
 use Psr\Log\LoggerInterface;
 
 /**

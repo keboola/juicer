@@ -4,7 +4,6 @@ namespace Keboola\Juicer\Tests\Parser;
 
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Tests\ExtractorTestCase;
-use Keboola\Temp\Temp;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\NullLogger;
@@ -13,7 +12,7 @@ class JsonTest extends ExtractorTestCase
 {
     public function testProcess()
     {
-        $parser = new Json(new NullLogger(), new Temp(), []);
+        $parser = new Json(new NullLogger(), []);
 
         $data = json_decode('[
             {
@@ -51,7 +50,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testGetMetadata()
     {
-        $parser = new Json(new NullLogger(), new Temp(), []);
+        $parser = new Json(new NullLogger(), []);
 
         $data = [
             (object) ['id' => 1]
@@ -85,7 +84,7 @@ class JsonTest extends ExtractorTestCase
         self::markTestSkipped("fix this");
         return;
         // TODO fix this test
-        $parser = new Json(new NullLogger(), new Temp(), []);
+        $parser = new Json(new NullLogger(), []);
         $json = '{
             "root.arr.arr1": {
                 "c": "string"
@@ -164,7 +163,7 @@ class JsonTest extends ExtractorTestCase
     {
         $logHandler = new TestHandler();
         $logger = new Logger('test', [$logHandler]);
-        $parser = new Json($logger, new Temp(), []);
+        $parser = new Json($logger, []);
 
         $parser->process([], 'empty');
         self::assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
