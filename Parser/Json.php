@@ -49,7 +49,7 @@ class Json implements ParserInterface
         }
 
         $structure->load($struct);
-        $this->parser = new JsonParser(new Analyzer($logger, $structure));
+        $this->parser = new JsonParser(new Analyzer($logger, $structure, true));
         $this->logger = $logger;
     }
 
