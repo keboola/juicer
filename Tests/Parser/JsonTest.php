@@ -12,7 +12,7 @@ class JsonTest extends ExtractorTestCase
 {
     public function testProcess()
     {
-        $parser = new Json(new NullLogger(), []);
+        $parser = new Json(new NullLogger(), [], 3);
 
         $data = json_decode('[
             {
@@ -50,7 +50,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testGetMetadata()
     {
-        $parser = new Json(new NullLogger(), []);
+        $parser = new Json(new NullLogger(), [], 3);
 
         $data = [
             (object) ['id' => 1]
@@ -61,9 +61,9 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             [
                 'json_parser.struct' => [
-                    'metadataTest' => [
+                    '_metadataTest' => [
                         '[]' => [
-                            'id' => [
+                            '_id' => [
                                 'nodeType' => 'scalar',
                                 'headerNames' => 'id',
                             ],
@@ -81,10 +81,6 @@ class JsonTest extends ExtractorTestCase
 
     public function testUpdateStruct()
     {
-        self::markTestSkipped("fix this");
-        return;
-        // TODO fix this test
-        $parser = new Json(new NullLogger(), []);
         $json = '{
             "root.arr.arr1": {
                 "c": "string"
@@ -103,7 +99,7 @@ class JsonTest extends ExtractorTestCase
                 "arr": "array"
             }
         }';
-        $struct = json_decode($json, true);
+        $parser = new Json(new NullLogger(), $json, 3);
 
         $updated = self::callMethod($parser, 'updateStruct', [$struct]);
 
@@ -163,7 +159,7 @@ class JsonTest extends ExtractorTestCase
     {
         $logHandler = new TestHandler();
         $logger = new Logger('test', [$logHandler]);
-        $parser = new Json($logger, []);
+        $parser = new Json($logger, [], 3);
 
         $parser->process([], 'empty');
         self::assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
