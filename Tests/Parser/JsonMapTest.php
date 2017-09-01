@@ -127,7 +127,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'fooBar']]
         ];
         $config = new Config($data);
-        $fallback = new Json(new NullLogger(), [],3);
+        $fallback = new Json(new NullLogger(), [], 3);
         $parser = new JsonMap($config, new NullLogger(), $fallback);
 
         $data = json_decode('[

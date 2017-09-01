@@ -162,15 +162,19 @@ class JsonTest extends ExtractorTestCase
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
         $parser = new Json($logger, $json, 3);
-        $parser->process([
-            (object) [
-                'id' => 1,
-                'some_property' => 'first_value',
-                'some.property' => 'second_value'
-            ]
-        ], 'root');
+        $parser->process(
+            [
+                (object) [
+                    'id' => 1,
+                    'some_property' => 'first_value',
+                    'some.property' => 'second_value'
+                ]
+            ],
+            'root'
+        );
 
-        self::assertEquals("\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
+        self::assertEquals(
+            "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
             file_get_contents($parser->getResults()['root'])
         );
@@ -202,15 +206,19 @@ class JsonTest extends ExtractorTestCase
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
         $parser = new Json($logger, $json, 3);
-        $parser->process([
-            (object) [
-                'id' => 1,
-                'some_property' => 'first_value',
-                'some.property' => 'second_value'
-            ]
-        ], 'root');
+        $parser->process(
+            [
+                (object) [
+                    'id' => 1,
+                    'some_property' => 'first_value',
+                    'some.property' => 'second_value'
+                ]
+            ],
+            'root'
+        );
 
-        self::assertEquals("\"id\",\"some_property\",\"some_property_u0\"\n" .
+        self::assertEquals(
+            "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
             file_get_contents($parser->getResults()['root'])
         );
@@ -222,15 +230,19 @@ class JsonTest extends ExtractorTestCase
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
         $parser = new Json($logger, [], 2);
-        $parser->process([
-            (object) [
-                'id' => 1,
-                'some_property' => 'first_value',
-                'some.property' => 'second_value'
-            ]
-        ], 'root');
+        $parser->process(
+                [
+                (object) [
+                    'id' => 1,
+                    'some_property' => 'first_value',
+                    'some.property' => 'second_value'
+                ]
+            ],
+            'root'
+        );
 
-        self::assertEquals("\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
+        self::assertEquals(
+            "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
             file_get_contents($parser->getResults()['root'])
         );
@@ -242,15 +254,19 @@ class JsonTest extends ExtractorTestCase
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
         $parser = new Json($logger, [], 3);
-        $parser->process([
-            (object) [
-                'id' => 1,
-                'some_property' => 'first_value',
-                'some.property' => 'second_value'
-            ]
-        ], 'root');
+        $parser->process(
+            [
+                (object) [
+                    'id' => 1,
+                    'some_property' => 'first_value',
+                    'some.property' => 'second_value'
+                ]
+            ],
+            'root'
+        );
 
-        self::assertEquals("\"id\",\"some_property\",\"some_property_u0\"\n" .
+        self::assertEquals(
+            "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
             file_get_contents($parser->getResults()['root'])
         );
