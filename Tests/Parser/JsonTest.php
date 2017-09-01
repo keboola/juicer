@@ -12,7 +12,7 @@ class JsonTest extends ExtractorTestCase
 {
     public function testProcess()
     {
-        $parser = new Json(new NullLogger(), [], 3);
+        $parser = new Json(new NullLogger(), [], Json::LATEST_VERSION);
 
         $data = json_decode('[
             {
@@ -50,7 +50,7 @@ class JsonTest extends ExtractorTestCase
 
     public function testGetMetadata()
     {
-        $parser = new Json(new NullLogger(), [], 3);
+        $parser = new Json(new NullLogger(), [], Json::LATEST_VERSION);
 
         $data = [
             (object) ['id' => 1]
@@ -104,7 +104,7 @@ class JsonTest extends ExtractorTestCase
         }';
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
-        $parser = new Json($logger, json_decode($json, true), 3);
+        $parser = new Json($logger, json_decode($json, true), Json::LATEST_VERSION);
         $parser->process([
             (object) [
                 'id' => 1,
@@ -142,7 +142,7 @@ class JsonTest extends ExtractorTestCase
     {
         $logHandler = new TestHandler();
         $logger = new Logger('test', [$logHandler]);
-        $parser = new Json($logger, [], 3);
+        $parser = new Json($logger, [], Json::LATEST_VERSION);
 
         $parser->process([], 'empty');
         self::assertTrue($logHandler->hasDebug("No data returned in 'empty'"));
@@ -161,7 +161,7 @@ class JsonTest extends ExtractorTestCase
         ];
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
-        $parser = new Json($logger, $json, 3);
+        $parser = new Json($logger, $json, Json::LATEST_VERSION);
         $parser->process(
             [
                 (object) [
@@ -205,7 +205,7 @@ class JsonTest extends ExtractorTestCase
         ];
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
-        $parser = new Json($logger, $json, 3);
+        $parser = new Json($logger, $json, Json::LATEST_VERSION);
         $parser->process(
             [
                 (object) [
@@ -231,8 +231,8 @@ class JsonTest extends ExtractorTestCase
         $logger = new Logger('null', [$handler]);
         $parser = new Json($logger, [], 2);
         $parser->process(
-                [
-                (object) [
+            [
+                (object)[
                     'id' => 1,
                     'some_property' => 'first_value',
                     'some.property' => 'second_value'
@@ -253,10 +253,10 @@ class JsonTest extends ExtractorTestCase
     {
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
-        $parser = new Json($logger, [], 3);
+        $parser = new Json($logger, [], Json::LATEST_VERSION);
         $parser->process(
             [
-                (object) [
+                (object)[
                     'id' => 1,
                     'some_property' => 'first_value',
                     'some.property' => 'second_value'
