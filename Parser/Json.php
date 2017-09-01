@@ -36,8 +36,9 @@ class Json implements ParserInterface
      * @param LoggerInterface $logger Logger instance.
      * @param array $metadata Previously stored state of the json parser.
      * @param int $compatLevel Compatibility level.
+     * @param int $cacheMemoryLimit
      */
-    public function __construct(LoggerInterface $logger, array $metadata, $compatLevel)
+    public function __construct(LoggerInterface $logger, array $metadata, $compatLevel, $cacheMemoryLimit = 2000000)
     {
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
@@ -64,6 +65,7 @@ class Json implements ParserInterface
                 $this->parser = new Parser(new Analyzer($logger, $structure, true));
             }
         }
+        $this->parser->setCacheMemoryLimit($cacheMemoryLimit);
     }
 
     /**
