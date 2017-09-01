@@ -55,12 +55,10 @@ class Json implements ParserInterface
             if ($compatLevel < 3) {
                 $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
                 $structure = new Struct($logger);
-                $structure->load($metadata['json_parser.struct']);
                 $structure->setAutoUpgradeToArray(true);
                 $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
             } else {
                 $structure = new Structure();
-                $structure->load([]);
                 $this->parser = new Parser(new Analyzer($logger, $structure, true));
             }
         }
