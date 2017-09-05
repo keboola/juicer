@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
-    const LATEST_VERSION = 3;
+    const LATEST_VERSION = 2;
 
     /**
      * @var LegacyParser|Parser
@@ -43,7 +43,7 @@ class Json implements ParserInterface
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
             !empty($metadata['json_parser.structVersion'])) {
-            if ($metadata['json_parser.structVersion'] != 3) {
+            if ($metadata['json_parser.structVersion'] < self::LATEST_VERSION) {
                 $logger->warning("Using legacy JSON parser, because it is in configuration state.");
                 $structure = new Struct($logger);
                 $structure->load($metadata['json_parser.struct']);
@@ -55,7 +55,7 @@ class Json implements ParserInterface
                 $this->parser = new Parser(new Analyzer($logger, $structure, true));
             }
         } else {
-            if ($compatLevel < 3) {
+            if ($compatLevel < self::LATEST_VERSION) {
                 $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
                 $structure = new Struct($logger);
                 $structure->setAutoUpgradeToArray(true);

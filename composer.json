@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "keboola/json-parser": "dev-column-conflicts#ad05801",
+        "keboola/json-parser": "dev-column-conflicts",
         "keboola-legacy/json-parser": "^2.0",
         "keboola/php-temp": "^0.1",
         "keboola/php-utils": "^1.0",
