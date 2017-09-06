@@ -79,6 +79,29 @@ class JsonTest extends ExtractorTestCase
         );
     }
 
+    public function testGetMetadataLegacy()
+    {
+        $parser = new Json(new NullLogger(), [], Json::LEGACY_VERSION);
+
+        $data = [
+            (object) ['id' => 1]
+        ];
+
+        $parser->process($data, 'metadataTest');
+
+        self::assertEquals(
+            [
+                'json_parser.struct' => [
+                    'metadataTest' => [
+                        'id' => 'scalar',
+                    ],
+                ],
+                'json_parser.structVersion' => 2.0
+            ],
+            $parser->getMetadata()
+        );
+    }
+
     public function testLegacyStruct()
     {
         $json = '{
@@ -229,7 +252,7 @@ class JsonTest extends ExtractorTestCase
     {
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
-        $parser = new Json($logger, [], 1);
+        $parser = new Json($logger, [], Json::LEGACY_VERSION);
         $parser->process(
             [
                 (object)[

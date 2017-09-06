@@ -19,6 +19,7 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
+    const LEGACY_VERSION = 1;
     const LATEST_VERSION = 2;
 
     /**
@@ -43,7 +44,7 @@ class Json implements ParserInterface
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
             !empty($metadata['json_parser.structVersion'])) {
-            if ($metadata['json_parser.structVersion'] < self::LATEST_VERSION) {
+            if ($metadata['json_parser.structVersion'] == self::LEGACY_VERSION) {
                 $logger->warning("Using legacy JSON parser, because it is in configuration state.");
                 $structure = new Struct($logger);
                 $structure->load($metadata['json_parser.struct']);
@@ -55,7 +56,7 @@ class Json implements ParserInterface
                 $this->parser = new Parser(new Analyzer($logger, $structure, true));
             }
         } else {
-            if ($compatLevel < self::LATEST_VERSION) {
+            if ($compatLevel == self::LEGACY_VERSION) {
                 $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
                 $structure = new Struct($logger);
                 $structure->setAutoUpgradeToArray(true);
@@ -110,9 +111,16 @@ class Json implements ParserInterface
      */
     public function getMetadata()
     {
-        return [
-            'json_parser.struct' => $this->parser->getAnalyzer()->getStructure()->getData(),
-            'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion()
-        ];
+        if ($this->parser instanceof LegacyParser) {
+            return [
+                'json_parser.struct' => $this->parser->getStruct()->getData(),
+                'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
+            ];
+        } else {
+            return [
+                'json_parser.struct' => $this->parser->getAnalyzer()->getStructure()->getData(),
+                'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion()
+            ];
+        }
     }
 }
