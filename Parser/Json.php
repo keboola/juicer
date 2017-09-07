@@ -3,14 +3,15 @@
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvTable\Table;
-use Keboola\Json\Parser as JsonParser;
+use Keboola\Json\Analyzer;
 use Keboola\Json\Exception\JsonParserException;
 use Keboola\Json\Exception\NoDataException;
-use Keboola\Json\Struct;
-use Keboola\Juicer\Config\Config;
+use Keboola\Json\Parser;
+use Keboola\Json\Structure;
 use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Exception\ApplicationException;
-use Keboola\Temp\Temp;
+use KeboolaLegacy\Json\Analyzer as LegacyAnalyzer;
+use KeboolaLegacy\Json\Parser as LegacyParser;
+use KeboolaLegacy\Json\Struct;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -18,8 +19,11 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
+    const LEGACY_VERSION = 2;
+    const LATEST_VERSION = 3;
+
     /**
-     * @var JsonParser
+     * @var LegacyParser|Parser
      */
     protected $parser;
 
@@ -29,29 +33,40 @@ class Json implements ParserInterface
     protected $logger;
 
     /**
-     * Json constructor.
-     * @param LoggerInterface $logger
-     * @param Temp $temp
-     * @param array $metadata
+     * Json parser constructor.
+     * @param LoggerInterface $logger Logger instance.
+     * @param array $metadata Previously stored state of the json parser.
+     * @param int $compatLevel Compatibility level.
+     * @param int $cacheMemoryLimit
      */
-    public function __construct(LoggerInterface $logger, Temp $temp, array $metadata = [])
+    public function __construct(LoggerInterface $logger, array $metadata, $compatLevel, $cacheMemoryLimit = 2000000)
     {
-        if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct'])) {
-            if (empty($metadata['json_parser.structVersion'])
-                || $metadata['json_parser.structVersion'] != Struct::STRUCT_VERSION
-            ) {
-                // temporary
-                $metadata['json_parser.struct'] = self::updateStruct($metadata['json_parser.struct']);
-            }
-
-            $struct = $metadata['json_parser.struct'];
-        } else {
-            $struct = [];
-        }
-
-        $this->parser = JsonParser::create($logger, $struct);
-        $this->parser->setTemp($temp);
         $this->logger = $logger;
+        if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
+            !empty($metadata['json_parser.structVersion'])) {
+            if ($metadata['json_parser.structVersion'] == self::LEGACY_VERSION) {
+                $logger->warning("Using legacy JSON parser, because it is in configuration state.");
+                $structure = new Struct($logger);
+                $structure->load($metadata['json_parser.struct']);
+                $structure->setAutoUpgradeToArray(true);
+                $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
+            } else {
+                if ($compatLevel != self::LATEST_VERSION) {
+                    $logger->warning("Ignored request for legacy JSON parser, because configuration is already upgraded.");
+                }
+                $this->parser = new Parser(new Analyzer($logger, new Structure(), true), $metadata['json_parser.struct']);
+            }
+        } else {
+            if ($compatLevel == self::LEGACY_VERSION) {
+                $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
+                $structure = new Struct($logger);
+                $structure->setAutoUpgradeToArray(true);
+                $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
+            } else {
+                $this->parser = new Parser(new Analyzer($logger, new Structure(), true));
+            }
+        }
+        $this->parser->setCacheMemoryLimit($cacheMemoryLimit);
     }
 
     /**
@@ -63,7 +78,16 @@ class Json implements ParserInterface
             $this->parser->process($data, $type, $parentId);
         } catch (NoDataException $e) {
             $this->logger->debug("No data returned in '{$type}'");
+        } catch (\KeboolaLegacy\Json\Exception\NoDataException $e) {
+            $this->logger->debug("No data returned in '{$type}'");
         } catch (JsonParserException $e) {
+            throw new UserException(
+                "Error parsing response JSON: " . $e->getMessage(),
+                500,
+                $e,
+                $e->getData()
+            );
+        } catch (\KeboolaLegacy\Json\Exception\JsonParserException $e) {
             throw new UserException(
                 "Error parsing response JSON: " . $e->getMessage(),
                 500,
@@ -83,49 +107,20 @@ class Json implements ParserInterface
     }
 
     /**
-     * @return JsonParser
-     */
-    public function getParser()
-    {
-        return $this->parser;
-    }
-
-    /**
      * @return array
      */
     public function getMetadata()
     {
-        return [
-            'json_parser.struct' => $this->parser->getStruct()->getData(),
-            'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
-        ];
-    }
-
-    protected static function updateStruct(array $struct)
-    {
-        foreach ($struct as $type => &$children) {
-            if (!is_array($children)) {
-                throw new ApplicationException("Error updating struct at '{$type}', an array was expected");
-            }
-
-            foreach ($children as $child => &$dataType) {
-                if (in_array($dataType, ['integer', 'double', 'string', 'boolean'])) {
-                    // Make scalars non-strict
-                    $dataType = 'scalar';
-                } elseif ($dataType == 'array') {
-                    // Determine array types
-                    if (!empty($struct["{$type}.{$child}"])) {
-                        $childType = $struct["{$type}.{$child}"];
-                        if (array_keys($childType) == ['data']) {
-                            $dataType = 'arrayOfscalar';
-                        } else {
-                            $dataType = 'arrayOfobject';
-                        }
-                    }
-                }
-            }
+        if ($this->parser instanceof LegacyParser) {
+            return [
+                'json_parser.struct' => $this->parser->getStruct()->getData(),
+                'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
+            ];
+        } else {
+            return [
+                'json_parser.struct' => $this->parser->getAnalyzer()->getStructure()->getData(),
+                'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion()
+            ];
         }
-
-        return $struct;
     }
 }

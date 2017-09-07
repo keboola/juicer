@@ -6,7 +6,6 @@ use Keboola\Juicer\Parser\JsonMap;
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Temp\Temp;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -128,7 +127,7 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'fooBar']]
         ];
         $config = new Config($data);
-        $fallback = new Json(new NullLogger(), new Temp());
+        $fallback = new Json(new NullLogger(), [], Json::LATEST_VERSION);
         $parser = new JsonMap($config, new NullLogger(), $fallback);
 
         $data = json_decode('[

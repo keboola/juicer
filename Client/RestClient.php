@@ -33,6 +33,7 @@ class RestClient
 
 
     /**
+     * @param LoggerInterface $logger
      * @param array $guzzleConfig GuzzleHttp\Client defaults
      * @param array $retryConfig @see RestClient::createBackoff()
      *
@@ -44,8 +45,7 @@ class RestClient
      * - curl
      *      - codes (array) list of error codes to retry on
      *
-     * @param LoggerInterface $logger
-     * @return RestClient
+     * @param array $defaultOptions
      */
     public function __construct(LoggerInterface $logger, $guzzleConfig = [], $retryConfig = [], $defaultOptions = [])
     {
