@@ -123,7 +123,7 @@ class JsonTest extends ExtractorTestCase
                     "arr": "arrayOfobject"
                 }
             },
-            "json_parser.structVersion": 1
+            "json_parser.structVersion": 2
         }';
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
@@ -180,7 +180,7 @@ class JsonTest extends ExtractorTestCase
                     'some_property' => 'scalar'
                 ]
             ],
-            'json_parser.structVersion' => 1
+            'json_parser.structVersion' => 2
         ];
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);
@@ -224,7 +224,7 @@ class JsonTest extends ExtractorTestCase
                     ]
                 ],
             ],
-            'json_parser.structVersion' => 2
+            'json_parser.structVersion' => 3
         ];
         $handler = new TestHandler();
         $logger = new Logger('null', [$handler]);

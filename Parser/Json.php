@@ -19,8 +19,8 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
-    const LEGACY_VERSION = 1;
-    const LATEST_VERSION = 2;
+    const LEGACY_VERSION = 2;
+    const LATEST_VERSION = 3;
 
     /**
      * @var LegacyParser|Parser
