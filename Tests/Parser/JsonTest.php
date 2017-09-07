@@ -61,16 +61,20 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             [
                 'json_parser.struct' => [
-                    '_metadataTest' => [
-                        '[]' => [
-                            '_id' => [
-                                'nodeType' => 'scalar',
-                                'headerNames' => 'id',
+                    'data' => [
+                        '_metadataTest' => [
+                            '[]' => [
+                                '_id' => [
+                                    'nodeType' => 'scalar',
+                                    'headerNames' => 'id',
+                                ],
+                                'nodeType' => 'object',
+                                'headerNames' => 'data',
                             ],
-                            'nodeType' => 'object',
-                            'headerNames' => 'data',
+                            'nodeType' => 'array'
                         ],
-                        'nodeType' => 'array'
+                    ],
+                    'parent_aliases' => [
                     ],
                 ],
                 'json_parser.structVersion' => 3
@@ -83,16 +87,20 @@ class JsonTest extends ExtractorTestCase
     {
         $metadata = [
             'json_parser.struct' => [
-                '_metadataTest' => [
-                    '[]' => [
-                        '_column' => [
-                            'nodeType' => 'scalar',
-                            'headerNames' => 'column',
+                'data' => [
+                    '_metadataTest' => [
+                        '[]' => [
+                            '_column' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'column',
+                            ],
+                            'nodeType' => 'object',
+                            'headerNames' => 'data',
                         ],
-                        'nodeType' => 'object',
-                        'headerNames' => 'data',
+                        'nodeType' => 'array'
                     ],
-                    'nodeType' => 'array'
+                ],
+                'parent_aliases' => [
                 ],
             ],
             'json_parser.structVersion' => 3
@@ -108,21 +116,25 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             [
                 'json_parser.struct' => [
-                    '_metadataTest' => [
-                        '[]' => [
-                            '_id' => [
-                                'nodeType' => 'scalar',
-                                'headerNames' => 'id',
+                    'data' => [
+                        '_metadataTest' => [
+                            '[]' => [
+                                '_id' => [
+                                    'nodeType' => 'scalar',
+                                    'headerNames' => 'id',
+                                ],
+                                '_column' => [
+                                    'nodeType' => 'scalar',
+                                    'headerNames' => 'column',
+                                ],
+                                'nodeType' => 'object',
+                                'headerNames' => 'data',
                             ],
-                            '_column' => [
-                                'nodeType' => 'scalar',
-                                'headerNames' => 'column',
-                            ],
-                            'nodeType' => 'object',
-                            'headerNames' => 'data',
+                            'nodeType' => 'array'
                         ],
-                        'nodeType' => 'array'
                     ],
+                    'parent_aliases' => [
+                    ]
                 ],
                 'json_parser.structVersion' => 3
             ],
@@ -134,16 +146,18 @@ class JsonTest extends ExtractorTestCase
     {
         $metadata = [
             'json_parser.struct' => [
-                '_metadataTest' => [
-                    '[]' => [
-                        '_column' => [
-                            'nodeType' => 'scalar',
-                            'headerNames' => 'column',
+                'data' => [
+                    '_metadataTest' => [
+                        '[]' => [
+                            '_column' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'column',
+                            ],
+                            'nodeType' => 'object',
+                            'headerNames' => 'data',
                         ],
-                        'nodeType' => 'object',
-                        'headerNames' => 'data',
+                        'nodeType' => 'array'
                     ],
-                    'nodeType' => 'array'
                 ],
             ],
             'json_parser.structVersion' => 3
@@ -161,21 +175,25 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             [
                 'json_parser.struct' => [
-                    '_metadataTest' => [
-                        '[]' => [
-                            '_id' => [
-                                'nodeType' => 'scalar',
-                                'headerNames' => 'id',
+                    'data' => [
+                        '_metadataTest' => [
+                            '[]' => [
+                                '_id' => [
+                                    'nodeType' => 'scalar',
+                                    'headerNames' => 'id',
+                                ],
+                                '_column' => [
+                                    'nodeType' => 'scalar',
+                                    'headerNames' => 'column',
+                                ],
+                                'nodeType' => 'object',
+                                'headerNames' => 'data',
                             ],
-                            '_column' => [
-                                'nodeType' => 'scalar',
-                                'headerNames' => 'column',
-                            ],
-                            'nodeType' => 'object',
-                            'headerNames' => 'data',
+                            'nodeType' => 'array'
                         ],
-                        'nodeType' => 'array'
                     ],
+                    'parent_aliases' => [
+                    ]
                 ],
                 'json_parser.structVersion' => 3
             ],
