@@ -51,9 +51,10 @@ class Json implements ParserInterface
                 $structure->setAutoUpgradeToArray(true);
                 $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
             } else {
-                $structure = new Structure();
-                $structure->load($metadata['json_parser.struct']);
-                $this->parser = new Parser(new Analyzer($logger, $structure, true));
+                if ($compatLevel != self::LATEST_VERSION) {
+                    $logger->warning("Ignored request for legacy JSON parser, because configuration is already upgraded.");
+                }
+                $this->parser = new Parser(new Analyzer($logger, new Structure(), true), $metadata['json_parser.struct']);
             }
         } else {
             if ($compatLevel == self::LEGACY_VERSION) {
@@ -62,8 +63,7 @@ class Json implements ParserInterface
                 $structure->setAutoUpgradeToArray(true);
                 $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
             } else {
-                $structure = new Structure();
-                $this->parser = new Parser(new Analyzer($logger, $structure, true));
+                $this->parser = new Parser(new Analyzer($logger, new Structure(), true));
             }
         }
         $this->parser->setCacheMemoryLimit($cacheMemoryLimit);

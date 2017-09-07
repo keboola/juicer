@@ -79,6 +79,111 @@ class JsonTest extends ExtractorTestCase
         );
     }
 
+    public function testLoadMetadata()
+    {
+        $metadata = [
+            'json_parser.struct' => [
+                '_metadataTest' => [
+                    '[]' => [
+                        '_column' => [
+                            'nodeType' => 'scalar',
+                            'headerNames' => 'column',
+                        ],
+                        'nodeType' => 'object',
+                        'headerNames' => 'data',
+                    ],
+                    'nodeType' => 'array'
+                ],
+            ],
+            'json_parser.structVersion' => 3
+        ];
+        $parser = new Json(new NullLogger(), $metadata, Json::LATEST_VERSION);
+
+        $data = [
+            (object) ['id' => 1]
+        ];
+
+        $parser->process($data, 'metadataTest');
+
+        self::assertEquals(
+            [
+                'json_parser.struct' => [
+                    '_metadataTest' => [
+                        '[]' => [
+                            '_id' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'id',
+                            ],
+                            '_column' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'column',
+                            ],
+                            'nodeType' => 'object',
+                            'headerNames' => 'data',
+                        ],
+                        'nodeType' => 'array'
+                    ],
+                ],
+                'json_parser.structVersion' => 3
+            ],
+            $parser->getMetadata()
+        );
+    }
+
+    public function testLoadMetadataForcedWrong()
+    {
+        $metadata = [
+            'json_parser.struct' => [
+                '_metadataTest' => [
+                    '[]' => [
+                        '_column' => [
+                            'nodeType' => 'scalar',
+                            'headerNames' => 'column',
+                        ],
+                        'nodeType' => 'object',
+                        'headerNames' => 'data',
+                    ],
+                    'nodeType' => 'array'
+                ],
+            ],
+            'json_parser.structVersion' => 3
+        ];
+        $handler = new TestHandler();
+        $logger = new Logger('null', [$handler]);
+        $parser = new Json($logger, $metadata, Json::LEGACY_VERSION);
+
+        $data = [
+            (object) ['id' => 1]
+        ];
+
+        $parser->process($data, 'metadataTest');
+
+        self::assertEquals(
+            [
+                'json_parser.struct' => [
+                    '_metadataTest' => [
+                        '[]' => [
+                            '_id' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'id',
+                            ],
+                            '_column' => [
+                                'nodeType' => 'scalar',
+                                'headerNames' => 'column',
+                            ],
+                            'nodeType' => 'object',
+                            'headerNames' => 'data',
+                        ],
+                        'nodeType' => 'array'
+                    ],
+                ],
+                'json_parser.structVersion' => 3
+            ],
+            $parser->getMetadata()
+        );
+        self::assertTrue($handler->hasWarning("Ignored request for legacy JSON parser, because configuration is already upgraded."));
+    }
+
     public function testGetMetadataLegacy()
     {
         $parser = new Json(new NullLogger(), [], Json::LEGACY_VERSION);
