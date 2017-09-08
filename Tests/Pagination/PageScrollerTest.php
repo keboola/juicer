@@ -187,30 +187,4 @@ class PageScrollerTest extends TestCase
         $third = $newScroller->getNextRequest($client, $config, new \stdClass, ['item']);
         self::assertEquals(3, $third->getParams()['p']);
     }
-
-    public function testStopTotalCount()
-    {
-        $client = new RestClient(new NullLogger());
-        $config = new JobConfig([
-            'endpoint' => 'test',
-            'params' => ['page' => 1]
-        ]);
-
-        $scroller = new PageScroller([]);
-
-        $response = new \stdClass();
-        $response->data = array_fill(0, 10, (object) ['data' => ['key' => 'value'], 'count' => 15]);
-
-        $next = $scroller->getNextRequest($client, $config, $response, $response->data);
-        $expected = $client->createRequest([
-            'endpoint' => 'test',
-            'params' => ['page' => 2]
-        ]);
-        self::assertEquals($expected, $next);
-
-        $response = new \stdClass();
-        $response->data = array_fill(0, 5, (object) ['data' => ['key' => 'value'], 'count' => 15]);
-        $next2 = $scroller->getNextRequest($client, $config, $response, $response->data);
-        self::assertEquals(false, $next2);
-    }
 }
