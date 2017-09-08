@@ -28,6 +28,10 @@ class ScrollerFactory
             $scroller = new Decorator\ForceStopScrollerDecorator($scroller, $config);
         }
 
+        if (!empty($config['limit'])) {
+            $scroller = new Decorator\LimitScrollerDecorator($scroller, $config);
+        }
+
         return $scroller;
     }
 
