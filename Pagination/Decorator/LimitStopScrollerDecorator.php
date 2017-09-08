@@ -9,10 +9,10 @@ use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
- * Class LimitScrollerDecorator
+ * Class LimitStopScrollerDecorator
  * Adds 'limit' option
  */
-class LimitScrollerDecorator extends AbstractScrollerDecorator
+class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 {
     /**
      * @var int
@@ -38,18 +38,18 @@ class LimitScrollerDecorator extends AbstractScrollerDecorator
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         parent::__construct($scroller);
-        if (!empty($config['limit'])) {
-            if (empty($config['limit']['field']) && empty($config['limit']['count'])) {
-                throw new UserException("One of 'limit.field' or 'limit.count' attributes is required.");
+        if (!empty($config['limitStop'])) {
+            if (empty($config['limitStop']['field']) && empty($config['limitStop']['count'])) {
+                throw new UserException("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
             }
-            if (!empty($config['limit']['field']) && !empty($config['limit']['count'])) {
-                throw new UserException("Specify only one of 'limit.field' or 'limit.count'.");
+            if (!empty($config['limitStop']['field']) && !empty($config['limitStop']['count'])) {
+                throw new UserException("Specify only one of 'limitStop.field' or 'limitStop.count'.");
             }
-            if (!empty($config['limit']['field'])) {
-                $this->fieldName = $config['limit']['field'];
+            if (!empty($config['limitStop']['field'])) {
+                $this->fieldName = $config['limitStop']['field'];
             }
-            if (!empty($config['limit']['count'])) {
-                $this->countLimit = intval($config['limit']['count']);
+            if (!empty($config['limitStop']['count'])) {
+                $this->countLimit = intval($config['limitStop']['count']);
             }
         }
         $this->reset();

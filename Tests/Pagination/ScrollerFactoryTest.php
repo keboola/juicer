@@ -6,6 +6,7 @@ use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
+use Keboola\Juicer\Pagination\Decorator\LimitStopScrollerDecorator;
 use Keboola\Juicer\Pagination\MultipleScroller;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\OffsetScroller;
@@ -62,6 +63,11 @@ class ScrollerFactoryTest extends TestCase
         self::assertInstanceOf(ForceStopScrollerDecorator::class, ScrollerFactory::getScroller([
             'forceStop' => [
                 'pages' => 2
+            ]
+        ]));
+        self::assertInstanceOf(LimitStopScrollerDecorator::class, ScrollerFactory::getScroller([
+            'limitStop' => [
+                'count' => 10
             ]
         ]));
     }
