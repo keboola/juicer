@@ -13,5 +13,6 @@ engines:
   fixme:
     enabled: true
   phpmd:
-    enabled: false
-    rulesets: "unusedcode"
+    enabled: true
+    config:
+      rulesets: "cleancode,codesize,controversial,design,naming,unusedcode,juicer-md.xml"    
