@@ -14,4 +14,4 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    rulesets: "juicer-md.xml"
+    rulesets: "unusedcode"
