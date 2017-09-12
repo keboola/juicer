@@ -5,6 +5,11 @@
          xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
     <description>Custom rules for checking my project</description>
     
+    <rule ref="rulesets/cleancode.xml/StaticAccess">
+        <properties>
+            <property name="exceptions" value="Keboola\Juicer\Pagination\ScrollerFactory,\DateTime" />
+        </properties>
+    </rule>
     <rule ref="rulesets/cleancode.xml">
         <exclude name="ElseExpression" />
     </rule>
@@ -19,10 +24,5 @@
         <exclude name="LongVariable" />
     </rule>
     <rule ref="rulesets/unusedcode.xml">
-    </rule>
-    <rule ref="rulesets/cleancode.xml/StaticAccess">
-        <properties>
-            <property name="exceptions" value="Keboola\Juicer\Pagination\ScrollerFactory,\DateTime" />
-        </properties>
     </rule>
 </ruleset>
