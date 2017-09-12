@@ -10,7 +10,7 @@ use Keboola\Juicer\Config\JobConfig;
 
 /**
  * Class LimitStopScrollerDecorator
- * Adds 'limit' option
+ * Adds 'limitStop' option
  */
 class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 {
