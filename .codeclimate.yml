@@ -14,4 +14,4 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    rulesets: "cleancode,codesize,controversial,design,naming,unusedcode,juicer-md"
+    config: 'juicer-md.xml'
