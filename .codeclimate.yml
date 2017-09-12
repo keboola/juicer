@@ -15,10 +15,3 @@ engines:
   phpmd:
     enabled: true
     rulesets: "cleancode,codesize,controversial,design,naming,unusedcode,juicer-md.xml"    
-    checks:
-      CleanCode/ElseExpression:
-        enabled: false
-      Naming/ShortVariable:
-        enabled: false 
-      Naming/LongVariable:
-        enabled: false
