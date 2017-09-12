@@ -14,4 +14,4 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    config: 'juicer-md.xml'
+    rulesets: "juicer-md.xml"
