@@ -14,10 +14,5 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    checks:
-      CleanCode/ElseExpression:
-        enabled: false
-      Naming/ShortVariable:
-        enabled: false 
-      Naming/LongVariable:
-        enabled: false
+    config:
+      rulesets: "juicer-md"
