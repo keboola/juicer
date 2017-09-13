@@ -147,7 +147,7 @@ class RestClient
      * @return GuzzleRequest
      * @throws UserException
      */
-    protected function getGuzzleRequest(RestRequest $request)
+    public function getGuzzleRequest(RestRequest $request)
     {
         switch ($request->getMethod()) {
             case 'GET':
