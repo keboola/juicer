@@ -124,7 +124,7 @@ class RestClient
      * @return array|object Should be anything that can result from json_decode
      * @throws UserException
      */
-    protected function getObjectFromResponse(ResponseInterface $response)
+    public function getObjectFromResponse(ResponseInterface $response)
     {
         // Sanitize the JSON
         $body = iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody());
