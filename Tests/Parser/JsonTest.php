@@ -4,6 +4,7 @@ namespace Keboola\Juicer\Tests\Parser;
 
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Tests\ExtractorTestCase;
+use KeboolaLegacy\Json\Parser;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\NullLogger;
@@ -325,6 +326,9 @@ class JsonTest extends ExtractorTestCase
             file_get_contents($parser->getResults()['root'])
         );
         self::assertTrue($handler->hasWarning('Using legacy JSON parser, because it is in configuration state.'));
+        /** @var Parser $oldParser */
+        $oldParser = self::getProperty($parser, 'parser');
+        self::assertTrue($oldParser->getAnalyzer()->getNestedArrayAsJson());
     }
 
     public function testStructConflict()
@@ -393,6 +397,9 @@ class JsonTest extends ExtractorTestCase
             file_get_contents($parser->getResults()['root'])
         );
         self::assertTrue($handler->hasWarning('Using legacy JSON parser, because it has been explicitly requested.'));
+        /** @var Parser $oldParser */
+        $oldParser = self::getProperty($parser, 'parser');
+        self::assertTrue($oldParser->getAnalyzer()->getNestedArrayAsJson());
     }
 
     public function testNoStructExplicitVersionConflict()

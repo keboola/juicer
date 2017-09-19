@@ -49,7 +49,9 @@ class Json implements ParserInterface
                 $structure = new Struct($logger);
                 $structure->load($metadata['json_parser.struct']);
                 $structure->setAutoUpgradeToArray(true);
-                $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
+                $analyzer = new LegacyAnalyzer($logger, $structure, -1);
+                $analyzer->setNestedArrayAsJson(true);
+                $this->parser = new LegacyParser($logger, $analyzer, $structure);
             } else {
                 if ($compatLevel != self::LATEST_VERSION) {
                     $logger->warning("Ignored request for legacy JSON parser, because configuration is already upgraded.");
@@ -61,7 +63,9 @@ class Json implements ParserInterface
                 $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
                 $structure = new Struct($logger);
                 $structure->setAutoUpgradeToArray(true);
-                $this->parser = new LegacyParser($logger, new LegacyAnalyzer($logger, $structure, -1), $structure);
+                $analyzer = new LegacyAnalyzer($logger, $structure, -1);
+                $analyzer->setNestedArrayAsJson(true);
+                $this->parser = new LegacyParser($logger, $analyzer, $structure);
             } else {
                 $this->parser = new Parser(new Analyzer($logger, new Structure(), true));
             }
