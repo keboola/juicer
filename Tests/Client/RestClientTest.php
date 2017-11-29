@@ -233,6 +233,63 @@ class RestClientTest extends ExtractorTestCase
         }
     }
 
+    public function testErrorCodesRetryNoRetry()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], []);
+        $mock = new Mock([
+            new Response(404, [], Stream::factory('{"a": "b"}'))
+        ]);
+        $client->getClient()->getEmitter()->attach($mock);
+        try {
+            $client->download(new RestRequest(['endpoint' => 'ep']));
+            self::fail("Request should fail");
+        } catch (\Exception $e) {
+            self::assertContains('Not Found', $e->getMessage());
+            self::assertContains('404', $e->getMessage());
+        }
+    }
+
+    public function testErrorCodesRetryDoRetry()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], [404]);
+        $mock = new Mock([
+            new Response(404, [], Stream::factory('{"a": "b"}'))
+        ]);
+        $client ->getClient()->getEmitter()->attach($mock);
+        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals(['a' => 'b'], (array)$response);
+    }
+
+    public function testErrorCodesRetryDoRetryInvalidResponse()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], [404]);
+        $mock = new Mock([
+            new Response(404, [], Stream::factory('{"a": "'))
+        ]);
+        $client ->getClient()->getEmitter()->attach($mock);
+        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals([], (array)$response);
+    }
+
+    public function testErrorCodesRetryDoRetryEmptyResponse()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], [404]);
+        $mock = new Mock([
+            new Response(404, [], null)
+        ]);
+        $client ->getClient()->getEmitter()->attach($mock);
+        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals([], (array)$response);
+    }
+
     /**
      * @expectedException \Keboola\Juicer\Exception\UserException
      * @expectedExceptionMessage Invalid JSON response from API: JSON decode error:

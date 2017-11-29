@@ -31,6 +31,10 @@ class RestClient
      */
     private $logger;
 
+    /**
+     * @var array
+     */
+    private $ignoreErrors;
 
     /**
      * @param LoggerInterface $logger
@@ -46,9 +50,15 @@ class RestClient
      *      - codes (array) list of error codes to retry on
      *
      * @param array $defaultOptions
+     * @param array $ignoreErrors List of HTTP Status codes which are to be ignored
      */
-    public function __construct(LoggerInterface $logger, $guzzleConfig = [], $retryConfig = [], $defaultOptions = [])
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        $guzzleConfig = [],
+        $retryConfig = [],
+        $defaultOptions = [],
+        $ignoreErrors = []
+    ) {
         $guzzle = new Client($guzzleConfig);
         $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));
 
@@ -62,6 +72,7 @@ class RestClient
         $this->logger = $logger;
         $this->client = $guzzle;
         $this->defaultRequestOptions = $defaultOptions;
+        $this->ignoreErrors = $ignoreErrors;
     }
 
     /**
@@ -99,17 +110,25 @@ class RestClient
             $response = $this->client->send($this->getGuzzleRequest($request));
             return $this->getObjectFromResponse($response);
         } catch (BadResponseException $e) {
-            $data = json_decode($e->getResponse()->getBody(), true);
-            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                $data = (string) $e->getResponse()->getBody();
-            }
+            if (in_array($e->getCode(), $this->ignoreErrors)) {
+                try {
+                    return $this->getObjectFromResponse($e->getResponse());
+                } catch (UserException $ex) {
+                    $this->logger->warning("Failed to parse response " . $ex->getMessage());
+                }
+            } else {
+                $data = json_decode($e->getResponse()->getBody(), true);
+                if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                    $data = (string)$e->getResponse()->getBody();
+                }
 
-            throw new UserException(
-                "The API request failed: [" . $e->getResponse()->getStatusCode() . "] " . $e->getMessage(),
-                400,
-                $e,
-                ['body' => $data]
-            );
+                throw new UserException(
+                    "The API request failed: [" . $e->getResponse()->getStatusCode() . "] " . $e->getMessage(),
+                    400,
+                    $e,
+                    ['body' => $data]
+                );
+            }
         } catch (RequestException $e) {
             if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
                 throw $e->getPrevious();
