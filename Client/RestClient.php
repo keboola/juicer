@@ -97,26 +97,54 @@ class RestClient
         return $this->client;
     }
 
+    private function handleException(\Exception $e, ?ResponseInterface $response)
+    {
+        if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
+            in_array($e->getCode(), $this->ignoreErrors)
+        ) {
+            if ($response) {
+                $this->logger->warning('Failed to get response ' . $e->getMessage());
+                try {
+                    $result = $this->getObjectFromResponse($response);
+                } catch (UserException $ex) {
+                    $this->logger->warning("Failed to parse response " . $ex->getMessage());
+                    $result = new \stdClass();
+                    $result->errorData = (string)($response->getBody());
+                }
+            } else {
+                $this->logger->warning('Failed to process response ' . $e->getMessage());
+                $result = new \stdClass();
+                $result->errorData = $e->getMessage();
+            }
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @param RestRequest $request
      * @return mixed Raw response as it comes from the client
      * @throws UserException
      * @throws \Exception
      */
-
     public function download(RestRequest $request)
     {
         try {
             $response = $this->client->send($this->getGuzzleRequest($request));
-            return $this->getObjectFromResponse($response);
-        } catch (BadResponseException $e) {
-            if (in_array($e->getCode(), $this->ignoreErrors)) {
-                try {
-                    return $this->getObjectFromResponse($e->getResponse());
-                } catch (UserException $ex) {
-                    $this->logger->warning("Failed to parse response " . $ex->getMessage());
+            try {
+                return $this->getObjectFromResponse($response);
+            } catch (UserException $e) {
+                $resp = $this->handleException($e, $response);
+                if ($resp === false) {
+                    throw $e;
+                } else {
+                    return $resp;
                 }
-            } else {
+            }
+        } catch (BadResponseException $e) {
+            $resp = $this->handleException($e, $e->getResponse());
+            if ($resp === false) {
                 $data = json_decode($e->getResponse()->getBody(), true);
                 if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
                     $data = (string)$e->getResponse()->getBody();
@@ -128,12 +156,19 @@ class RestClient
                     $e,
                     ['body' => $data]
                 );
+            } else {
+                return $resp;
             }
         } catch (RequestException $e) {
-            if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
-                throw $e->getPrevious();
+            $resp = $this->handleException($e, null);
+            if ($resp === false) {
+                if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
+                    throw $e->getPrevious();
+                } else {
+                    throw $e;
+                }
             } else {
-                throw $e;
+                return $resp;
             }
         }
     }

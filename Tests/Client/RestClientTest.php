@@ -233,7 +233,7 @@ class RestClientTest extends ExtractorTestCase
         }
     }
 
-    public function testErrorCodesRetryNoRetry()
+    public function testErrorCodesIgnoreNoIgnore()
     {
         $handler = new TestHandler();
         $logger = new Logger("test", [$handler]);
@@ -251,7 +251,7 @@ class RestClientTest extends ExtractorTestCase
         }
     }
 
-    public function testErrorCodesRetryDoRetry()
+    public function testErrorCodesIgnore()
     {
         $handler = new TestHandler();
         $logger = new Logger("test", [$handler]);
@@ -264,7 +264,35 @@ class RestClientTest extends ExtractorTestCase
         self::assertEquals(['a' => 'b'], (array)$response);
     }
 
-    public function testErrorCodesRetryDoRetryInvalidResponse()
+    public function testErrorCodesIgnoreServer()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], [503]);
+        $responses = [];
+        for ($i = 0; $i < 15; $i++) {
+            $responses[] = new Response(503, [], Stream::factory('{"a": "b"}'));
+        }
+        $mock = new Mock($responses);
+        $client ->getClient()->getEmitter()->attach($mock);
+        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals(['a' => 'b'], (array)$response);
+    }
+
+    public function testErrorCodesIgnoreInvalidResponse()
+    {
+        $handler = new TestHandler();
+        $logger = new Logger("test", [$handler]);
+        $client = new RestClient($logger, [], [], [], [200]);
+        $mock = new Mock([
+            new Response(200, [], Stream::factory('{"a": "'))
+        ]);
+        $client ->getClient()->getEmitter()->attach($mock);
+        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals(['errorData' => '{"a": "'], (array)$response);
+    }
+
+    public function testErrorCodesIgnoreInvalidResponseAndCode()
     {
         $handler = new TestHandler();
         $logger = new Logger("test", [$handler]);
@@ -274,10 +302,10 @@ class RestClientTest extends ExtractorTestCase
         ]);
         $client ->getClient()->getEmitter()->attach($mock);
         $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals([], (array)$response);
+        self::assertEquals(['errorData' => '{"a": "'], (array)$response);
     }
 
-    public function testErrorCodesRetryDoRetryEmptyResponse()
+    public function testErrorCodesIgnoreEmptyResponse()
     {
         $handler = new TestHandler();
         $logger = new Logger("test", [$handler]);
@@ -287,7 +315,7 @@ class RestClientTest extends ExtractorTestCase
         ]);
         $client ->getClient()->getEmitter()->attach($mock);
         $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals([], (array)$response);
+        self::assertEquals(['errorData' => ''], (array)$response);
     }
 
     /**
