@@ -18,15 +18,15 @@
         "keboola/csvmap": "^0.5",
         "guzzlehttp/retry-subscriber": "dev-master#270393c",
         "guzzlehttp/guzzle": "^5.3",
-        "keboola/codebuilder": "^0.4",
+        "keboola/codebuilder": "^0.5",
         "keboola/php-temp": "^1.0"
     },
     "require-dev": {
         "monolog/monolog": "^1.22",
-		"phpunit/phpunit": "^6.2",
+		"phpunit/phpunit": "^7.0",
 		"codeclimate/php-test-reporter": "^0.4",
         "squizlabs/php_codesniffer": "^3.0",
-        "phpstan/phpstan": "^0.7"
+        "phpstan/phpstan": "^0.9"
     },
     "autoload": {
         "psr-4": { "Keboola\\Juicer\\": "" }
