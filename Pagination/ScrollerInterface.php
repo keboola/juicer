@@ -10,14 +10,14 @@ interface ScrollerInterface
 {
     /**
      * @param RestClient $client
-     * @param $jobConfig $jobConfig
+     * @param JobConfig $jobConfig
      * @return RestRequest|false
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig);
 
     /**
      * @param RestClient $client
-     * @param $jobConfig $jobConfig
+     * @param JobConfig $jobConfig
      * @param array|object $response
      * @param array $data
      * @return RestRequest|false

@@ -16,7 +16,7 @@ use Keboola\Juicer\Config\JobConfig;
 class PageScroller extends AbstractScroller implements ScrollerInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit = null;
 
@@ -138,7 +138,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
 
     /**
      * @param JobConfig $jobConfig
-     * @return int
+     * @return int|null
      */
     private function getLimit(JobConfig $jobConfig)
     {

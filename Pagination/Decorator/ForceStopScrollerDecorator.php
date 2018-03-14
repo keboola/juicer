@@ -76,9 +76,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     * @param RestClient $client
-     * @param $jobConfig $jobConfig
-     * @return RestRequest
+     * @inheritdoc
      */
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
     {
