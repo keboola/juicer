@@ -49,6 +49,13 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
+    public function __clone()
+    {
+        foreach ($this->scrollers as $index => $scroller) {
+            $this->scrollers[$index] = clone $scroller;
+        }
+    }
+
     /**
      * @inheritdoc
      */

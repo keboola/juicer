@@ -235,7 +235,61 @@ class MultipleScrollerTest extends TestCase
         ]);
         self::assertEquals($expectedPage, $nextPage);
     }
+    
+    public function testCloneSafety()
+    {
+        $scroller = new MultipleScroller($this->getScrollerConfig());
+        $client = new RestClient(new NullLogger());
+        $cursorConfig = new JobConfig([
+            'endpoint' => 'arrData',
+            'scroller' => 'cursor'
+        ]);
+        $pageConfig = new JobConfig([
+            'endpoint' => 'someData',
+            'scroller' => 'page'
+        ]);
 
+        $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
+        $scroller->getNextRequest($client, $cursorConfig, [], [['id' => 2], ['id' => 1]]);
+        $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
+        $nextCursor = $scroller->getNextRequest($client, $cursorConfig, [], [['id' => 3], ['id' => 4]]);
+        $expectedCursor = $client->createRequest([
+            'endpoint' => 'arrData',
+            'params' => [
+                'newerThan' => 4
+            ]
+        ]);
+        self::assertEquals($expectedCursor, $nextCursor);
+        $nextPage = $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
+        $expectedPage = $client->createRequest([
+            'endpoint' => 'someData',
+            'params' => [
+                'page' => 4
+            ]
+        ]);
+        self::assertEquals($expectedPage, $nextPage);
+
+        $scrollerClone = clone $scroller;
+        $scrollerClone->reset();
+
+        $nextCursor = $scroller->getNextRequest($client, $cursorConfig, [], [['id' => 3], ['id' => 4]]);
+        $expectedCursor = $client->createRequest([
+            'endpoint' => 'arrData',
+            'params' => [
+                'newerThan' => 4
+            ]
+        ]);
+        self::assertEquals($expectedCursor, $nextCursor);
+        $nextPage = $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
+        $expectedPage = $client->createRequest([
+            'endpoint' => 'someData',
+            'params' => [
+                'page' => 5
+            ]
+        ]);
+        self::assertEquals($expectedPage, $nextPage);
+    }
+    
     public function testScrollers()
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
