@@ -118,7 +118,6 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         );
 
         $cloneDecorator = clone $decorator;
-        $cloneDecorator->reset();
 
         $decoratorState = $decorator->getScroller()->getState();
         $cloneDecoratorState = $cloneDecorator->getScroller()->getState();

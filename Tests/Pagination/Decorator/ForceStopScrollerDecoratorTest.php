@@ -106,7 +106,6 @@ class ForceStopScrollerDecoratorTest extends TestCase
         $decorator->getNextRequest($client, $jobConfig, [$response], $response);
 
         $cloneDecorator = clone $decorator;
-        $cloneDecorator->reset();
 
         $decoratorState = $decorator->getScroller()->getState();
         $cloneDecoratorState = $cloneDecorator->getScroller()->getState();
