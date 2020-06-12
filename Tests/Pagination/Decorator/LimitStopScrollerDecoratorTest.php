@@ -96,4 +96,34 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
     {
         new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 12, 'field' => 'whatever']]);
     }
+
+    public function testCloneScrollerDecorator()
+    {
+        $client = new RestClient(new NullLogger());
+        $jobConfig = new JobConfig(['endpoint' => 'test']);
+
+        $config = ['limitStop' => ['count' => 12]];
+
+        $scroller = new PageScroller(['pageParam' => 'pageNo']);
+        $decorator = new LimitStopScrollerDecorator($scroller, $config);
+        $response = new \stdClass();
+        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 1];
+        $response->results->data = array_fill(0, 10, (object)['key' => 'value']);
+
+        $decorator->getNextRequest(
+            $client,
+            $jobConfig,
+            $response,
+            $response->results->data
+        );
+
+        $cloneDecorator = clone $decorator;
+        $cloneDecorator->reset();
+
+        $decoratorState = $decorator->getScroller()->getState();
+        $cloneDecoratorState = $cloneDecorator->getScroller()->getState();
+
+        self::assertEquals(2, $decoratorState['page']);
+        self::assertEquals(1, $cloneDecoratorState['page']);
+    }
 }

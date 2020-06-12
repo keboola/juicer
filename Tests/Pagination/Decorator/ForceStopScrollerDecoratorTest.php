@@ -86,4 +86,32 @@ class ForceStopScrollerDecoratorTest extends TestCase
         // Assert 3 pages were true
         self::assertEquals(3, $i);
     }
+
+    public function testCloneScrollerDecorator()
+    {
+        $client = new RestClient(new NullLogger());
+        $jobConfig = new JobConfig([
+            'endpoint' => 'test'
+        ]);
+
+        $scroller = new PageScroller([]);
+
+        $decorator = new ForceStopScrollerDecorator($scroller, [
+            'forceStop' => [
+                'time' => 3
+            ]
+        ]);
+
+        $response = ['a'];
+        $decorator->getNextRequest($client, $jobConfig, [$response], $response);
+
+        $cloneDecorator = clone $decorator;
+        $cloneDecorator->reset();
+
+        $decoratorState = $decorator->getScroller()->getState();
+        $cloneDecoratorState = $cloneDecorator->getScroller()->getState();
+
+        self::assertEquals(2, $decoratorState['page']);
+        self::assertEquals(1, $cloneDecoratorState['page']);
+    }
 }
