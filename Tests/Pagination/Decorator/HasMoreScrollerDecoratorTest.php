@@ -68,4 +68,36 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $null = self::callMethod($scroller, 'hasMore', [(object) ['finished' => false]]);
         self::assertNull($null);
     }
+
+    public function testCloneScrollerDecorator()
+    {
+        $client = new RestClient(new NullLogger());
+        $jobConfig = new JobConfig(['endpoint' => 'test']);
+
+        $config = [
+            'nextPageFlag' => [
+                'field' => 'hasMore',
+                'stopOn' => false
+            ]
+        ];
+
+        $scroller = new OffsetScroller(['limit' => 10]);
+
+        $decorator = new HasMoreScrollerDecorator($scroller, $config);
+
+        $decorator->getNextRequest(
+            $client,
+            $jobConfig,
+            (object)['hasMore' => true],
+            array_fill(0, 10, ['k' => 'v'])
+        );
+
+        $cloneDecorator = clone $decorator;
+
+        $decoratorState = $decorator->getScroller()->getState();
+        $cloneDecoratorState = $cloneDecorator->getScroller()->getState();
+
+        self::assertEquals(10, $decoratorState['pointer']);
+        self::assertEquals(0, $cloneDecoratorState['pointer']);
+    }
 }

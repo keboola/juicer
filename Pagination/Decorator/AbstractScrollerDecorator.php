@@ -22,6 +22,12 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
         $this->scroller = $scroller;
     }
 
+    public function __clone()
+    {
+        $this->scroller = clone $this->scroller;
+        $this->reset();
+    }
+
     /**
      * @inheritdoc
      */

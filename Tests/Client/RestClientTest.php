@@ -285,11 +285,11 @@ class RestClientTest extends ExtractorTestCase
         $logger = new Logger("test", [$handler]);
         $client = new RestClient($logger, [], [], [], [200]);
         $mock = new Mock([
-            new Response(200, [], Stream::factory('{"a": "'))
+            new Response(200, [], Stream::factory('{"a": bcd"'))
         ]);
         $client ->getClient()->getEmitter()->attach($mock);
         $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => '{"a": "'], (array)$response);
+        self::assertEquals(['errorData' => '{"a": bcd"'], (array)$response);
     }
 
     public function testErrorCodesIgnoreInvalidResponseAndCode()
@@ -298,11 +298,11 @@ class RestClientTest extends ExtractorTestCase
         $logger = new Logger("test", [$handler]);
         $client = new RestClient($logger, [], [], [], [404]);
         $mock = new Mock([
-            new Response(404, [], Stream::factory('{"a": "'))
+            new Response(404, [], Stream::factory('{"a": bcd"'))
         ]);
         $client ->getClient()->getEmitter()->attach($mock);
         $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => '{"a": "'], (array)$response);
+        self::assertEquals(['errorData' => '{"a": bcd"'], (array)$response);
     }
 
     public function testErrorCodesIgnoreEmptyResponse()
