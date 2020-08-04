@@ -128,4 +128,30 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         ]);
         self::assertEquals($expected, $nextRequest);
     }
+    
+    
+    public function testGetNextRequestDelimiterParams()
+    {
+        $client = new RestClient(new NullLogger());
+        $config = $this->getConfig();
+
+        $scroller = new ResponseUrlScroller(['urlKey' => 'links|next', 'delimiter' => '|']);
+
+        $response = new \stdClass();
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
+        $response->links = new \stdClass();
+        $response->links->next = 'test?page=2';
+
+        $next = $scroller->getNextRequest($client, $config, $response, $response->data);
+        $expected = $client->createRequest([
+            'endpoint' => 'test?page=2'
+        ]);
+        self::assertEquals($expected, $next);
+
+        $responseLast = new \stdClass();
+        $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
+
+        $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
+        self::assertEquals(false, $last);
+    }
 }
