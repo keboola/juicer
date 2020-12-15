@@ -61,7 +61,6 @@ class ScrollerFactory
                     ? $config['method']
                     : json_encode($config['method']);
                 throw new UserException("Unknown pagination method '{$method}'");
-                break;
         }
     }
 }
