@@ -3,6 +3,7 @@
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use Keboola\Juicer\Exception\UserException;
 use GuzzleHttp\Client;
@@ -165,7 +166,7 @@ class RestClient
                 if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
                     throw $e->getPrevious();
                 } else {
-                    throw $e;
+                    throw new UserException($e->getMessage(), $e->getCode(), $e);
                 }
             } else {
                 return $resp;
@@ -198,7 +199,7 @@ class RestClient
 
     /**
      * @param RestRequest $request
-     * @return GuzzleRequest
+     * @return RequestInterface
      * @throws UserException
      */
     public function getGuzzleRequest(RestRequest $request)
@@ -221,7 +222,6 @@ class RestClient
                 break;
             default:
                 throw new UserException("Unknown request method '" . $request->getMethod() . "' for '" . $request->getEndpoint() . "'");
-                break;
         }
 
         if (!empty($request->getHeaders())) {

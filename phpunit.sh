@@ -4,7 +4,7 @@ set -e
 php --version
 
 echo "Starting tests" >&1
-./vendor/bin/phpcs --standard=psr2 --ignore=vendor -n .
+./vendor/bin/phpcs --standard=psr2 --ignore=vendor,.tmp -n .
 ./vendor/bin/phpstan analyse --level=4 Client Config Exception Pagination Parser Tests
 
 ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml

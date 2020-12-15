@@ -4,3 +4,4 @@ vendor
 .idea
 /build
 /.tmp
+/cc-test-reporter
