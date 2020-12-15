@@ -166,7 +166,7 @@ class RestClient
                 if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
                     throw $e->getPrevious();
                 } else {
-                    throw $e;
+                    throw new UserException($e->getMessage(), $e->getCode(), $e);
                 }
             } else {
                 return $resp;
