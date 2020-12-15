@@ -46,7 +46,18 @@ class JsonMap implements ParserInterface
         $mappers = [];
         foreach ($config->getAttribute('mappings') as $type => $mapping) {
             if (empty($mapping)) {
-                throw new UserException("Empty mapping for '{$type}' in config.");
+                throw new UserException(sprintf(
+                    "Empty mapping for '%s' data type in 'mappings' config.",
+                    $type
+                ));
+            }
+
+            if (!is_array($mapping)) {
+                throw new UserException(sprintf(
+                    "Mapping must be 'array' type, '%s' type given, for '%s' data type in 'mappings' config.",
+                    gettype($mapping),
+                    $type
+                ));
             }
 
             $mappers[$type] = new Mapper($mapping, $type);
@@ -56,7 +67,10 @@ class JsonMap implements ParserInterface
             $type = $job->getDataType();
             if (empty($mappers[$type])) {
                 if (is_null($fallbackParser)) {
-                    throw new UserException("Missing mapping for '{$type}' in config.");
+                    throw new UserException(sprintf(
+                        "No mapping for '%s' data type in 'mappings' config.",
+                        $type
+                    ));
                 }
             }
         }

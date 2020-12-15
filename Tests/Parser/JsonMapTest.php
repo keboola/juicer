@@ -2,6 +2,7 @@
 
 namespace Keboola\Juicer\Tests\Parser;
 
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Parser\JsonMap;
 use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Config\Config;
@@ -92,10 +93,6 @@ class JsonMapTest extends TestCase
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Missing mapping for 'first' in config.
-     */
     public function testNoMapping()
     {
         $data = [
@@ -109,6 +106,26 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
         ];
         $config = new Config($data);
+
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("No mapping for 'first' data type in 'mappings' config.");
+        new JsonMap($config, new NullLogger());
+    }
+
+    public function testMappingNotArray()
+    {
+        $data = [
+            'mappings' => [
+                'first' => 'not array'
+            ],
+            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
+        ];
+        $config = new Config($data);
+
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Mapping must be 'array' type, 'string' type given, for 'first' data type in 'mappings' config."
+        );
         new JsonMap($config, new NullLogger());
     }
 
@@ -158,10 +175,6 @@ class JsonMapTest extends TestCase
         self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Empty mapping for 'first' in config.
-     */
     public function testEmptyMappingError()
     {
         $data = [
@@ -169,6 +182,9 @@ class JsonMapTest extends TestCase
             'jobs' => [['endpoint' => 'fooBar']]
         ];
         $config = new Config($data);
+
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Empty mapping for 'first' data type in 'mappings' config.");
         new JsonMap($config, new NullLogger());
     }
 
