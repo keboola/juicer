@@ -266,7 +266,7 @@ class RestClient
                 RetrySubscriber::createCurlFilter($curlRetryCodes),
             ]),
             'max' => $maxRetries,
-            'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName, $logger) {
+            'delay' => function (int $retries, AbstractTransferEvent $event) use ($headerName, $logger) {
                 $delay = self::getRetryDelay($retries, $event, $headerName);
 
                 $errData = [
@@ -287,7 +287,7 @@ class RestClient
         ]);
     }
 
-    protected static function getRetryDelay($retries, AbstractTransferEvent $event, $headerName)
+    protected static function getRetryDelay(int $retries, AbstractTransferEvent $event, string $headerName): int
     {
         if (is_null($event->getResponse())
             || !$event->getResponse()->hasHeader($headerName)
