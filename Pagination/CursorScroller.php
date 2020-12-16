@@ -76,6 +76,13 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
 
             foreach ($data as $item) {
                 $cursorVal = getDataFromPath($this->idKey, $item, '.');
+                if (!is_numeric($cursorVal)) {
+                    throw new UserException(sprintf(
+                        "Cursor value '%s' is not numeric.",
+                        json_encode($cursorVal)
+                    ));
+                }
+                $cursorVal = (int)$cursorVal;
 
                 if (is_null($this->max) || $cursorVal > $this->max) {
                     $this->max = $cursorVal;
@@ -88,11 +95,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
                 $cursor = $this->reverse ? $this->min : $this->max;
             }
 
-            if (0 !== $this->increment) {
-                if (!is_numeric($cursor)) {
-                    throw new UserException("Trying to increment a pointer that is not numeric.");
-                }
-
+            if ($this->increment !== 0) {
                 $cursor += $this->increment;
             }
 

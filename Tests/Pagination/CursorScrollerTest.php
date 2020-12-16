@@ -103,7 +103,7 @@ class CursorScrollerTest extends TestCase
             $scroller->getNextRequest($client, $config, $response, $response);
             self::fail("Must raise exception.");
         } catch (UserException $e) {
-            self::assertContains('Trying to increment a pointer that is not numeric.', $e->getMessage());
+            self::assertContains('Cursor value \'"foo"\' is not numeric.', $e->getMessage());
         }
     }
 }

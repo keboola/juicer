@@ -127,7 +127,7 @@ class OffsetScrollerTest extends TestCase
         self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
     }
 
-    public function testInvalid()
+    public function testMissingLimit()
     {
         try {
             new OffsetScroller([]);
@@ -135,6 +135,19 @@ class OffsetScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertContains('Missing \'pagination.limit\' attribute required for offset pagination', $e->getMessage());
         }
-        new OffsetScroller(['limit' => 'foo']);
+
+    }
+
+    public function testNotNumericLimit()
+    {
+        try {
+            new OffsetScroller(['limit' => 'foo']);
+            self::fail("Must cause exception");
+        } catch (UserException $e) {
+            self::assertContains(
+                'Parameter \'pagination.limit\' is not numeric. Value \'"foo"\'.',
+                $e->getMessage()
+            );
+        }
     }
 }

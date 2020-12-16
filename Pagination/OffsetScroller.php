@@ -43,7 +43,16 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         if (empty($config['limit'])) {
             throw new UserException("Missing 'pagination.limit' attribute required for offset pagination");
         }
-        $this->limit = $config['limit'];
+
+        if (!is_numeric($config['limit'])) {
+            throw new UserException(sprintf(
+                "Parameter 'pagination.limit' is not numeric. Value '%s'.",
+                json_encode($config['limit'])
+            ));
+        }
+
+        $this->limit = (int)$config['limit'];
+
         if (!empty($config['limitParam'])) {
             $this->limitParam = $config['limitParam'];
         }
