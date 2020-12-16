@@ -26,9 +26,6 @@ class JsonMap implements ParserInterface
     private LoggerInterface $logger;
 
     /**
-     * @param Config $config
-     * @param LoggerInterface $logger
-     * @param ParserInterface|null $fallbackParser
      * @throws UserException
      */
     public function __construct(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)

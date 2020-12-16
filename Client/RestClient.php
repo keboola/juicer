@@ -66,8 +66,6 @@ class RestClient
 
     /**
      * Update request config with default options
-     * @param array $config
-     * @return array
      */
     protected function getRequestConfig(array $config) : array
     {
@@ -186,11 +184,9 @@ class RestClient
     }
 
     /**
-     * @param RestRequest $request
-     * @return RequestInterface
      * @throws UserException
      */
-    public function getGuzzleRequest(RestRequest $request)
+    public function getGuzzleRequest(RestRequest $request): RequestInterface
     {
         switch ($request->getMethod()) {
             case 'GET':
@@ -249,11 +245,8 @@ class RestClient
      * - curl
      *      - codes (array) list of error codes to retry on
      *
-     * @param array $options
-     * @param LoggerInterface $logger
-     * @return RetrySubscriber
      */
-    private static function createBackoff(array $options, LoggerInterface $logger)
+    private static function createBackoff(array $options, LoggerInterface $logger): RetrySubscriber
     {
         $headerName = isset($options['http']['retryHeader']) ? $options['http']['retryHeader'] : 'Retry-After';
         $httpRetryCodes = isset($options['http']['codes']) ? $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];

@@ -10,10 +10,6 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
     protected ScrollerInterface $scroller;
 
-    /**
-     * AbstractScrollerDecorator constructor.
-     * @param ScrollerInterface $scroller
-     */
     public function __construct(ScrollerInterface $scroller)
     {
         $this->scroller = $scroller;

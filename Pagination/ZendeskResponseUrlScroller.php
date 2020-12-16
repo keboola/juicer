@@ -26,7 +26,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
      *          'paramIsQuery' => bool // Pick parameters from the scroll URL and use them with job configuration
      *      ]
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];

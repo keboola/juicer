@@ -7,11 +7,9 @@ use Keboola\Juicer\Exception\UserException;
 class ScrollerFactory
 {
     /**
-     * @param array $config
-     * @return ScrollerInterface
      * @throws UserException
      */
-    public static function getScroller(array $config)
+    public static function getScroller(array $config): ScrollerInterface
     {
         $scroller = self::createScroller($config);
         $scroller = self::decorateScroller($scroller, $config);

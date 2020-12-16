@@ -29,14 +29,7 @@ class Json implements ParserInterface
 
     protected LoggerInterface $logger;
 
-    /**
-     * Json parser constructor.
-     * @param LoggerInterface $logger Logger instance.
-     * @param array $metadata Previously stored state of the json parser.
-     * @param int $compatLevel Compatibility level.
-     * @param int $cacheMemoryLimit
-     */
-    public function __construct(LoggerInterface $logger, array $metadata, $compatLevel, $cacheMemoryLimit = 2000000)
+    public function __construct(LoggerInterface $logger, array $metadata, int $compatLevel, int $cacheMemoryLimit = 2000000)
     {
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
@@ -73,7 +66,7 @@ class Json implements ParserInterface
     /**
      * @inheritdoc
      */
-    public function process(array $data, $type, $parentId = null)
+    public function process(array $data, string $type, $parentId = null)
     {
         try {
             $this->parser->process($data, $type, $parentId);

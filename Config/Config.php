@@ -17,8 +17,6 @@ class Config
     private array $jobs = [];
 
     /**
-     * Config constructor.
-     * @param array $configuration
      * @throws UserException
      */
     public function __construct(array $configuration)
@@ -52,7 +50,7 @@ class Config
      * @param string $name
      * @return bool|mixed
      */
-    public function getAttribute($name)
+    public function getAttribute(string $name)
     {
         return empty($this->attributes[$name]) ? false : $this->attributes[$name];
     }

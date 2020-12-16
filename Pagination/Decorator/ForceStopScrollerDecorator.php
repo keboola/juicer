@@ -37,11 +37,6 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     protected bool $limitReached = false;
 
-    /**
-     * ForceStopScrollerDecorator constructor.
-     * @param ScrollerInterface $scroller
-     * @param array $config
-     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         parent::__construct($scroller);

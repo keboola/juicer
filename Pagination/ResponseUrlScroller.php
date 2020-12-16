@@ -17,6 +17,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
 
     protected bool $paramIsQuery = false;
     
+
     protected string $delimiter = '.';
 
     /**
@@ -29,7 +30,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      *          'delimiter' => string // Data path separator char
      *      ]
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];

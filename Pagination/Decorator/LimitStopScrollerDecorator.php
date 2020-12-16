@@ -22,9 +22,6 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     private ?int $currentCount = null;
 
     /**
-     * Constructor.
-     * @param ScrollerInterface $scroller
-     * @param array $config
      * @throws UserException
      */
     public function __construct(ScrollerInterface $scroller, array $config)

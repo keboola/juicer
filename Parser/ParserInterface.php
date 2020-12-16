@@ -13,9 +13,9 @@ interface ParserInterface
      * Parse the data
      * @param array $data shall be the response body
      * @param string $type data type
-     * @param null $parentId
+     * @param string|array $parentId
      */
-    public function process(array $data, $type, $parentId = null);
+    public function process(array $data, string $type, $parentId = null);
 
 
     /**
