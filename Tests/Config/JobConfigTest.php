@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Config;
 
 use Keboola\Juicer\Config\JobConfig;
@@ -7,16 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class JobConfigTest extends TestCase
 {
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage The 'endpoint' property must be set in job.
-     */
-    public function testConstructInvalid()
+    public function testConstructInvalid(): void
     {
         new JobConfig([]);
     }
 
-    public function testConstructDefault()
+    public function testConstructDefault(): void
     {
         $job = new JobConfig(['endpoint' => 'fooBar']);
         self::assertEquals('fooBar', $job->getEndpoint());
@@ -30,7 +28,7 @@ class JobConfigTest extends TestCase
         self::assertNotEmpty($job->getJobId());
     }
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $config = ['endpoint' => 'fooBar', 'id' => 'baz', 'params' => ['a' => 'b'], 'dataType' => 'dt'];
         $job = new JobConfig($config);
@@ -42,49 +40,33 @@ class JobConfigTest extends TestCase
         self::assertEquals('baz', $job->getJobId());
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage The 'children' property must an array of jobs.
-     */
-    public function testConstructChildrenInvalid1()
+    public function testConstructChildrenInvalid1(): void
     {
         new JobConfig(['endpoint' => 'fooBar', 'children' => 'invalid']);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Job configuration must be an array: 'invalid'
-     */
-    public function testConstructChildrenInvalid2()
+    public function testConstructChildrenInvalid2(): void
     {
         new JobConfig(['endpoint' => 'fooBar', 'children' => ['invalid']]);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage The 'endpoint' property must be set in job.
-     */
-    public function testConstructChildrenInvalid3()
+    public function testConstructChildrenInvalid3(): void
     {
         new JobConfig(['endpoint' => 'fooBar', 'children' => [['invalid']]]);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage The 'params' property must be an array.
-     */
-    public function testConstructChildrenInvalid4()
+    public function testConstructChildrenInvalid4(): void
     {
         new JobConfig(['endpoint' => 'fooBar', 'params' => 'invalid']);
     }
 
-    public function testConstructChildren()
+    public function testConstructChildren(): void
     {
         $job = new JobConfig(['endpoint' => 'fooBar', 'children' => [['endpoint' => 'fooBar', 'id' => 'baz']]]);
         self::assertEquals(['baz' => new JobConfig(['endpoint' => 'fooBar', 'id' => 'baz'])], $job->getChildJobs());
     }
 
-    public function testConstructSet()
+    public function testConstructSet(): void
     {
         $config = ['endpoint' => 'fooBar', 'id' => 'baz', 'params' => ['a' => 'b'], 'dataType' => 'dt'];
         $job = new JobConfig($config);

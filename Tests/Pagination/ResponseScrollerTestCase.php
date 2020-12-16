@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Config\JobConfig;
@@ -13,8 +15,8 @@ class ResponseScrollerTestCase extends TestCase
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
     }
 }

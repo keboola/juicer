@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Exception\UserException;
 
 class ScrollerFactory
 {
-    /**
-     * @throws UserException
-     */
     public static function getScroller(array $config): ScrollerInterface
     {
         $scroller = self::createScroller($config);

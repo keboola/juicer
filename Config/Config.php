@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Config;
 
 use Keboola\Juicer\Exception\UserException;
@@ -16,9 +18,6 @@ class Config
      */
     private array $jobs = [];
 
-    /**
-     * @throws UserException
-     */
     public function __construct(array $configuration)
     {
         if (empty($configuration['jobs']) || !is_array($configuration['jobs'])) {
@@ -28,7 +27,7 @@ class Config
         $jobConfigs = [];
         foreach ($configuration['jobs'] as $job) {
             if (!is_array($job)) {
-                throw new UserException("Job configuration must be an array: " . var_export($job, true));
+                throw new UserException('Job configuration must be an array: ' . var_export($job, true));
             }
             $jobConfig = new JobConfig($job);
             $jobConfigs[$jobConfig->getJobId()] = $jobConfig;

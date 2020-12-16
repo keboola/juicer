@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -58,7 +60,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
-        if (false === $this->hasMore($response)) {
+        if ($this->hasMore($response) === false) {
             return false;
         }
 
@@ -80,7 +82,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             $value = $response->{$this->field};
         }
 
-        if ((bool)$value === $this->stopOn) {
+        if ((bool) $value === $this->stopOn) {
             return false;
         } else {
             return true;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -111,7 +113,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * Checks time between first and current request
      * @return bool
      */
-    private function checkTime()
+    private function checkTime(): bool
     {
         if (is_null($this->timeLimit)) {
             return false;
@@ -151,10 +153,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         parent::reset();
     }
 
-    /**
-     * @return bool
-     */
-    public function getLimitReached()
+    public function getLimitReached(): bool
     {
         return $this->limitReached;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -21,9 +23,6 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 
     private ?int $currentCount = null;
 
-    /**
-     * @throws UserException
-     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         parent::__construct($scroller);

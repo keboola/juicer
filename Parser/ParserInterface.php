@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvTable\Table;
@@ -15,7 +17,7 @@ interface ParserInterface
      * @param string $type data type
      * @param string|array $parentId
      */
-    public function process(array $data, string $type, $parentId = null);
+    public function process(array $data, string $type, $parentId = null): void;
 
 
     /**

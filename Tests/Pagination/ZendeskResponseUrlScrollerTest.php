@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @author Erik Zigo <erik.zigo@keboola.com>
  */
@@ -12,7 +15,7 @@ use Psr\Log\NullLogger;
 
 class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
-    public function testGetNextRequestStop()
+    public function testGetNextRequestStop(): void
     {
         $now = new \DateTime();
         $pagingStart = clone $now;
@@ -26,9 +29,8 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             $step = round(ZendeskResponseUrlScroller::NEXT_PAGE_FILTER_MINUTES * 0.5);
             $pagingStart->modify(sprintf('-%d minutes', $step));
 
-
             $response = new \stdClass();
-            $response->data = array_fill(0, 10, (object)['key' => 'value']);
+            $response->data = array_fill(0, 10, (object) ['key' => 'value']);
             $response->next_page = 'test?start_time=' . $pagingStart->getTimestamp();
 
             $next = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -43,7 +45,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         }
     }
 
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -51,50 +53,50 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next']);
 
         $response = new \stdClass();
-        $response->data = array_fill(0, 10, (object)['key' => 'value']);
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
-            'endpoint' => 'test?page=2'
+            'endpoint' => 'test?page=2',
         ]);
         self::assertEquals($expected, $next);
 
         $responseLast = new \stdClass();
-        $responseLast->data = array_fill(0, 10, (object)['key' => 'value']);
+        $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
         self::assertEquals(false, $last);
     }
 
-    public function testGetNextRequestNested()
+    public function testGetNextRequestNested(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'pagination.next']);
 
-        $response = (object)[
-            'pagination' => (object)[
+        $response = (object) [
+            'pagination' => (object) [
                 'next' => 'test?page=2',
-                'prev' => 'test?page=0' // Not used, just for demo
-            ]
+                'prev' => 'test?page=0', // Not used, just for demo
+            ],
         ];
 
         $next = $scroller->getNextRequest($client, $config, $response, []);
         $expected = $client->createRequest([
-            'endpoint' => 'test?page=2'
+            'endpoint' => 'test?page=2',
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestParams()
+    public function testGetNextRequestParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = new \stdClass();
-        $response->data = array_fill(0, 10, (object)['key' => 'value']);
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
@@ -104,25 +106,25 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             'endpoint' => 'test?page=2',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestQuery()
+    public function testGetNextRequestQuery(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
-        $response = (object)[
+        $response = (object) [
             'data' => [],
-            'scroll' => '?page=2&q=v'
+            'scroll' => '?page=2&q=v',
         ];
 
         $scroller = new ZendeskResponseUrlScroller([
             'urlKey' => 'scroll',
-            'paramIsQuery' => true
+            'paramIsQuery' => true,
         ]);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -130,26 +132,26 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             'endpoint' => 'test',
             'params' => [
                 'page' => 2,
-                'q' => 'v'
-            ]
+                'q' => 'v',
+            ],
         ]);
         self::assertEquals($expected, $nextRequest);
     }
 
-    public function testGetNextRequestQueryParams()
+    public function testGetNextRequestQueryParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
-        $response = (object)[
+        $response = (object) [
             'data' => [],
-            'scroll' => '?page=2&b=v'
+            'scroll' => '?page=2&b=v',
         ];
 
         $scroller = new ZendeskResponseUrlScroller([
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
-            'includeParams' => true
+            'includeParams' => true,
         ]);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -158,8 +160,8 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             'params' => [
                 'page' => 2,
                 'a' => 1,
-                'b' => 'v'
-            ]
+                'b' => 'v',
+            ],
         ]);
         self::assertEquals($expected, $nextRequest);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Exception\UserException;
@@ -19,70 +21,70 @@ use PHPUnit\Framework\TestCase;
 
 class ScrollerFactoryTest extends TestCase
 {
-    public function testCreateScroller()
+    public function testCreateScroller(): void
     {
         self::assertInstanceOf(NoScroller::class, ScrollerFactory::getScroller([]));
         self::assertInstanceOf(CursorScroller::class, ScrollerFactory::getScroller([
             'method' => 'cursor',
             'idKey' => 'id',
-            'param' => 'from'
+            'param' => 'from',
         ]));
         self::assertInstanceOf(OffsetScroller::class, ScrollerFactory::getScroller([
             'method' => 'offset',
-            'limit' => 2
+            'limit' => 2,
         ]));
         self::assertInstanceOf(PageScroller::class, ScrollerFactory::getScroller([
-            'method' => 'pagenum'
+            'method' => 'pagenum',
         ]));
         self::assertInstanceOf(ResponseUrlScroller::class, ScrollerFactory::getScroller([
-            'method' => 'response.url'
+            'method' => 'response.url',
         ]));
         self::assertInstanceOf(ResponseParamScroller::class, ScrollerFactory::getScroller([
             'method' => 'response.param',
             'responseParam' => 'scrollId',
-            'queryParam' => 'scrollID'
+            'queryParam' => 'scrollID',
         ]));
         self::assertInstanceOf(MultipleScroller::class, ScrollerFactory::getScroller([
             'method' => 'multiple',
-            'scrollers' => ['none' => []]
+            'scrollers' => ['none' => []],
         ]));
         self::assertInstanceOf(ZendeskResponseUrlScroller::class, ScrollerFactory::getScroller([
-            'method' => 'zendesk.response.url'
+            'method' => 'zendesk.response.url',
         ]));
     }
 
-    public function testDecorateScroller()
+    public function testDecorateScroller(): void
     {
         self::assertInstanceOf(HasMoreScrollerDecorator::class, ScrollerFactory::getScroller([
             'nextPageFlag' => [
                 'field' => 'continue',
-                'stopOn' => 'false'
+                'stopOn' => 'false',
             ],
-            'method' => 'pagenum'
+            'method' => 'pagenum',
         ]));
         self::assertInstanceOf(ForceStopScrollerDecorator::class, ScrollerFactory::getScroller([
             'forceStop' => [
-                'pages' => 2
-            ]
+                'pages' => 2,
+            ],
         ]));
         self::assertInstanceOf(LimitStopScrollerDecorator::class, ScrollerFactory::getScroller([
             'limitStop' => [
-                'count' => 10
-            ]
+                'count' => 10,
+            ],
         ]));
     }
 
-    public function testInvalid()
+    public function testInvalid(): void
     {
         try {
             ScrollerFactory::getScroller(['method' => 'fooBar']);
-            self::fail("Must raise exception");
+            self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertContains('Unknown pagination method \'fooBar\'', $e->getMessage());
         }
         try {
             ScrollerFactory::getScroller(['method' => ['foo' => 'bar']]);
-            self::fail("Must raise exception");
+            self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertContains('Unknown pagination method \'{"foo":"bar"}\'', $e->getMessage());
         }

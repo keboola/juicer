@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -10,15 +12,15 @@ use Psr\Log\NullLogger;
 
 class NoScrollerTest extends TestCase
 {
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new NoScroller();
@@ -31,15 +33,15 @@ class NoScrollerTest extends TestCase
         self::assertEquals(false, $next);
     }
 
-    public function testGetFirstRequest()
+    public function testGetFirstRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new NoScroller();
@@ -48,7 +50,7 @@ class NoScrollerTest extends TestCase
         self::assertEquals($expected, $req);
     }
 
-    public function testState()
+    public function testState(): void
     {
         $scroller = new NoScroller();
         self::assertEquals([], $scroller->getState());

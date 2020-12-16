@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use GuzzleHttp\Url;
@@ -32,10 +34,10 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
             $this->urlParam = $config['urlKey'];
         }
         if (isset($config['includeParams'])) {
-            $this->includeParams = (bool)$config['includeParams'];
+            $this->includeParams = (bool) $config['includeParams'];
         }
         if (isset($config['paramIsQuery'])) {
-            $this->paramIsQuery = (bool)$config['paramIsQuery'];
+            $this->paramIsQuery = (bool) $config['paramIsQuery'];
         }
     }
 
@@ -58,7 +60,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
             Url::fromString($nextUrl)->getQuery()->get('start_time')
         );
 
-        if ($startDateTime && $startDateTime > $now->modify(sprintf("-%d minutes", self::NEXT_PAGE_FILTER_MINUTES))) {
+        if ($startDateTime && $startDateTime > $now->modify(sprintf('-%d minutes', self::NEXT_PAGE_FILTER_MINUTES))) {
             return false;
         }
 

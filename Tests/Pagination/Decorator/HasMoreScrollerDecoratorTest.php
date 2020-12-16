@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -12,7 +14,7 @@ use Psr\Log\NullLogger;
 
 class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
-    public function testGetNextRequestHasMore()
+    public function testGetNextRequestHasMore(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
@@ -20,8 +22,8 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $config = [
             'nextPageFlag' => [
                 'field' => 'hasMore',
-                'stopOn' => false
-            ]
+                'stopOn' => false,
+            ],
         ];
 
         $scroller = new OffsetScroller(['limit' => 10]);
@@ -46,13 +48,13 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         self::assertFalse($noNext);
     }
 
-    public function testHasMore()
+    public function testHasMore(): void
     {
         $scroller = new HasMoreScrollerDecorator(new NoScroller, [
             'nextPageFlag' => [
                 'field' => 'finished',
-                'stopOn' => true
-            ]
+                'stopOn' => true,
+            ],
         ]);
 
         $yes = self::callMethod($scroller, 'hasMore', [(object) ['finished' => false]]);
@@ -61,7 +63,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         self::assertFalse($no);
     }
 
-    public function testHasMoreNotSet()
+    public function testHasMoreNotSet(): void
     {
         $scroller = new HasMoreScrollerDecorator(new NoScroller, []);
 
@@ -69,7 +71,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         self::assertNull($null);
     }
 
-    public function testCloneScrollerDecorator()
+    public function testCloneScrollerDecorator(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
@@ -77,8 +79,8 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $config = [
             'nextPageFlag' => [
                 'field' => 'hasMore',
-                'stopOn' => false
-            ]
+                'stopOn' => false,
+            ],
         ];
 
         $scroller = new OffsetScroller(['limit' => 10]);
@@ -88,7 +90,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $decorator->getNextRequest(
             $client,
             $jobConfig,
-            (object)['hasMore' => true],
+            (object) ['hasMore' => true],
             array_fill(0, 10, ['k' => 'v'])
         );
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -88,9 +90,6 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         return $this->scrollers;
     }
 
-    /**
-     * @throws UserException
-     */
     private function getScrollerForJob(JobConfig $jobConfig): ScrollerInterface
     {
         if (empty($jobConfig->getConfig()['scroller'])) {

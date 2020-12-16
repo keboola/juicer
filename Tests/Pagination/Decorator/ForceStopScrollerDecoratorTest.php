@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -16,17 +18,17 @@ class ForceStopScrollerDecoratorTest extends TestCase
      * @param array $config
      * @param array|object $response
      */
-    public function testCheckLimits(array $config, $response)
+    public function testCheckLimits(array $config, $response): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig([
-            'endpoint' => 'test'
+            'endpoint' => 'test',
         ]);
 
         $scroller = new PageScroller([]);
 
         $decorator = new ForceStopScrollerDecorator($scroller, [
-            'forceStop' => $config
+            'forceStop' => $config,
         ]);
 
         $i = 0;
@@ -42,36 +44,36 @@ class ForceStopScrollerDecoratorTest extends TestCase
     public function limitProvider()
     {
         $response = [
-            (object)[
-                'asdf' => 1234
-            ]
+            (object) [
+                'asdf' => 1234,
+            ],
         ];
 
         return [
             'pages' => [
                 ['pages' => 3],
-                $response
+                $response,
             ],
             'volume' => [
                 ['volume' => strlen(json_encode($response)) * 3],
-                $response
-            ]
+                $response,
+            ],
         ];
     }
 
-    public function testTimeLimit()
+    public function testTimeLimit(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig([
-            'endpoint' => 'test'
+            'endpoint' => 'test',
         ]);
 
         $scroller = new PageScroller([]);
 
         $decorator = new ForceStopScrollerDecorator($scroller, [
             'forceStop' => [
-                'time' => 3
-            ]
+                'time' => 3,
+            ],
         ]);
 
         $response = ['a'];
@@ -87,19 +89,19 @@ class ForceStopScrollerDecoratorTest extends TestCase
         self::assertEquals(3, $i);
     }
 
-    public function testCloneScrollerDecorator()
+    public function testCloneScrollerDecorator(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig([
-            'endpoint' => 'test'
+            'endpoint' => 'test',
         ]);
 
         $scroller = new PageScroller([]);
 
         $decorator = new ForceStopScrollerDecorator($scroller, [
             'forceStop' => [
-                'time' => 3
-            ]
+                'time' => 3,
+            ],
         ]);
 
         $response = ['a'];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvMap\Mapper;
@@ -25,13 +27,10 @@ class JsonMap implements ParserInterface
 
     private LoggerInterface $logger;
 
-    /**
-     * @throws UserException
-     */
-    public function __construct(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)
+    public function __construct(Config $config, LoggerInterface $logger, ?ParserInterface $fallbackParser = null)
     {
         if (empty($config->getAttribute('mappings'))) {
-            throw new UserException("Cannot initialize JSON Mapper with no mapping");
+            throw new UserException('Cannot initialize JSON Mapper with no mapping');
         }
 
         $mappers = [];
@@ -86,7 +85,7 @@ class JsonMap implements ParserInterface
 
             return $this->mappers[$type]->parse($data, (array) $parentId);
         } catch (BadConfigException $e) {
-            throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
+            throw new UserException('Bad Json to CSV Mapping configuration: ' . $e->getMessage(), 0, $e);
         } catch (BadDataException $e) {
             throw new UserException("Error saving '{$type}' data to CSV column: " . $e->getMessage(), 0, $e, $e->getData());
         }

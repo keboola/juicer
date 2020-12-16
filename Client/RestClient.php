@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\RequestException;
@@ -43,21 +45,21 @@ class RestClient
      */
     public function __construct(
         LoggerInterface $logger,
-        $guzzleConfig = [],
-        $retryConfig = [],
-        $defaultOptions = [],
-        $ignoreErrors = []
+        array $guzzleConfig = [],
+        array $retryConfig = [],
+        array $defaultOptions = [],
+        array $ignoreErrors = []
     ) {
         $guzzle = new Client($guzzleConfig);
         $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));
 
-        $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent) {
+        $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent): void {
             $errno = $errorEvent->getTransferInfo('errno');
             $error = $errorEvent->getTransferInfo('error');
             if ($errno > 0) {
-                throw new UserException(sprintf("CURL error %d: %s", $errno, $error));
+                throw new UserException(sprintf('CURL error %d: %s', $errno, $error));
             }
-        }, "last");
+        }, 'last');
         $this->logger = $logger;
         $this->client = $guzzle;
         $this->defaultRequestOptions = $defaultOptions;
@@ -67,7 +69,7 @@ class RestClient
     /**
      * Update request config with default options
      */
-    protected function getRequestConfig(array $config) : array
+    protected function getRequestConfig(array $config): array
     {
         if (!empty($this->defaultRequestOptions)) {
             $config = array_replace_recursive($this->defaultRequestOptions, $config);
@@ -76,12 +78,12 @@ class RestClient
         return $config;
     }
 
-    public function getClient() : Client
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    private function handleException(\Exception $e, ?ResponseInterface $response)
+    private function handleException(\Throwable $e, ?ResponseInterface $response)
     {
         if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
             in_array($e->getCode(), $this->ignoreErrors)
@@ -91,9 +93,9 @@ class RestClient
                 try {
                     $result = $this->getObjectFromResponse($response);
                 } catch (UserException $ex) {
-                    $this->logger->warning("Failed to parse response " . $ex->getMessage());
+                    $this->logger->warning('Failed to parse response ' . $ex->getMessage());
                     $result = new \stdClass();
-                    $result->errorData = (string)($response->getBody());
+                    $result->errorData = (string) ($response->getBody());
                 }
             } else {
                 $this->logger->warning('Failed to process response ' . $e->getMessage());
@@ -131,11 +133,11 @@ class RestClient
             if ($resp === false) {
                 $data = json_decode($e->getResponse()->getBody(), true);
                 if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                    $data = (string)$e->getResponse()->getBody();
+                    $data = (string) $e->getResponse()->getBody();
                 }
 
                 throw new UserException(
-                    "The API request failed: [" . $e->getResponse()->getStatusCode() . "] " . $e->getMessage(),
+                    'The API request failed: [' . $e->getResponse()->getStatusCode() . '] ' . $e->getMessage(),
                     400,
                     $e,
                     ['body' => $data]
@@ -170,7 +172,7 @@ class RestClient
             $decoded = jsonDecode($body, false, 512, 0, true, true);
         } catch (JsonDecodeException $e) {
             throw new UserException(
-                "Invalid JSON response from API: " . $e->getMessage(),
+                'Invalid JSON response from API: ' . $e->getMessage(),
                 0,
                 null,
                 $e->getData()
@@ -180,9 +182,6 @@ class RestClient
         return $decoded;
     }
 
-    /**
-     * @throws UserException
-     */
     public function getGuzzleRequest(RestRequest $request): RequestInterface
     {
         switch ($request->getMethod()) {
@@ -253,31 +252,31 @@ class RestClient
             CURLE_COULDNT_CONNECT,
             CURLE_SSL_CONNECT_ERROR,
             CURLE_GOT_NOTHING,
-            CURLE_RECV_ERROR
+            CURLE_RECV_ERROR,
         ];
 
         return new RetrySubscriber([
             'filter' => RetrySubscriber::createChainFilter([
                 RetrySubscriber::createStatusFilter($httpRetryCodes),
-                RetrySubscriber::createCurlFilter($curlRetryCodes)
+                RetrySubscriber::createCurlFilter($curlRetryCodes),
             ]),
             'max' => $maxRetries,
             'delay' => function ($retries, AbstractTransferEvent $event) use ($headerName, $logger) {
                 $delay = self::getRetryDelay($retries, $event, $headerName);
 
                 $errData = [
-                    "http_code" => !empty($event->getTransferInfo()['http_code']) ? $event->getTransferInfo()['http_code'] : null,
-                    "body" => is_null($event->getResponse()) ? null : (string) $event->getResponse()->getBody(),
-                    "url" =>  !empty($event->getTransferInfo()['url']) ? $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
+                    'http_code' => !empty($event->getTransferInfo()['http_code']) ? $event->getTransferInfo()['http_code'] : null,
+                    'body' => is_null($event->getResponse()) ? null : (string) $event->getResponse()->getBody(),
+                    'url' =>  !empty($event->getTransferInfo()['url']) ? $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
                 ];
                 if ($event instanceof ErrorEvent) {
-                    $errData["message"] = $event->getException()->getMessage();
+                    $errData['message'] = $event->getException()->getMessage();
                 }
                 $logger->debug("Http request failed, retrying in {$delay}s", $errData);
 
                 // ms > s
                 return 1000 * $delay;
-            }
+            },
         ]);
     }
 

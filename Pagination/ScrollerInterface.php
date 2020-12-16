@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -27,7 +29,7 @@ interface ScrollerInterface
     /**
      * Reset the pagination pointer
      */
-    public function reset();
+    public function reset(): void;
 
     /**
      * Get the current scrolling state

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -13,7 +15,7 @@ use Psr\Log\NullLogger;
 
 class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 {
-    public function testField()
+    public function testField(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
@@ -23,8 +25,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorated = new LimitStopScrollerDecorator($scroller, $config);
         $response = new \stdClass();
-        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 1];
-        $response->results->data = array_fill(0, 10, (object)['key' => 'value']);
+        $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
+        $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $next = $decorated->getNextRequest(
             $client,
@@ -35,8 +37,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
 
-        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 2];
-        $response->results->data = array_fill(0, 5, (object)['key' => 'value2']);
+        $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 2];
+        $response->results->data = array_fill(0, 5, (object) ['key' => 'value2']);
         $noNext = $decorated->getNextRequest(
             $client,
             $jobConfig,
@@ -46,7 +48,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         self::assertFalse($noNext);
     }
 
-    public function testLimit()
+    public function testLimit(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
@@ -56,8 +58,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorated = new LimitStopScrollerDecorator($scroller, $config);
         $response = new \stdClass();
-        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 1];
-        $response->results->data = array_fill(0, 10, (object)['key' => 'value']);
+        $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
+        $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $next = $decorated->getNextRequest(
             $client,
@@ -68,8 +70,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
 
-        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 2];
-        $response->results->data = array_fill(0, 5, (object)['key' => 'value2']);
+        $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 2];
+        $response->results->data = array_fill(0, 5, (object) ['key' => 'value2']);
         $noNext = $decorated->getNextRequest(
             $client,
             $jobConfig,
@@ -79,25 +81,17 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         self::assertFalse($noNext);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage One of 'limitStop.field' or 'limitStop.count' attributes is required.
-     */
-    public function testInvalid1()
+    public function testInvalid1(): void
     {
         new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]]);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Specify only one of 'limitStop.field' or 'limitStop.count'
-     */
-    public function testInvalid2()
+    public function testInvalid2(): void
     {
         new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 12, 'field' => 'whatever']]);
     }
 
-    public function testCloneScrollerDecorator()
+    public function testCloneScrollerDecorator(): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig(['endpoint' => 'test']);
@@ -107,8 +101,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorator = new LimitStopScrollerDecorator($scroller, $config);
         $response = new \stdClass();
-        $response->results = (object)['totalNumber' => 15, 'pageNumber' => 1];
-        $response->results->data = array_fill(0, 10, (object)['key' => 'value']);
+        $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
+        $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $decorator->getNextRequest(
             $client,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Config;
 
 use Keboola\Juicer\Exception\UserException;
@@ -55,7 +57,7 @@ class JobConfig
             }
             foreach ($config['children'] as $child) {
                 if (!is_array($child)) {
-                    throw new UserException("Job configuration must be an array: " . var_export($child, true));
+                    throw new UserException('Job configuration must be an array: ' . var_export($child, true));
                 }
                 $child = new JobConfig($child);
                 $this->childJobs[$child->getJobId()] = $child;
@@ -66,32 +68,32 @@ class JobConfig
     /**
      * @return JobConfig[]
      */
-    public function getChildJobs() : array
+    public function getChildJobs(): array
     {
         return $this->childJobs;
     }
 
-    public function getJobId() : string
+    public function getJobId(): string
     {
         return $this->jobId;
     }
 
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    public function getEndpoint() : string
+    public function getEndpoint(): string
     {
         return $this->config['endpoint'];
     }
 
-    public function setEndpoint(string $endpoint)
+    public function setEndpoint(string $endpoint): void
     {
         $this->config['endpoint'] = $endpoint;
     }
 
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->config['params'];
     }
@@ -105,12 +107,12 @@ class JobConfig
      * @param string $name
      * @param mixed $value
      */
-    public function setParam($name, $value): void
+    public function setParam(string $name, $value): void
     {
         $this->config['params'][$name] = $value;
     }
 
-    public function getDataType() : string
+    public function getDataType(): string
     {
         return $this->config['dataType'];
     }

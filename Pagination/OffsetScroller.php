@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -51,7 +53,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
             ));
         }
 
-        $this->limit = (int)$config['limit'];
+        $this->limit = (int) $config['limit'];
 
         if (!empty($config['limitParam'])) {
             $this->limitParam = $config['limitParam'];
@@ -60,10 +62,10 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
             $this->offsetParam = $config['offsetParam'];
         }
         if (isset($config['firstPageParams'])) {
-            $this->firstPageParams = (bool)$config['firstPageParams'];
+            $this->firstPageParams = (bool) $config['firstPageParams'];
         }
         if (isset($config['offsetFromJob'])) {
-            $this->offsetFromJob = (bool)$config['offsetFromJob'];
+            $this->offsetFromJob = (bool) $config['offsetFromJob'];
         }
     }
 
@@ -100,7 +102,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->pointer = 0;
     }
@@ -113,7 +115,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         $config = $jobConfig->getConfig();
         $scrollParams = [
             $this->limitParam => $this->getLimit($jobConfig),
-            $this->offsetParam => $this->pointer
+            $this->offsetParam => $this->pointer,
         ];
 
         $config['params'] = array_replace($jobConfig->getParams(), $scrollParams);

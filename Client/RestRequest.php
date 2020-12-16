@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Client;
 
 use Keboola\Juicer\Exception\UserException;
@@ -51,22 +53,22 @@ class RestRequest
         }
     }
 
-    public function getEndpoint() : string
+    public function getEndpoint(): string
     {
         return $this->endpoint;
     }
 
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->method;
     }
 
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -74,14 +76,14 @@ class RestRequest
     /**
      * @return string METHOD endpoint query/JSON params
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return join(' ', [
             $this->getMethod(),
             $this->getEndpoint(),
-            'GET' == $this->getMethod()
+            $this->getMethod() === 'GET'
                 ? http_build_query($this->getParams())
-                : json_encode($this->getParams(), JSON_PRETTY_PRINT)
+                : json_encode($this->getParams(), JSON_PRETTY_PRINT),
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -13,15 +15,15 @@ use Psr\Log\NullLogger;
  */
 class PageScrollerTest extends TestCase
 {
-    public function testGetFirstRequest()
+    public function testGetFirstRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new PageScroller(['limit' => 500]);
@@ -34,15 +36,15 @@ class PageScrollerTest extends TestCase
         self::assertEquals($client->createRequest($expectedCfg), $req);
     }
 
-    public function testGetFirstRequestExplicit()
+    public function testGetFirstRequestExplicit(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new PageScroller(['limit' => 500, 'firstPage' => 0]);
@@ -55,34 +57,34 @@ class PageScrollerTest extends TestCase
         self::assertEquals($client->createRequest($expectedCfg), $req);
     }
 
-    public function testGetFirstRequestNoParams()
+    public function testGetFirstRequestNoParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new PageScroller([
-            'firstPageParams' => false
+            'firstPageParams' => false,
         ]);
 
         $req = $scroller->getFirstRequest($client, $config);
         self::assertEquals($client->createRequest($config->getConfig()), $req);
     }
 
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
 
         $scroller = new PageScroller([]);
@@ -96,8 +98,8 @@ class PageScrollerTest extends TestCase
             'params' => [
                 'a' => 1,
                 'b' => 2,
-                'page' => 2
-            ]
+                'page' => 2,
+            ],
         ]);
         self::assertEquals($expected, $next);
 
@@ -107,8 +109,8 @@ class PageScrollerTest extends TestCase
             'params' => [
                 'a' => 1,
                 'b' => 2,
-                'page' => 3
-            ]
+                'page' => 3,
+            ],
         ]);
         self::assertEquals($expected2, $next2);
 
@@ -124,16 +126,16 @@ class PageScrollerTest extends TestCase
         self::assertEquals(false, $next4);
     }
 
-    public function testGetNextRequestPost()
+    public function testGetNextRequestPost(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
+                'b' => 2,
             ],
-            'method' => 'POST'
+            'method' => 'POST',
         ]);
 
         $scroller = new PageScroller([]);
@@ -146,14 +148,14 @@ class PageScrollerTest extends TestCase
             'params' => [
                 'a' => 1,
                 'b' => 2,
-                'page' => 2
+                'page' => 2,
             ],
-            'method' => 'POST'
+            'method' => 'POST',
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetFirstNext()
+    public function testGetFirstNext(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig(['endpoint' => 'test']);
@@ -171,7 +173,7 @@ class PageScrollerTest extends TestCase
         self::assertFalse($last);
     }
 
-    public function testSetState()
+    public function testSetState(): void
     {
         $client = new RestClient(new NullLogger());
         $config = new JobConfig(['endpoint' => 'test']);

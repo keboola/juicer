@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -60,7 +62,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     {
         return [
             'decorator' => get_object_vars($this),
-            'scroller' => get_object_vars($this->scroller)
+            'scroller' => get_object_vars($this->scroller),
         ];
     }
 

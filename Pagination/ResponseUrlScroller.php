@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -16,7 +18,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
     protected bool $includeParams = false;
 
     protected bool $paramIsQuery = false;
-    
+
 
     protected string $delimiter = '.';
 
@@ -36,10 +38,10 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
             $this->urlParam = $config['urlKey'];
         }
         if (isset($config['includeParams'])) {
-            $this->includeParams = (bool)$config['includeParams'];
+            $this->includeParams = (bool) $config['includeParams'];
         }
         if (isset($config['paramIsQuery'])) {
-            $this->paramIsQuery = (bool)$config['paramIsQuery'];
+            $this->paramIsQuery = (bool) $config['paramIsQuery'];
         }
         if (isset($config['delimiter'])) {
             $this->delimiter = $config['delimiter'];

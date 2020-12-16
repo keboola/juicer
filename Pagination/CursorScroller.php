@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -48,7 +50,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
         $this->idKey = $config['idKey'];
         $this->param = $config['param'];
         if (isset($config['reverse'])) {
-            $this->reverse = (bool)$config['reverse'];
+            $this->reverse = (bool) $config['reverse'];
         }
         if (!empty($config['increment'])) {
             $this->increment = $config['increment'];
@@ -82,7 +84,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
                         json_encode($cursorVal)
                     ));
                 }
-                $cursorVal = (int)$cursorVal;
+                $cursorVal = (int) $cursorVal;
 
                 if (is_null($this->max) || $cursorVal > $this->max) {
                     $this->max = $cursorVal;

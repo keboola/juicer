@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -9,14 +11,14 @@ use Psr\Log\NullLogger;
 
 class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
             'responseParam' => '_scroll_id',
-            'queryParam' => 'scroll_id'
+            'queryParam' => 'scroll_id',
         ]);
 
         $response = new \stdClass();
@@ -27,8 +29,8 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $expected = $client->createRequest([
             'endpoint' => 'test',
             'params' => [
-                'scroll_id' => 'asdf'
-            ]
+                'scroll_id' => 'asdf',
+            ],
         ]);
         self::assertEquals($expected, $next);
 
@@ -39,33 +41,33 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         self::assertEquals(false, $last);
     }
 
-    public function testGetNextRequestNested()
+    public function testGetNextRequestNested(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
             'responseParam' => 'scroll.id',
-            'queryParam' => 'scroll_id'
+            'queryParam' => 'scroll_id',
         ]);
 
         $response = (object) [
             'scroll' => (object) [
-                'id' => 'asdf'
-            ]
+                'id' => 'asdf',
+            ],
         ];
 
         $next = $scroller->getNextRequest($client, $config, $response, []);
         $expected = $client->createRequest([
             'endpoint' => 'test',
             'params' => [
-                'scroll_id' => 'asdf'
-            ]
+                'scroll_id' => 'asdf',
+            ],
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestOverride()
+    public function testGetNextRequestOverride(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -78,9 +80,9 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                 'endpoint' => '_search/scroll',
                 'method' => 'POST',
                 'params' => [
-                    'scroll' => '1m'
-                ]
-            ]
+                    'scroll' => '1m',
+                ],
+            ],
         ]);
 
         $response = new \stdClass();
@@ -92,14 +94,14 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             'endpoint' => '_search/scroll',
             'params' => [
                 'scroll' => '1m',
-                'scroll_id' => 'asdf'
+                'scroll_id' => 'asdf',
             ],
-            'method' => 'POST'
+            'method' => 'POST',
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestParams()
+    public function testGetNextRequestParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -114,9 +116,9 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             'includeParams' => true,
             'scrollRequest' => [
                 'params' => [
-                    'scroll' => '1m'
-                ]
-            ]
+                    'scroll' => '1m',
+                ],
+            ],
         ]);
 
         $nextParams = $scrollerParams->getNextRequest($client, $config, $response, $response->data);
@@ -126,13 +128,13 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                 'a' => 1,
                 'b' => 2,
                 'scroll' => '1m',
-                'scroll_id' => 'asdf'
-            ]
+                'scroll_id' => 'asdf',
+            ],
         ]);
         self::assertEquals($expectedParams, $nextParams);
     }
 
-    public function testGetFirstRequest()
+    public function testGetFirstRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -141,25 +143,25 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             'endpoint' => '_search/scroll',
             'method' => 'POST',
             'params' => [
-                'scroll' => '1m'
-            ]
+                'scroll' => '1m',
+            ],
         ]]);
 
         $expected = $client->createRequest($config->getConfig());
         self::assertEquals($expected, $scroller->getFirstRequest($client, $config));
     }
 
-    public function testInvalid()
+    public function testInvalid(): void
     {
         try {
             new ResponseParamScroller([]);
-            self::fail("Must raise exception");
+            self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertContains('Missing required \'pagination.responseParam\' parameter', $e->getMessage());
         }
         try {
             new ResponseParamScroller(['responseParam' => 'foo']);
-            self::fail("Must raise exception");
+            self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertContains('Missing required \'pagination.queryParam\' parameter', $e->getMessage());
         }
