@@ -6,27 +6,36 @@ namespace Keboola\Juicer\Tests\Config;
 
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
     public function testConstructInvalid1(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'jobs' section is required in the configuration.");
         new Config([]);
     }
 
     public function testConstructInvalid2(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'jobs' section is required in the configuration.");
         new Config(['jobs' => 'invalid']);
     }
 
     public function testConstructInvalid3(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Job configuration must be an array: 'invalid'");
         new Config(['jobs' => ['invalid']]);
     }
 
     public function testConstructInvalid4(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'endpoint' property must be set in job.");
         new Config(['jobs' => [['still-invalid']]]);
     }
 

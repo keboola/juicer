@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Config;
 
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use PHPUnit\Framework\TestCase;
 
 class JobConfigTest extends TestCase
 {
     public function testConstructInvalid(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'endpoint' property must be set in job.");
         new JobConfig([]);
     }
 
@@ -42,21 +45,29 @@ class JobConfigTest extends TestCase
 
     public function testConstructChildrenInvalid1(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'children' property must an array of jobs.");
         new JobConfig(['endpoint' => 'fooBar', 'children' => 'invalid']);
     }
 
     public function testConstructChildrenInvalid2(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Job configuration must be an array: 'invalid'");
         new JobConfig(['endpoint' => 'fooBar', 'children' => ['invalid']]);
     }
 
     public function testConstructChildrenInvalid3(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'endpoint' property must be set in job.");
         new JobConfig(['endpoint' => 'fooBar', 'children' => [['invalid']]]);
     }
 
     public function testConstructChildrenInvalid4(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("The 'params' property must be an array.");
         new JobConfig(['endpoint' => 'fooBar', 'params' => 'invalid']);
     }
 

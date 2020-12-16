@@ -131,6 +131,8 @@ class MultipleScrollerTest extends TestCase
             'endpoint' => 'data',
         ]);
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Default scroller 'def' does not exist");
         $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
@@ -144,6 +146,10 @@ class MultipleScrollerTest extends TestCase
             'scroller' => 'nonExistentScroller',
         ]);
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page"
+        );
         $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 

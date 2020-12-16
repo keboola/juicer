@@ -340,6 +340,8 @@ class RestClientTest extends ExtractorTestCase
 
         $request = new RestRequest(['endpoint' => 'ep']);
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage('Invalid JSON response from API: JSON decode error:');
         try {
             $restClient->download($request);
         } catch (UserException $e) {
@@ -347,8 +349,6 @@ class RestClientTest extends ExtractorTestCase
             self::assertArrayHasKey('json', $e->getData());
             throw $e;
         }
-
-        throw new \Exception;
     }
 
     public function testDefaultRequestOptions(): void

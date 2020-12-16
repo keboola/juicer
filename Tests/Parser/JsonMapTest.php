@@ -211,6 +211,10 @@ class JsonMapTest extends TestCase
             }
         ]');
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'."
+        );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
 
@@ -238,6 +242,10 @@ class JsonMapTest extends TestCase
             }
         ]');
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Error saving 'first' data to CSV column: Error writing 'col' column: Cannot write object into a column"
+        );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
 

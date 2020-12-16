@@ -7,6 +7,7 @@ namespace Keboola\Juicer\Tests\Pagination\Decorator;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\Decorator\LimitStopScrollerDecorator;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\PageScroller;
@@ -83,11 +84,15 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
     public function testInvalid1(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
         new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]]);
     }
 
     public function testInvalid2(): void
     {
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Specify only one of 'limitStop.field' or 'limitStop.count'");
         new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 12, 'field' => 'whatever']]);
     }
 
