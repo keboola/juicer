@@ -74,7 +74,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         foreach ($this->scrollers as $scroller) {
             $scroller->reset();

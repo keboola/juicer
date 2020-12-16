@@ -147,7 +147,7 @@ class MultipleScrollerTest extends TestCase
         $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
-    protected function getScrollerConfig()
+    protected function getScrollerConfig(): array
     {
         $responseParamConfig = [
             'method' => 'response.param',

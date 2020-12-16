@@ -31,7 +31,7 @@ class NoScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
     }
 

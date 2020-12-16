@@ -42,7 +42,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->scroller->reset();
     }

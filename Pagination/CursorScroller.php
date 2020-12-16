@@ -110,7 +110,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->max = $this->min = null;
     }

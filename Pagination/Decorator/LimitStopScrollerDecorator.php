@@ -73,7 +73,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->currentCount = 0;
         parent::reset();

@@ -21,8 +21,8 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
-    const LEGACY_VERSION = 2;
-    const LATEST_VERSION = 3;
+    public const LEGACY_VERSION = 2;
+    public const LATEST_VERSION = 3;
 
     /**
      * @var LegacyParser|Parser
@@ -75,7 +75,7 @@ class Json implements ParserInterface
     /**
      * @inheritdoc
      */
-    public function process(array $data, string $type, $parentId = null)
+    public function process(array $data, string $type, $parentId = null): void
     {
         try {
             $this->parser->process($data, $type, $parentId);

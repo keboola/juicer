@@ -72,7 +72,7 @@ class JsonMap implements ParserInterface
     /**
      * @inheritdoc
      */
-    public function process(array $data, $type, $parentId = null)
+    public function process(array $data, $type, $parentId = null): void
     {
         try {
             if (empty($this->mappers[$type])) {
@@ -80,10 +80,10 @@ class JsonMap implements ParserInterface
                     throw new UserException("Mapper for type '{$type}' has not been configured.");
                 }
 
-                return $this->fallback->process($data, $type, (array) $parentId);
+                $this->fallback->process($data, $type, (array) $parentId);
             }
 
-            return $this->mappers[$type]->parse($data, (array) $parentId);
+            $this->mappers[$type]->parse($data, (array) $parentId);
         } catch (BadConfigException $e) {
             throw new UserException('Bad Json to CSV Mapping configuration: ' . $e->getMessage(), 0, $e);
         } catch (BadDataException $e) {

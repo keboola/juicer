@@ -95,7 +95,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->page = $this->firstPage;
     }

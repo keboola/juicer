@@ -145,7 +145,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->pageCounter = 0;
         $this->volumeCounter = 0;
