@@ -37,7 +37,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      *          'limit' => int // page size limit
      *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
      *          'firstPage' => int // number of the first page
-     *          'firstPageParams` => bool // whether to include the limit and offset in the first request (default = true)
+     *          'firstPageParams` => bool // whether to include the limit and offset in the first request (def. true)
      *      ]
      */
     public function __construct(array $config)

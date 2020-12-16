@@ -202,7 +202,9 @@ class JsonTest extends ExtractorTestCase
             ],
             $parser->getMetadata()
         );
-        self::assertTrue($handler->hasWarning('Ignored request for legacy JSON parser, because configuration is already upgraded.'));
+        self::assertTrue($handler->hasWarning(
+            'Ignored request for legacy JSON parser, because configuration is already upgraded.'
+        ));
     }
 
     public function testGetMetadataLegacy(): void
@@ -272,9 +274,13 @@ class JsonTest extends ExtractorTestCase
 "1","root_a52f96d95586c8de1e8fa67b77597262"
 ', file_get_contents($parser->getResults()['root']));
 
-        self::assertEquals('"a","b","arr1","arr2","JSON_parentId"
-"hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997","root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
-', file_get_contents($parser->getResults()['root_arr']));
+        self::assertEquals(
+            '"a","b","arr1","arr2","JSON_parentId"' . "\n" .
+            '"hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997",' .
+            '"root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
+',
+            file_get_contents($parser->getResults()['root_arr'])
+        );
 
         self::assertEquals('"c","JSON_parentId"
 "d","root.arr_a75f0a3e0b848d52033929a761e6c997"
@@ -284,7 +290,9 @@ class JsonTest extends ExtractorTestCase
 "1","root.arr_a75f0a3e0b848d52033929a761e6c997"
 "2","root.arr_a75f0a3e0b848d52033929a761e6c997"
 ', file_get_contents($parser->getResults()['root_arr_arr2']));
-        self::assertTrue($handler->hasWarning('Using legacy JSON parser, because it is in configuration state.'));
+        self::assertTrue($handler->hasWarning(
+            'Using legacy JSON parser, because it is in configuration state.'
+        ));
     }
 
     public function testProcessNoData(): void
@@ -327,7 +335,9 @@ class JsonTest extends ExtractorTestCase
             "\"1\",\"second_value\",\"\"\n",
             file_get_contents($parser->getResults()['root'])
         );
-        self::assertTrue($handler->hasWarning('Using legacy JSON parser, because it is in configuration state.'));
+        self::assertTrue($handler->hasWarning(
+            'Using legacy JSON parser, because it is in configuration state.'
+        ));
         /** @var Parser $oldParser */
         $oldParser = self::getProperty($parser, 'parser');
         self::assertTrue($oldParser->getAnalyzer()->getNestedArrayAsJson());
@@ -374,7 +384,9 @@ class JsonTest extends ExtractorTestCase
             "\"1\",\"first_value\",\"second_value\"\n",
             file_get_contents($parser->getResults()['root'])
         );
-        self::assertFalse($handler->hasWarning('Using legacy JSON parser, because it is in configuration state.'));
+        self::assertFalse($handler->hasWarning(
+            'Using legacy JSON parser, because it is in configuration state.'
+        ));
     }
 
     public function testLegacyNoStructExplicitVersionConflict(): void
@@ -398,7 +410,9 @@ class JsonTest extends ExtractorTestCase
             "\"1\",\"second_value\",\"\"\n",
             file_get_contents($parser->getResults()['root'])
         );
-        self::assertTrue($handler->hasWarning('Using legacy JSON parser, because it has been explicitly requested.'));
+        self::assertTrue($handler->hasWarning(
+            'Using legacy JSON parser, because it has been explicitly requested.'
+        ));
         /** @var Parser $oldParser */
         $oldParser = self::getProperty($parser, 'parser');
         self::assertTrue($oldParser->getAnalyzer()->getNestedArrayAsJson());
@@ -425,6 +439,8 @@ class JsonTest extends ExtractorTestCase
             "\"1\",\"first_value\",\"second_value\"\n",
             file_get_contents($parser->getResults()['root'])
         );
-        self::assertFalse($handler->hasWarning('Using legacy JSON parser, because it has been explicitly requested.'));
+        self::assertFalse($handler->hasWarning(
+            'Using legacy JSON parser, because it has been explicitly requested.'
+        ));
     }
 }

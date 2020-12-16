@@ -67,7 +67,12 @@ class MultipleScrollerTest extends TestCase
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
 
-        $nextNone = $scroller->getNextRequest($client, $noScrollerConfig, $noScrollerResponse, $noScrollerResponse->results);
+        $nextNone = $scroller->getNextRequest(
+            $client,
+            $noScrollerConfig,
+            $noScrollerResponse,
+            $noScrollerResponse->results
+        );
         self::assertFalse($nextNone);
     }
 

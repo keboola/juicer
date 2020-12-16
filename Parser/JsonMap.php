@@ -87,7 +87,12 @@ class JsonMap implements ParserInterface
         } catch (BadConfigException $e) {
             throw new UserException('Bad Json to CSV Mapping configuration: ' . $e->getMessage(), 0, $e);
         } catch (BadDataException $e) {
-            throw new UserException("Error saving '{$type}' data to CSV column: " . $e->getMessage(), 0, $e, $e->getData());
+            throw new UserException(
+                "Error saving '{$type}' data to CSV column: " . $e->getMessage(),
+                0,
+                $e,
+                $e->getData()
+            );
         }
     }
 

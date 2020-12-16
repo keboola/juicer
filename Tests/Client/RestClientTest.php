@@ -98,7 +98,12 @@ class RestClientTest extends ExtractorTestCase
         $restClient->getClient()->getEmitter()->attach($mock);
         $restClient->getClient()->getEmitter()->attach($history);
 
-        $request = new RestRequest(['endpoint' => 'ep', 'params' => [], 'method' => 'GET', 'headers' => ['X-RTest' => 'requestHeader']]);
+        $request = new RestRequest([
+            'endpoint' => 'ep',
+            'params' => [],
+            'method' => 'GET',
+            'headers' => ['X-RTest' => 'requestHeader'],
+        ]);
         $restClient->download($request);
 
         self::assertEquals(

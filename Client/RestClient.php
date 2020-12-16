@@ -201,7 +201,11 @@ class RestClient
                 $options = ['body' => $request->getParams()];
                 break;
             default:
-                throw new UserException("Unknown request method '" . $request->getMethod() . "' for '" . $request->getEndpoint() . "'");
+                throw new UserException(sprintf(
+                    "Unknown request method '%s' for '%s'",
+                    $request->getMethod(),
+                    $request->getEndpoint()
+                ));
         }
 
         if (!empty($request->getHeaders())) {
@@ -243,7 +247,8 @@ class RestClient
     private static function createBackoff(array $options, LoggerInterface $logger): RetrySubscriber
     {
         $headerName = isset($options['http']['retryHeader']) ? $options['http']['retryHeader'] : 'Retry-After';
-        $httpRetryCodes = isset($options['http']['codes']) ? $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];
+        $httpRetryCodes = isset($options['http']['codes']) ?
+            $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];
         $maxRetries = isset($options['maxRetries']) ? (int) $options['maxRetries']: 10;
 
         $curlRetryCodes = isset($options['curl']['codes']) ? $options['curl']['codes'] : [
@@ -265,9 +270,11 @@ class RestClient
                 $delay = self::getRetryDelay($retries, $event, $headerName);
 
                 $errData = [
-                    'http_code' => !empty($event->getTransferInfo()['http_code']) ? $event->getTransferInfo()['http_code'] : null,
+                    'http_code' => !empty($event->getTransferInfo()['http_code']) ?
+                        $event->getTransferInfo()['http_code'] : null,
                     'body' => is_null($event->getResponse()) ? null : (string) $event->getResponse()->getBody(),
-                    'url' =>  !empty($event->getTransferInfo()['url']) ? $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
+                    'url' =>  !empty($event->getTransferInfo()['url']) ?
+                        $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
                 ];
                 if ($event instanceof ErrorEvent) {
                     $errData['message'] = $event->getException()->getMessage();

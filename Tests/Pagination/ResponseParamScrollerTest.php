@@ -139,13 +139,18 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
-        $scroller = new ResponseParamScroller(['responseParam' => '_scroll_id', 'queryParam' => 'scroll_id', 'includeParams' => false, 'scrollRequest' => [
-            'endpoint' => '_search/scroll',
-            'method' => 'POST',
-            'params' => [
-                'scroll' => '1m',
+        $scroller = new ResponseParamScroller([
+            'responseParam' => '_scroll_id',
+            'queryParam' => 'scroll_id',
+            'includeParams' => false,
+            'scrollRequest' => [
+                'endpoint' => '_search/scroll',
+                'method' => 'POST',
+                'params' => [
+                    'scroll' => '1m',
+                ],
             ],
-        ]]);
+        ]);
 
         $expected = $client->createRequest($config->getConfig());
         self::assertEquals($expected, $scroller->getFirstRequest($client, $config));

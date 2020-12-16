@@ -31,8 +31,12 @@ class Json implements ParserInterface
 
     protected LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $logger, array $metadata, int $compatLevel, int $cacheMemoryLimit = 2000000)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        array $metadata,
+        int $compatLevel,
+        int $cacheMemoryLimit = 2000000
+    ) {
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
             !empty($metadata['json_parser.structVersion'])) {
@@ -46,9 +50,12 @@ class Json implements ParserInterface
                 $this->parser = new LegacyParser($logger, $analyzer, $structure);
             } else {
                 if ($compatLevel !== self::LATEST_VERSION) {
-                    $logger->warning('Ignored request for legacy JSON parser, because configuration is already upgraded.');
+                    $logger->warning(
+                        'Ignored request for legacy JSON parser, because configuration is already upgraded.'
+                    );
                 }
-                $this->parser = new Parser(new Analyzer($logger, new Structure(), true), $metadata['json_parser.struct']);
+                $analyzer = new Analyzer($logger, new Structure(), true);
+                $this->parser = new Parser($analyzer, $metadata['json_parser.struct']);
             }
         } else {
             if ($compatLevel === self::LEGACY_VERSION) {

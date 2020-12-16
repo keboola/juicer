@@ -35,7 +35,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      *          'limit' => int // mandatory parameter; size of each page
      *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
      *          'offsetParam' => string // the offset parameter
-     *          'firstPageParams' => bool // whether to include the limit and offset in the first request (default = true)
+     *          'firstPageParams' => bool // whether to include the limit and offset in the first request (def. true)
      *          'offsetFromJob' => bool // use offset parameter provided in the job parameters
      *      ]
      * @throws UserException
