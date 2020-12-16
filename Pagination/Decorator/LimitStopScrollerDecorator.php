@@ -21,7 +21,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 
     private ?string $fieldName = null;
 
-    private ?int $currentCount = null;
+    private int $currentCount;
 
     public function __construct(ScrollerInterface $scroller, array $config)
     {
