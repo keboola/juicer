@@ -9,15 +9,12 @@ use Keboola\Juicer\Exception\UserException;
  */
 class Config
 {
-    /**
-     * @var array
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * @var JobConfig[]
      */
-    private $jobs = [];
+    private array $jobs = [];
 
     /**
      * Config constructor.

@@ -11,20 +11,11 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
 {
     const NEXT_PAGE_FILTER_MINUTES = 6;
 
-    /**
-     * @var string
-     */
-    protected $urlParam = 'next_page';
+    protected string $urlParam = 'next_page';
 
-    /**
-     * @var bool
-     */
-    protected $includeParams = false;
+    protected bool $includeParams = false;
 
-    /**
-     * @var bool
-     */
-    protected $paramIsQuery = false;
+    protected bool $paramIsQuery = false;
 
     /**
      * ZendeskResponseUrlScroller constructor.

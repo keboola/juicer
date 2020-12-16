@@ -15,12 +15,9 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @var ScrollerInterface[]
      */
-    private $scrollers = [];
+    private array $scrollers = [];
 
-    /**
-     * @var string
-     */
-    private $defaultScroller;
+    private string $defaultScroller;
 
     /**
      * MultipleScroller constructor.

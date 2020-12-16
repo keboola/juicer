@@ -11,25 +11,13 @@ use Keboola\Juicer\Exception\UserException;
  */
 class ResponseParamScroller extends AbstractResponseScroller implements ScrollerInterface
 {
-    /**
-     * @var string
-     */
-    protected $responseParam;
+    protected string $responseParam;
 
-    /**
-     * @var string
-     */
-    protected $queryParam;
+    protected string $queryParam;
 
-    /**
-     * @var array
-     */
-    protected $scrollRequest = [];
+    protected array $scrollRequest = [];
 
-    /**
-     * @var bool
-     */
-    private $includeParams = false;
+    private bool $includeParams = false;
 
     /**
      * ResponseParamScroller constructor.

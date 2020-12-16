@@ -13,20 +13,11 @@ use Keboola\Juicer\Exception\UserException;
  */
 class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var string
-     */
-    protected $field = null;
+    protected ?string $field = null;
 
-    /**
-     * @var bool
-     */
-    protected $stopOn = false;
+    protected bool $stopOn = false;
 
-    /**
-     * @var bool
-     */
-    protected $ifNotSet = false;
+    protected bool $ifNotSet = false;
 
     /**
      * HasMoreScrollerDecorator constructor.

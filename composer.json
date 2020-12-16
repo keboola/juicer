@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.4",
+        "ext-json": "*",
         "keboola/json-parser": "^2.1",
         "keboola-legacy/json-parser": "^2.1",
         "keboola/php-utils": "^2.2",

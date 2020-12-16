@@ -14,35 +14,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int
-     */
-    protected $limit;
+    protected int $limit;
 
-    /**
-     * @var string
-     */
-    protected $limitParam = 'limit';
+    protected string $limitParam = 'limit';
 
-    /**
-     * @var string
-     */
-    protected $offsetParam = 'offset';
+    protected string $offsetParam = 'offset';
 
-    /**
-     * @var bool
-     */
-    protected $firstPageParams = true;
+    protected bool $firstPageParams = true;
 
-    /**
-     * @var int
-     */
-    protected $pointer = 0;
+    protected int $pointer = 0;
 
-    /**
-     * @var bool
-     */
-    protected $offsetFromJob = false;
+    protected bool $offsetFromJob = false;
 
     /**
      * OffsetScroller constructor.

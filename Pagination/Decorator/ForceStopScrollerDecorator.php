@@ -13,10 +13,7 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var int|null
-     */
-    protected $pageLimit = null;
+    protected ?int $pageLimit = null;
 
     /**
      * Time in seconds
@@ -26,30 +23,19 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Size in bytes
-     * @var int|null
      */
-    protected $volumeLimit = null;
+    protected ?int $volumeLimit = null;
 
-    /**
-     * @var int
-     */
-    protected $pageCounter;
+    protected ?int $pageCounter = null;
 
-    /**
-     * @var int
-     */
-    protected $volumeCounter;
+    protected ?int $volumeCounter = null;
 
     /**
      * Timestamp
-     * @var int
      */
-    protected $startTime;
+    protected ?int $startTime = null;
 
-    /**
-     * @var bool
-     */
-    protected $limitReached = false;
+    protected bool $limitReached = false;
 
     /**
      * ForceStopScrollerDecorator constructor.

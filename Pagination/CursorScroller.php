@@ -5,6 +5,7 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Looks within the response **data** for an ID
@@ -12,35 +13,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class CursorScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $max = null;
+    protected ?int $max = null;
 
-    /**
-     * @var int|null
-     */
-    protected $min = null;
+    protected ?int $min = null;
 
-    /**
-     * @var string
-     */
-    protected $idKey;
+    protected string $idKey;
 
-    /**
-     * @var string
-     */
-    protected $param;
+    protected string $param;
 
-    /**
-     * @var bool
-     */
-    protected $reverse = false;
+    protected bool $reverse = false;
 
-    /**
-     * @var int
-     */
-    protected $increment = 0;
+    protected int $increment = 0;
 
     /**
      * FacebookResponseUrlScroller constructor.
@@ -92,7 +75,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
             $cursor = 0;
 
             foreach ($data as $item) {
-                $cursorVal = \Keboola\Utils\getDataFromPath($this->idKey, $item, '.');
+                $cursorVal = getDataFromPath($this->idKey, $item, '.');
 
                 if (is_null($this->max) || $cursorVal > $this->max) {
                     $this->max = $cursorVal;

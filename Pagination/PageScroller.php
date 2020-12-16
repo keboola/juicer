@@ -15,35 +15,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class PageScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $limit = null;
+    protected ?int $limit = null;
 
-    /**
-     * @var string
-     */
-    protected $limitParam = 'limit';
+    protected string $limitParam = 'limit';
 
-    /**
-     * @var string
-     */
-    protected $pageParam = 'page';
+    protected string $pageParam = 'page';
 
-    /**
-     * @var int
-     */
-    protected $firstPage = 1;
+    protected int $firstPage = 1;
 
-    /**
-     * @var bool
-     */
-    protected $firstPageParams = true;
+    protected bool $firstPageParams = true;
 
-    /**
-     * @var int
-     */
-    protected $page;
+    protected int $page;
 
     /**
      * PageScroller constructor.

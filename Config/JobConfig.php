@@ -9,20 +9,14 @@ use Keboola\Juicer\Exception\UserException;
  */
 class JobConfig
 {
-    /**
-     * @var string
-     */
-    protected $jobId;
+    protected string $jobId;
 
     /**
      * @var JobConfig[]
      */
-    protected $childJobs = [];
+    protected array $childJobs = [];
 
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     /**
      * Create an instance of Job configuration from configuration associative array

@@ -7,6 +7,7 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Class LimitStopScrollerDecorator
@@ -14,20 +15,11 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var int
-     */
-    private $countLimit;
+    private ?int $countLimit = null;
 
-    /**
-     * @var string
-     */
-    private $fieldName;
+    private ?string $fieldName = null;
 
-    /**
-     * @var int
-     */
-    private $currentCount;
+    private ?int $currentCount = null;
 
     /**
      * Constructor.
@@ -71,7 +63,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     {
         $this->currentCount += count($data);
         if ($this->fieldName) {
-            $limit = \Keboola\Utils\getDataFromPath($this->fieldName, $response, '.');
+            $limit = getDataFromPath($this->fieldName, $response, '.');
         } else {
             $limit = $this->countLimit;
         }

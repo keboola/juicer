@@ -19,17 +19,11 @@ class JsonMap implements ParserInterface
     /**
      * @var Mapper[]
      */
-    protected $mappers;
+    protected array $mappers;
 
-    /**
-     * @var ParserInterface
-     */
-    protected $fallback;
+    protected ?ParserInterface $fallback;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @param Config $config

@@ -27,10 +27,7 @@ class Json implements ParserInterface
      */
     protected $parser;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
      * Json parser constructor.

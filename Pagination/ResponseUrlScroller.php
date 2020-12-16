@@ -11,25 +11,13 @@ use GuzzleHttp\Query;
  */
 class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {
-    /**
-     * @var string
-     */
-    protected $urlParam = 'next_page';
+    protected string $urlParam = 'next_page';
 
-    /**
-     * @var bool
-     */
-    protected $includeParams = false;
+    protected bool $includeParams = false;
 
-    /**
-     * @var bool
-     */
-    protected $paramIsQuery = false;
+    protected bool $paramIsQuery = false;
     
-    /**
-     * @var string
-     */
-    protected $delimiter = '.';
+    protected string $delimiter = '.';
 
     /**
      * ResponseUrlScroller constructor.

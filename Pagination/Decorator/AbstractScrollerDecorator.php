@@ -8,10 +8,7 @@ use Keboola\Juicer\Config\JobConfig;
 
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
-    /**
-     * @var ScrollerInterface
-     */
-    protected $scroller;
+    protected ScrollerInterface $scroller;
 
     /**
      * AbstractScrollerDecorator constructor.

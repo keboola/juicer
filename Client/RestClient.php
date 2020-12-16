@@ -8,34 +8,22 @@ use GuzzleHttp\Message\ResponseInterface;
 use Keboola\Juicer\Exception\UserException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Message\Request as GuzzleRequest;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
 use Psr\Log\LoggerInterface;
+use function Keboola\Utils\jsonDecode;
 
 class RestClient
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
-    /**
-     * @var array
-     */
-    protected $defaultRequestOptions = [];
+    protected array $defaultRequestOptions = [];
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    private $ignoreErrors;
+    private array $ignoreErrors;
 
     /**
      * @param LoggerInterface $logger
@@ -184,7 +172,7 @@ class RestClient
         // Sanitize the JSON
         $body = iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody());
         try {
-            $decoded = \Keboola\Utils\jsonDecode($body, false, 512, 0, true, true);
+            $decoded = jsonDecode($body, false, 512, 0, true, true);
         } catch (JsonDecodeException $e) {
             throw new UserException(
                 "Invalid JSON response from API: " . $e->getMessage(),
