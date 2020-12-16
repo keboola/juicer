@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseScrollerTestCase extends TestCase
 {
-    protected function getConfig()
+    protected function getConfig(): JobConfig
     {
         return new JobConfig([
             'endpoint' => 'test',

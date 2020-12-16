@@ -11,7 +11,7 @@ use GuzzleHttp\Query;
 
 class ZendeskResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {
-    const NEXT_PAGE_FILTER_MINUTES = 6;
+    public const NEXT_PAGE_FILTER_MINUTES = 6;
 
     protected string $urlParam = 'next_page';
 

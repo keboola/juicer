@@ -41,7 +41,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
         self::assertEquals(3, $i);
     }
 
-    public function limitProvider()
+    public function limitProvider(): array
     {
         $response = [
             (object) [

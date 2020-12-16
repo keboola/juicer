@@ -15,7 +15,7 @@ class ScrollerFactory
         return $scroller;
     }
 
-    private static function decorateScroller(ScrollerInterface $scroller, array $config)
+    private static function decorateScroller(ScrollerInterface $scroller, array $config): ScrollerInterface
     {
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
@@ -32,7 +32,7 @@ class ScrollerFactory
         return $scroller;
     }
 
-    private static function createScroller(array $config)
+    private static function createScroller(array $config): ScrollerInterface
     {
         if (empty($config['method'])) {
             return new NoScroller();
