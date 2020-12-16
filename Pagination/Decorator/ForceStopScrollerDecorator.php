@@ -84,7 +84,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * @param mixed $response
      * @return bool Returns true if a limit is reached
      */
-    private function checkLimits($response)
+    private function checkLimits($response): bool
     {
         if ($this->checkPages() || $this->checkTime() || $this->checkVolume($response)) {
             return true;
@@ -94,9 +94,8 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Uses internal counter to check page limit
-     * @return bool
      */
-    private function checkPages()
+    private function checkPages(): bool
     {
         if (is_null($this->pageLimit)) {
             return false;
@@ -127,9 +126,8 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * Count the size of $response and check the limit
      * @param object|array $response
-     * @return bool
      */
-    private function checkVolume($response)
+    private function checkVolume($response): bool
     {
         if (is_null($this->volumeLimit)) {
             return false;

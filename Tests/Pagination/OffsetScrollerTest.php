@@ -135,7 +135,6 @@ class OffsetScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertContains('Missing \'pagination.limit\' attribute required for offset pagination', $e->getMessage());
         }
-
     }
 
     public function testNotNumericLimit()

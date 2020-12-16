@@ -21,10 +21,7 @@ interface ParserInterface
     /**
      * @return Table[]
      */
-    public function getResults();
+    public function getResults(): array;
 
-    /**
-     * @return array
-     */
-    public function getMetadata();
+    public function getMetadata(): array;
 }

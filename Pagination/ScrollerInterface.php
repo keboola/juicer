@@ -31,13 +31,11 @@ interface ScrollerInterface
 
     /**
      * Get the current scrolling state
-     * @return array
      */
-    public function getState();
+    public function getState(): array;
 
     /**
      * Restore the scroller state
-     * @param array $state
      */
-    public function setState(array $state);
+    public function setState(array $state): void;
 }

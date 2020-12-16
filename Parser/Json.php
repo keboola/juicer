@@ -95,15 +95,12 @@ class Json implements ParserInterface
      * Return the results list
      * @return Table[]
      */
-    public function getResults()
+    public function getResults(): array
     {
         return $this->parser->getCsvFiles();
     }
 
-    /**
-     * @return array
-     */
-    public function getMetadata()
+    public function getMetadata(): array
     {
         if ($this->parser instanceof LegacyParser) {
             return [

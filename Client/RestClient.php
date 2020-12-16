@@ -76,9 +76,6 @@ class RestClient
         return $config;
     }
 
-    /**
-     * @return Client
-     */
     public function getClient() : Client
     {
         return $this->client;
@@ -226,10 +223,8 @@ class RestClient
      *    'options' => [], // SOAP only
      *    'inputHeader' => '' // SOAP only
      * ]
-     * @param array $config
-     * @return RestRequest
      */
-    public function createRequest(array $config)
+    public function createRequest(array $config): RestRequest
     {
         return new RestRequest($this->getRequestConfig($config));
     }

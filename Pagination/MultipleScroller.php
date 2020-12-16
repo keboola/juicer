@@ -83,17 +83,15 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
      * Get configured scrollers
      * @return ScrollerInterface[]
      */
-    public function getScrollers()
+    public function getScrollers(): array
     {
         return $this->scrollers;
     }
 
     /**
-     * @param JobConfig $jobConfig
-     * @return ScrollerInterface
      * @throws UserException
      */
-    private function getScrollerForJob(JobConfig $jobConfig)
+    private function getScrollerForJob(JobConfig $jobConfig): ScrollerInterface
     {
         if (empty($jobConfig->getConfig()['scroller'])) {
             if (empty($this->defaultScroller)) {

@@ -2,12 +2,12 @@
 
 namespace Keboola\Juicer\Pagination;
 
-abstract class AbstractScroller
+abstract class AbstractScroller implements ScrollerInterface
 {
     /**
      * Get object vars by default
      */
-    public function getState()
+    public function getState(): array
     {
         return get_object_vars($this);
     }

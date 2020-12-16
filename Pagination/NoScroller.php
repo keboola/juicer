@@ -36,7 +36,7 @@ class NoScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getState()
+    public function getState(): array
     {
         return [];
     }
@@ -44,7 +44,7 @@ class NoScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function setState(array $state)
+    public function setState(array $state): void
     {
     }
 }

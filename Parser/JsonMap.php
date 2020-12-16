@@ -95,7 +95,7 @@ class JsonMap implements ParserInterface
     /**
      * @return Table[]
      */
-    public function getResults()
+    public function getResults(): array
     {
         $results = [];
         foreach ($this->mappers as $parser) {
@@ -111,7 +111,7 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    protected function mergeResults(array $results, array $files)
+    protected function mergeResults(array $results, array $files): array
     {
         foreach ($files as $name => $file) {
             if (array_key_exists($name, $results)) {
@@ -138,7 +138,7 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    protected function mergeFiles(CsvFile $file1, CsvFile $file2)
+    protected function mergeFiles(CsvFile $file1, CsvFile $file2): void
     {
         // CsvFile::getHeader resets it to the first line,
         // so we need to forward it back to the end to append it
@@ -157,12 +157,12 @@ class JsonMap implements ParserInterface
         }
     }
 
-    public function getMappers()
+    public function getMappers(): array
     {
         return $this->mappers;
     }
 
-    public function getMetadata()
+    public function getMetadata(): array
     {
         return empty($this->fallback) ? [] : $this->fallback->getMetadata();
     }

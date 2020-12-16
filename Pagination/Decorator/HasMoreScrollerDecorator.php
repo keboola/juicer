@@ -67,9 +67,8 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * @param mixed $response
-     * @return bool|null Returns null if this option isn't used
      */
-    protected function hasMore($response)
+    protected function hasMore($response): ?bool
     {
         if (empty($this->field)) {
             return null;

@@ -47,9 +47,8 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
 
     /**
      * Get decorated scroller
-     * @return ScrollerInterface
      */
-    public function getScroller()
+    public function getScroller(): ScrollerInterface
     {
         return $this->scroller;
     }
@@ -57,7 +56,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getState()
+    public function getState(): array
     {
         return [
             'decorator' => get_object_vars($this),
@@ -68,7 +67,7 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function setState(array $state)
+    public function setState(array $state): void
     {
         if (isset($state['scroller'])) {
             $this->scroller->setState($state['scroller']);

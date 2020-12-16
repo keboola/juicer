@@ -12,6 +12,7 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
+        "ext-iconv": "*",
         "keboola/json-parser": "^2.1",
         "keboola-legacy/json-parser": "^2.1",
         "keboola/php-utils": "^2.2",

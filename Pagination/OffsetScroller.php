@@ -107,10 +107,8 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
 
     /**
      * Returns a config with scroller params
-     * @param JobConfig $jobConfig
-     * @return array
      */
-    private function getParams(JobConfig $jobConfig)
+    private function getParams(JobConfig $jobConfig): array
     {
         $config = $jobConfig->getConfig();
         $scrollParams = [
@@ -122,11 +120,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         return $config;
     }
 
-    /**
-     * @param JobConfig $jobConfig
-     * @return int
-     */
-    private function getLimit(JobConfig $jobConfig)
+    private function getLimit(JobConfig $jobConfig): int
     {
         $params = $jobConfig->getParams();
         return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];

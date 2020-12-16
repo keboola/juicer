@@ -51,33 +51,21 @@ class RestRequest
         }
     }
 
-    /**
-     * @return string
-     */
     public function getEndpoint() : string
     {
         return $this->endpoint;
     }
 
-    /**
-     * @return array
-     */
     public function getParams() : array
     {
         return $this->params;
     }
 
-    /**
-     * @return string
-     */
     public function getMethod() : string
     {
         return $this->method;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaders() : array
     {
         return $this->headers;

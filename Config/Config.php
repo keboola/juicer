@@ -38,10 +38,7 @@ class Config
         $this->attributes = $configuration;
     }
 
-    /**
-     * @return array
-     */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -58,7 +55,7 @@ class Config
     /**
      * @return JobConfig[]
      */
-    public function getJobs()
+    public function getJobs(): array
     {
         return $this->jobs;
     }

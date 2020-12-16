@@ -71,50 +71,32 @@ class JobConfig
         return $this->childJobs;
     }
 
-    /**
-     * @return string
-     */
     public function getJobId() : string
     {
         return $this->jobId;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig() : array
     {
         return $this->config;
     }
 
-    /**
-     * @return string
-     */
     public function getEndpoint() : string
     {
         return $this->config['endpoint'];
     }
 
-    /**
-     * @param string $endpoint
-     */
-    public function setEndpoint($endpoint)
+    public function setEndpoint(string $endpoint)
     {
         $this->config['endpoint'] = $endpoint;
     }
 
-    /**
-     * @return array
-     */
     public function getParams() : array
     {
         return $this->config['params'];
     }
 
-    /**
-     * @param array $params
-     */
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
         $this->config['params'] = $params;
     }
@@ -123,14 +105,11 @@ class JobConfig
      * @param string $name
      * @param mixed $value
      */
-    public function setParam($name, $value)
+    public function setParam($name, $value): void
     {
         $this->config['params'][$name] = $value;
     }
 
-    /**
-     * @return string
-     */
     public function getDataType() : string
     {
         return $this->config['dataType'];
