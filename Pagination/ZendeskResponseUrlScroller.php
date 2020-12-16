@@ -55,10 +55,8 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
         // start_time validation
         // https://developer.zendesk.com/rest_api/docs/core/incremental_export#incremental-ticket-export
         $now = new \DateTime();
-        $startDateTime = \DateTime::createFromFormat(
-            'U',
-            Url::fromString($nextUrl)->getQuery()->get('start_time')
-        );
+        $startDateTimeStr = Url::fromString($nextUrl)->getQuery()->get('start_time');
+        $startDateTime = $startDateTimeStr ? \DateTime::createFromFormat('U', $startDateTimeStr) : null;
 
         if ($startDateTime && $startDateTime > $now->modify(sprintf('-%d minutes', self::NEXT_PAGE_FILTER_MINUTES))) {
             return false;

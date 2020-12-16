@@ -81,6 +81,7 @@ class JsonMap implements ParserInterface
                 }
 
                 $this->fallback->process($data, $type, (array) $parentId);
+                return;
             }
 
             $this->mappers[$type]->parse($data, (array) $parentId);
