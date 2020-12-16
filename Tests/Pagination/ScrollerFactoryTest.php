@@ -58,7 +58,7 @@ class ScrollerFactoryTest extends TestCase
         self::assertInstanceOf(HasMoreScrollerDecorator::class, ScrollerFactory::getScroller([
             'nextPageFlag' => [
                 'field' => 'continue',
-                'stopOn' => 'false',
+                'stopOn' => false,
             ],
             'method' => 'pagenum',
         ]));
