@@ -83,7 +83,7 @@ class RestClient
         return $this->client;
     }
 
-    private function handleException(\Throwable $e, ?ResponseInterface $response)
+    private function handleException(\Throwable $e, ?ResponseInterface $response): ?\stdClass
     {
         if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
             in_array($e->getCode(), $this->ignoreErrors)
@@ -104,7 +104,7 @@ class RestClient
             }
             return $result;
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -122,7 +122,7 @@ class RestClient
                 return $this->getObjectFromResponse($response);
             } catch (UserException $e) {
                 $resp = $this->handleException($e, $response);
-                if ($resp === false) {
+                if (!$resp) {
                     throw $e;
                 } else {
                     return $resp;
@@ -130,7 +130,7 @@ class RestClient
             }
         } catch (BadResponseException $e) {
             $resp = $this->handleException($e, $e->getResponse());
-            if ($resp === false) {
+            if (!$resp) {
                 $data = json_decode($e->getResponse()->getBody(), true);
                 if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
                     $data = (string) $e->getResponse()->getBody();
@@ -147,7 +147,7 @@ class RestClient
             }
         } catch (RequestException $e) {
             $resp = $this->handleException($e, null);
-            if ($resp === false) {
+            if (!$resp) {
                 if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
                     throw $e->getPrevious();
                 } else {
