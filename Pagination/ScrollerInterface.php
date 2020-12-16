@@ -24,7 +24,7 @@ interface ScrollerInterface
      * @param array $data
      * @return RestRequest|false
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data);
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data);
 
     /**
      * Reset the pagination pointer

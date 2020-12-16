@@ -81,7 +81,7 @@ class JsonMapTest extends TestCase
                 '"1","","iAreId"' . "\n",
                 '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n",
             ],
-            file($parser->getResults()['first'])
+            file((string) $parser->getResults()['first'])
         );
         self::assertEquals(
             [
@@ -89,7 +89,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
                 '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
             ],
-            file($parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags'])
         );
 
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
@@ -344,7 +344,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag3"' . "\n",
                 '"asd","tag4"' . "\n",
             ],
-            file($parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags'])
         );
     }
 
@@ -404,6 +404,6 @@ class JsonMapTest extends TestCase
             '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n",
         ];
 
-        self::assertEquals($expected, file($parser->getResults()['report-rows']));
+        self::assertEquals($expected, file((string) $parser->getResults()['report-rows']));
     }
 }

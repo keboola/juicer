@@ -16,9 +16,9 @@ class ForceStopScrollerDecoratorTest extends TestCase
     /**
      * @dataProvider limitProvider
      * @param array $config
-     * @param array|object $response
+     * @param array $response
      */
-    public function testCheckLimits(array $config, $response): void
+    public function testCheckLimits(array $config, array $response): void
     {
         $client = new RestClient(new NullLogger());
         $jobConfig = new JobConfig([
@@ -55,7 +55,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
                 $response,
             ],
             'volume' => [
-                ['volume' => strlen(json_encode($response)) * 3],
+                ['volume' => strlen((string) json_encode($response)) * 3],
                 $response,
             ],
         ];

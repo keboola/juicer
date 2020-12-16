@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\OffsetScroller;
@@ -118,6 +119,7 @@ class OffsetScrollerTest extends TestCase
             'offsetParam' => 'startAt',
         ]);
 
+        /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
 
         self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
@@ -125,6 +127,7 @@ class OffsetScrollerTest extends TestCase
         $response = new \stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
+        /** @var RestRequest $second */
         $second = $scroller->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
     }

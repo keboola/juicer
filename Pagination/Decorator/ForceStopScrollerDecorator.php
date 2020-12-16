@@ -135,7 +135,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
             return false;
         }
 
-        $this->volumeCounter += strlen(json_encode($response));
+        $this->volumeCounter += strlen((string) json_encode($response));
         if ($this->volumeCounter > $this->volumeLimit) {
             return true;
         }

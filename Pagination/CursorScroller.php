@@ -68,7 +68,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data)
     {
         if (empty($data)) {
             $this->reset();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
 use PHPUnit\Framework\TestCase;
@@ -162,9 +163,13 @@ class PageScrollerTest extends TestCase
 
         $scroller = new PageScroller([]);
 
+        /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
+        /** @var RestRequest $second */
         $second = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        /** @var RestRequest $third */
         $third = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        /** @var RestRequest $last */
         $last = $scroller->getNextRequest($client, $config, new \stdClass, []);
 
         self::assertEquals(1, $first->getParams()['page']);
@@ -186,6 +191,7 @@ class PageScrollerTest extends TestCase
         $state = $scroller->getState();
         $newScroller = new PageScroller([]);
         $newScroller->setState($state);
+        /** @var RestRequest $third */
         $third = $newScroller->getNextRequest($client, $config, new \stdClass, ['item']);
         self::assertEquals(3, $third->getParams()['p']);
     }

@@ -15,6 +15,7 @@ use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
 use Psr\Log\LoggerInterface;
+use function Keboola\Utils\isValidDateTimeString;
 use function Keboola\Utils\jsonDecode;
 
 class RestClient
@@ -91,6 +92,7 @@ class RestClient
             if ($response) {
                 $this->logger->warning('Failed to get response ' . $e->getMessage());
                 try {
+                    /** @var \stdClass $result */
                     $result = $this->getObjectFromResponse($response);
                 } catch (UserException $ex) {
                     $this->logger->warning('Failed to parse response ' . $ex->getMessage());
@@ -121,40 +123,42 @@ class RestClient
             try {
                 return $this->getObjectFromResponse($response);
             } catch (UserException $e) {
-                $resp = $this->handleException($e, $response);
-                if (!$resp) {
+                $respObj = $this->handleException($e, $response);
+                if (!$respObj) {
                     throw $e;
                 } else {
-                    return $resp;
+                    return $respObj;
                 }
             }
         } catch (BadResponseException $e) {
-            $resp = $this->handleException($e, $e->getResponse());
-            if (!$resp) {
-                $data = json_decode($e->getResponse()->getBody(), true);
+            $respObj = $this->handleException($e, $e->getResponse());
+            if (!$respObj) {
+                /** @var ResponseInterface $response */
+                $response = $e->getResponse();
+                $data = json_decode((string) $response->getBody(), true);
                 if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                    $data = (string) $e->getResponse()->getBody();
+                    $data = (string) $response->getBody();
                 }
 
                 throw new UserException(
-                    'The API request failed: [' . $e->getResponse()->getStatusCode() . '] ' . $e->getMessage(),
+                    'The API request failed: [' . $response->getStatusCode() . '] ' . $e->getMessage(),
                     400,
                     $e,
                     ['body' => $data]
                 );
             } else {
-                return $resp;
+                return $respObj;
             }
         } catch (RequestException $e) {
-            $resp = $this->handleException($e, null);
-            if (!$resp) {
+            $respObj = $this->handleException($e, null);
+            if (!$respObj) {
                 if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
                     throw $e->getPrevious();
                 } else {
                     throw new UserException($e->getMessage(), $e->getCode(), $e);
                 }
             } else {
-                return $resp;
+                return $respObj;
             }
         }
     }
@@ -167,7 +171,7 @@ class RestClient
     public function getObjectFromResponse(ResponseInterface $response)
     {
         // Sanitize the JSON
-        $body = iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody());
+        $body = (string) iconv('UTF-8', 'UTF-8//IGNORE', (string) $response->getBody());
         try {
             $decoded = jsonDecode($body, false, 512, 0, true, true);
         } catch (JsonDecodeException $e) {
@@ -297,6 +301,7 @@ class RestClient
 
         $retryAfter = $event->getResponse()->getHeader($headerName);
         if (is_numeric($retryAfter)) {
+            $retryAfter = (int) $retryAfter;
             if ($retryAfter < time() - strtotime('1 day', 0)) {
                 return $retryAfter;
             } else {
@@ -304,7 +309,8 @@ class RestClient
             }
         }
 
-        if (\Keboola\Utils\isValidDateTimeString($retryAfter, DATE_RFC1123)) {
+        if (isValidDateTimeString($retryAfter, DATE_RFC1123)) {
+            /** @var \DateTime $date */
             $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
             return $date->getTimestamp() - time();
         }
