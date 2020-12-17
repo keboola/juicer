@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Looks within the response **data** for an ID
@@ -12,35 +15,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class CursorScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $max = null;
+    protected ?int $max = null;
 
-    /**
-     * @var int|null
-     */
-    protected $min = null;
+    protected ?int $min = null;
 
-    /**
-     * @var string
-     */
-    protected $idKey;
+    protected string $idKey;
 
-    /**
-     * @var string
-     */
-    protected $param;
+    protected string $param;
 
-    /**
-     * @var bool
-     */
-    protected $reverse = false;
+    protected bool $reverse = false;
 
-    /**
-     * @var int
-     */
-    protected $increment = 0;
+    protected int $increment = 0;
 
     /**
      * FacebookResponseUrlScroller constructor.
@@ -65,7 +50,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
         $this->idKey = $config['idKey'];
         $this->param = $config['param'];
         if (isset($config['reverse'])) {
-            $this->reverse = (bool)$config['reverse'];
+            $this->reverse = (bool) $config['reverse'];
         }
         if (!empty($config['increment'])) {
             $this->increment = $config['increment'];
@@ -83,7 +68,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data)
     {
         if (empty($data)) {
             $this->reset();
@@ -92,7 +77,14 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
             $cursor = 0;
 
             foreach ($data as $item) {
-                $cursorVal = \Keboola\Utils\getDataFromPath($this->idKey, $item, '.');
+                $cursorVal = getDataFromPath($this->idKey, $item, '.');
+                if (!is_numeric($cursorVal)) {
+                    throw new UserException(sprintf(
+                        "Cursor value '%s' is not numeric.",
+                        json_encode($cursorVal)
+                    ));
+                }
+                $cursorVal = (int) $cursorVal;
 
                 if (is_null($this->max) || $cursorVal > $this->max) {
                     $this->max = $cursorVal;
@@ -105,11 +97,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
                 $cursor = $this->reverse ? $this->min : $this->max;
             }
 
-            if (0 !== $this->increment) {
-                if (!is_numeric($cursor)) {
-                    throw new UserException("Trying to increment a pointer that is not numeric.");
-                }
-
+            if ($this->increment !== 0) {
                 $cursor += $this->increment;
             }
 
@@ -122,7 +110,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->max = $this->min = null;
     }

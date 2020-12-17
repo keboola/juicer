@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -22,22 +24,20 @@ interface ScrollerInterface
      * @param array $data
      * @return RestRequest|false
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data);
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data);
 
     /**
      * Reset the pagination pointer
      */
-    public function reset();
+    public function reset(): void;
 
     /**
      * Get the current scrolling state
-     * @return array
      */
-    public function getState();
+    public function getState(): array;
 
     /**
      * Restore the scroller state
-     * @param array $state
      */
-    public function setState(array $state);
+    public function setState(array $state): void;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -8,7 +10,7 @@ use Psr\Log\NullLogger;
 
 class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -21,7 +23,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
-            'endpoint' => 'test?page=2'
+            'endpoint' => 'test?page=2',
         ]);
         self::assertEquals($expected, $next);
 
@@ -32,7 +34,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         self::assertEquals(false, $last);
     }
 
-    public function testGetNextRequestNested()
+    public function testGetNextRequestNested(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -42,18 +44,18 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response = (object) [
             'pagination' => (object) [
                 'next' => 'test?page=2',
-                'prev' => 'test?page=0' // Not used, just for usecase demo
-            ]
+                'prev' => 'test?page=0', // Not used, just for usecase demo
+            ],
         ];
 
         $next = $scroller->getNextRequest($client, $config, $response, []);
         $expected = $client->createRequest([
-            'endpoint' => 'test?page=2'
+            'endpoint' => 'test?page=2',
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestParams()
+    public function testGetNextRequestParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -69,25 +71,25 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
             'endpoint' => 'test?page=2',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
         self::assertEquals($expected, $next);
     }
 
-    public function testGetNextRequestQuery()
+    public function testGetNextRequestQuery(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object) [
             'data' => [],
-            'scroll' => '?page=2&q=v'
+            'scroll' => '?page=2&q=v',
         ];
 
         $scroller = new ResponseUrlScroller([
             'urlKey' => 'scroll',
-            'paramIsQuery' => true
+            'paramIsQuery' => true,
         ]);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -95,26 +97,26 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
             'endpoint' => 'test',
             'params' => [
                 'page' => 2,
-                'q' => 'v'
-            ]
+                'q' => 'v',
+            ],
         ]);
         self::assertEquals($expected, $nextRequest);
     }
 
-    public function testGetNextRequestQueryParams()
+    public function testGetNextRequestQueryParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
 
         $response = (object) [
             'data' => [],
-            'scroll' => '?page=2&b=v'
+            'scroll' => '?page=2&b=v',
         ];
 
         $scroller = new ResponseUrlScroller([
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
-            'includeParams' => true
+            'includeParams' => true,
         ]);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -123,14 +125,14 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
             'params' => [
                 'page' => 2,
                 'a' => 1,
-                'b' => 'v'
-            ]
+                'b' => 'v',
+            ],
         ]);
         self::assertEquals($expected, $nextRequest);
     }
-    
-    
-    public function testGetNextRequestDelimiterParams()
+
+
+    public function testGetNextRequestDelimiterParams(): void
     {
         $client = new RestClient(new NullLogger());
         $config = $this->getConfig();
@@ -144,7 +146,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
-            'endpoint' => 'test?page=2'
+            'endpoint' => 'test?page=2',
         ]);
         self::assertEquals($expected, $next);
 

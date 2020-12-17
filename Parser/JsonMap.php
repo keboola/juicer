@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvMap\Mapper;
@@ -19,28 +21,16 @@ class JsonMap implements ParserInterface
     /**
      * @var Mapper[]
      */
-    protected $mappers;
+    protected array $mappers;
 
-    /**
-     * @var ParserInterface
-     */
-    protected $fallback;
+    protected ?ParserInterface $fallback;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param Config $config
-     * @param LoggerInterface $logger
-     * @param ParserInterface|null $fallbackParser
-     * @throws UserException
-     */
-    public function __construct(Config $config, LoggerInterface $logger, ParserInterface $fallbackParser = null)
+    public function __construct(Config $config, LoggerInterface $logger, ?ParserInterface $fallbackParser = null)
     {
         if (empty($config->getAttribute('mappings'))) {
-            throw new UserException("Cannot initialize JSON Mapper with no mapping");
+            throw new UserException('Cannot initialize JSON Mapper with no mapping');
         }
 
         $mappers = [];
@@ -82,7 +72,7 @@ class JsonMap implements ParserInterface
     /**
      * @inheritdoc
      */
-    public function process(array $data, $type, $parentId = null)
+    public function process(array $data, $type, $parentId = null): void
     {
         try {
             if (empty($this->mappers[$type])) {
@@ -90,21 +80,27 @@ class JsonMap implements ParserInterface
                     throw new UserException("Mapper for type '{$type}' has not been configured.");
                 }
 
-                return $this->fallback->process($data, $type, (array) $parentId);
+                $this->fallback->process($data, $type, (array) $parentId);
+                return;
             }
 
-            return $this->mappers[$type]->parse($data, (array) $parentId);
+            $this->mappers[$type]->parse($data, (array) $parentId);
         } catch (BadConfigException $e) {
-            throw new UserException("Bad Json to CSV Mapping configuration: " . $e->getMessage(), 0, $e);
+            throw new UserException('Bad Json to CSV Mapping configuration: ' . $e->getMessage(), 0, $e);
         } catch (BadDataException $e) {
-            throw new UserException("Error saving '{$type}' data to CSV column: " . $e->getMessage(), 0, $e, $e->getData());
+            throw new UserException(
+                "Error saving '{$type}' data to CSV column: " . $e->getMessage(),
+                0,
+                $e,
+                $e->getData()
+            );
         }
     }
 
     /**
      * @return Table[]
      */
-    public function getResults()
+    public function getResults(): array
     {
         $results = [];
         foreach ($this->mappers as $parser) {
@@ -120,7 +116,7 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    protected function mergeResults(array $results, array $files)
+    protected function mergeResults(array $results, array $files): array
     {
         foreach ($files as $name => $file) {
             if (array_key_exists($name, $results)) {
@@ -147,7 +143,7 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    protected function mergeFiles(CsvFile $file1, CsvFile $file2)
+    protected function mergeFiles(CsvFile $file1, CsvFile $file2): void
     {
         // CsvFile::getHeader resets it to the first line,
         // so we need to forward it back to the end to append it
@@ -166,12 +162,12 @@ class JsonMap implements ParserInterface
         }
     }
 
-    public function getMappers()
+    public function getMappers(): array
     {
         return $this->mappers;
     }
 
-    public function getMetadata()
+    public function getMetadata(): array
     {
         return empty($this->fallback) ? [] : $this->fallback->getMetadata();
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -21,7 +23,7 @@ abstract class AbstractResponseScroller extends AbstractScroller
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -29,14 +31,14 @@ class NoScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
     }
 
     /**
      * @inheritdoc
      */
-    public function getState()
+    public function getState(): array
     {
         return [];
     }
@@ -44,7 +46,7 @@ class NoScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function setState(array $state)
+    public function setState(array $state): void
     {
     }
 }

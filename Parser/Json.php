@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvTable\Table;
@@ -19,33 +21,27 @@ use Psr\Log\LoggerInterface;
  */
 class Json implements ParserInterface
 {
-    const LEGACY_VERSION = 2;
-    const LATEST_VERSION = 3;
+    public const LEGACY_VERSION = 2;
+    public const LATEST_VERSION = 3;
 
     /**
      * @var LegacyParser|Parser
      */
     protected $parser;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * Json parser constructor.
-     * @param LoggerInterface $logger Logger instance.
-     * @param array $metadata Previously stored state of the json parser.
-     * @param int $compatLevel Compatibility level.
-     * @param int $cacheMemoryLimit
-     */
-    public function __construct(LoggerInterface $logger, array $metadata, $compatLevel, $cacheMemoryLimit = 2000000)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        array $metadata,
+        int $compatLevel,
+        int $cacheMemoryLimit = 2000000
+    ) {
         $this->logger = $logger;
         if (!empty($metadata['json_parser.struct']) && is_array($metadata['json_parser.struct']) &&
             !empty($metadata['json_parser.structVersion'])) {
-            if ($metadata['json_parser.structVersion'] == self::LEGACY_VERSION) {
-                $logger->warning("Using legacy JSON parser, because it is in configuration state.");
+            if ($metadata['json_parser.structVersion'] === self::LEGACY_VERSION) {
+                $logger->warning('Using legacy JSON parser, because it is in configuration state.');
                 $structure = new Struct($logger);
                 $structure->load($metadata['json_parser.struct']);
                 $structure->setAutoUpgradeToArray(true);
@@ -53,14 +49,17 @@ class Json implements ParserInterface
                 $analyzer->setNestedArrayAsJson(true);
                 $this->parser = new LegacyParser($logger, $analyzer, $structure);
             } else {
-                if ($compatLevel != self::LATEST_VERSION) {
-                    $logger->warning("Ignored request for legacy JSON parser, because configuration is already upgraded.");
+                if ($compatLevel !== self::LATEST_VERSION) {
+                    $logger->warning(
+                        'Ignored request for legacy JSON parser, because configuration is already upgraded.'
+                    );
                 }
-                $this->parser = new Parser(new Analyzer($logger, new Structure(), true), $metadata['json_parser.struct']);
+                $analyzer = new Analyzer($logger, new Structure(), true);
+                $this->parser = new Parser($analyzer, $metadata['json_parser.struct']);
             }
         } else {
-            if ($compatLevel == self::LEGACY_VERSION) {
-                $logger->warning("Using legacy JSON parser, because it has been explicitly requested.");
+            if ($compatLevel === self::LEGACY_VERSION) {
+                $logger->warning('Using legacy JSON parser, because it has been explicitly requested.');
                 $structure = new Struct($logger);
                 $structure->setAutoUpgradeToArray(true);
                 $analyzer = new LegacyAnalyzer($logger, $structure, -1);
@@ -76,7 +75,7 @@ class Json implements ParserInterface
     /**
      * @inheritdoc
      */
-    public function process(array $data, $type, $parentId = null)
+    public function process(array $data, string $type, $parentId = null): void
     {
         try {
             $this->parser->process($data, $type, $parentId);
@@ -86,14 +85,14 @@ class Json implements ParserInterface
             $this->logger->debug("No data returned in '{$type}'");
         } catch (JsonParserException $e) {
             throw new UserException(
-                "Error parsing response JSON: " . $e->getMessage(),
+                'Error parsing response JSON: ' . $e->getMessage(),
                 500,
                 $e,
                 $e->getData()
             );
         } catch (\KeboolaLegacy\Json\Exception\JsonParserException $e) {
             throw new UserException(
-                "Error parsing response JSON: " . $e->getMessage(),
+                'Error parsing response JSON: ' . $e->getMessage(),
                 500,
                 $e,
                 $e->getData()
@@ -105,25 +104,22 @@ class Json implements ParserInterface
      * Return the results list
      * @return Table[]
      */
-    public function getResults()
+    public function getResults(): array
     {
         return $this->parser->getCsvFiles();
     }
 
-    /**
-     * @return array
-     */
-    public function getMetadata()
+    public function getMetadata(): array
     {
         if ($this->parser instanceof LegacyParser) {
             return [
                 'json_parser.struct' => $this->parser->getStruct()->getData(),
-                'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion()
+                'json_parser.structVersion' => $this->parser->getStruct()::getStructVersion(),
             ];
         } else {
             return [
                 'json_parser.struct' => $this->parser->getAnalyzer()->getStructure()->getData(),
-                'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion()
+                'json_parser.structVersion' => $this->parser->getAnalyzer()->getStructure()->getVersion(),
             ];
         }
     }

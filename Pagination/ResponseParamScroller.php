@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -11,25 +13,13 @@ use Keboola\Juicer\Exception\UserException;
  */
 class ResponseParamScroller extends AbstractResponseScroller implements ScrollerInterface
 {
-    /**
-     * @var string
-     */
-    protected $responseParam;
+    protected string $responseParam;
 
-    /**
-     * @var string
-     */
-    protected $queryParam;
+    protected string $queryParam;
 
-    /**
-     * @var array
-     */
-    protected $scrollRequest = [];
+    protected array $scrollRequest = [];
 
-    /**
-     * @var bool
-     */
-    private $includeParams = false;
+    private bool $includeParams = false;
 
     /**
      * ResponseParamScroller constructor.
@@ -42,7 +32,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      *      ]
      * @throws UserException
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         if (empty($config['responseParam'])) {
             throw new UserException("Missing required 'pagination.responseParam' parameter.");
@@ -56,7 +46,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
         $this->responseParam = $config['responseParam'];
         $this->queryParam = $config['queryParam'];
         if (isset($config['includeParams'])) {
-            $this->includeParams = (bool)$config['includeParams'];
+            $this->includeParams = (bool) $config['includeParams'];
         }
         if (!empty($config['scrollRequest'])) {
             $this->scrollRequest = $config['scrollRequest'];
@@ -96,7 +86,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      * @param array $newConfig
      * @return array
      */
-    private function createScrollRequest(array $originalConfig, array $newConfig)
+    private function createScrollRequest(array $originalConfig, array $newConfig): array
     {
         return array_replace_recursive($originalConfig, $newConfig);
     }

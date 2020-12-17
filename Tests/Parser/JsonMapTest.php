@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Parser;
 
 use Keboola\Juicer\Exception\UserException;
@@ -12,14 +14,14 @@ use Psr\Log\NullLogger;
 
 class JsonMapTest extends TestCase
 {
-    public function testProcess()
+    public function testProcess(): void
     {
         $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
                         'type' => 'column',
-                        'mapping' => ['destination' => 'item_id']
+                        'mapping' => ['destination' => 'item_id'],
                     ],
                     'tags' => [
                         'type' => 'table',
@@ -28,24 +30,24 @@ class JsonMapTest extends TestCase
                             'user' => [
                                 'mapping' => [
                                     'destination' => 'user',
-                                    'primaryKey' => true
-                                ]
+                                    'primaryKey' => true,
+                                ],
                             ],
                             'tag' => [
                                 'mapping' => [
                                     'destination' => 'tag',
-                                    'primaryKey' => true
-                                ]
-                            ]
-                        ]
+                                    'primaryKey' => true,
+                                ],
+                            ],
+                        ],
                     ],
                     'parent' => [
                         'type' => 'user',
-                        'mapping' => ['destination' => 'parent_id']
+                        'mapping' => ['destination' => 'parent_id'],
                     ],
-                ]
+                ],
             ],
-            'jobs' => [['endpoint' => 'first']]
+            'jobs' => [['endpoint' => 'first']],
         ];
         $config = new Config($data);
         $parser = new JsonMap($config, new NullLogger());
@@ -77,33 +79,33 @@ class JsonMapTest extends TestCase
             [
                 '"item_id","tags","parent_id"' . "\n",
                 '"1","","iAreId"' . "\n",
-                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n"
+                '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n",
             ],
-            file($parser->getResults()['first'])
+            file((string) $parser->getResults()['first'])
         );
         self::assertEquals(
             [
                 '"user","tag","first_pk"' . "\n",
                 '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
-                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n"
+                '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
             ],
-            file($parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags'])
         );
 
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
     }
 
-    public function testNoMapping()
+    public function testNoMapping(): void
     {
         $data = [
             'mappings' => [
                 'notfirst' => [
                     'id' => [
                         'type' => 'column',
-                    ]
-                ]
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
+            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']],
         ];
         $config = new Config($data);
 
@@ -112,13 +114,13 @@ class JsonMapTest extends TestCase
         new JsonMap($config, new NullLogger());
     }
 
-    public function testMappingNotArray()
+    public function testMappingNotArray(): void
     {
         $data = [
             'mappings' => [
-                'first' => 'not array'
+                'first' => 'not array',
             ],
-            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']]
+            'jobs' => [['endpoint' => '1st', 'dataType' => 'first']],
         ];
         $config = new Config($data);
 
@@ -129,19 +131,19 @@ class JsonMapTest extends TestCase
         new JsonMap($config, new NullLogger());
     }
 
-    public function testNoMappingFallback()
+    public function testNoMappingFallback(): void
     {
         $data = [
             'mappings' => [
                 'notfirst' => [
                     'id' => [
                         'mapping' => [
-                            'destination' => 'id'
-                        ]
-                    ]
-                ]
+                            'destination' => 'id',
+                        ],
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => 'fooBar']]
+            'jobs' => [['endpoint' => 'fooBar']],
         ];
         $config = new Config($data);
         $fallback = new Json(new NullLogger(), [], Json::LATEST_VERSION);
@@ -175,11 +177,11 @@ class JsonMapTest extends TestCase
         self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 
-    public function testEmptyMappingError()
+    public function testEmptyMappingError(): void
     {
         $data = [
             'mappings' => ['first' => []],
-            'jobs' => [['endpoint' => 'fooBar']]
+            'jobs' => [['endpoint' => 'fooBar']],
         ];
         $config = new Config($data);
 
@@ -188,21 +190,17 @@ class JsonMapTest extends TestCase
         new JsonMap($config, new NullLogger());
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'.
-     */
-    public function testBadMapping()
+    public function testBadMapping(): void
     {
         $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
                         'type' => 'column',
-                    ]
-                ]
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => 'first']]
+            'jobs' => [['endpoint' => 'first']],
         ];
         $config = new Config($data);
         $parser = new JsonMap($config, new NullLogger());
@@ -213,26 +211,26 @@ class JsonMapTest extends TestCase
             }
         ]');
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'."
+        );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Error saving 'first' data to CSV column: Error writing 'col' column: Cannot write object into a column
-     */
-    public function testBadData()
+    public function testBadData(): void
     {
         $data = [
             'mappings' => [
                 'first' => [
                     'obj' => [
                         'mapping' => [
-                            'destination' => 'col'
-                        ]
-                    ]
-                ]
+                            'destination' => 'col',
+                        ],
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => 'first']]
+            'jobs' => [['endpoint' => 'first']],
         ];
         $config = new Config($data);
         $parser = new JsonMap($config, new NullLogger());
@@ -244,26 +242,30 @@ class JsonMapTest extends TestCase
             }
         ]');
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Error saving 'first' data to CSV column: Error writing 'col' column: Cannot write object into a column"
+        );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
 
-    public function testMergeResults()
+    public function testMergeResults(): void
     {
         $configFirst = new JobConfig([
             'endpoint' => '1st',
-            'dataType' => 'first'
+            'dataType' => 'first',
         ]);
 
         $configTags = new JobConfig([
             'endpoint' => '2nd',
-            'dataType' => 'tags'
+            'dataType' => 'tags',
         ]);
         $data = [
             'mappings' => [
                 'first' => [
                     'id' => [
                         'type' => 'column',
-                        'mapping' => ['destination' => 'item_id']
+                        'mapping' => ['destination' => 'item_id'],
                     ],
                     'tags' => [
                         'type' => 'table',
@@ -272,37 +274,37 @@ class JsonMapTest extends TestCase
                             'user' => [
                                 'mapping' => [
                                     'destination' => 'user',
-                                    'primaryKey' => true
-                                ]
+                                    'primaryKey' => true,
+                                ],
                             ],
                             'tag' => [
                                 'mapping' => [
                                     'destination' => 'tag',
-                                    'primaryKey' => true
-                                ]
-                            ]
+                                    'primaryKey' => true,
+                                ],
+                            ],
                         ],
                         'parentKey' => [
-                            'disable' => true
-                        ]
-                    ]
+                            'disable' => true,
+                        ],
+                    ],
                 ],
                 'tags' => [
                     'user' => [
                         'mapping' => [
                             'destination' => 'user',
-                            'primaryKey' => true
-                        ]
+                            'primaryKey' => true,
+                        ],
                     ],
                     'tag' => [
                         'mapping' => [
                             'destination' => 'tag',
-                            'primaryKey' => true
-                        ]
-                    ]
-                ]
+                            'primaryKey' => true,
+                        ],
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => 'first']]
+            'jobs' => [['endpoint' => 'first']],
         ];
 
         $config = new Config($data);
@@ -348,13 +350,13 @@ class JsonMapTest extends TestCase
                 '"asd","tag1"' . "\n",
                 '"asd","tag2"' . "\n",
                 '"asd","tag3"' . "\n",
-                '"asd","tag4"' . "\n"
+                '"asd","tag4"' . "\n",
             ],
-            file($parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags'])
         );
     }
 
-    public function testMappingSimpleArrayToTable()
+    public function testMappingSimpleArrayToTable(): void
     {
         $data = [
             'mappings' => [
@@ -366,32 +368,32 @@ class JsonMapTest extends TestCase
                             '0' => [
                                 'type' => 'column',
                                 'mapping' => [
-                                    'destination' => 'date'
-                                ]
+                                    'destination' => 'date',
+                                ],
                             ],
                             '1' => [
                                 'type' => 'column',
                                 'mapping' => [
-                                    'destination' => 'unit_id'
-                                ]
+                                    'destination' => 'unit_id',
+                                ],
                             ],
                             '2' => [
                                 'type' => 'column',
                                 'mapping' => [
-                                    'destination' => 'unit_name'
-                                ]
+                                    'destination' => 'unit_name',
+                                ],
                             ],
                             '3' => [
                                 'type' => 'column',
                                 'mapping' => [
-                                    'destination' => 'clicks'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'destination' => 'clicks',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
-            'jobs' => [['endpoint' => 'reports']]
+            'jobs' => [['endpoint' => 'reports']],
         ];
         $config = new Config($data);
         $parser = new JsonMap($config, new NullLogger());
@@ -407,9 +409,9 @@ class JsonMapTest extends TestCase
         $expected = [
             '"date","unit_id","unit_name","clicks","reports_pk"' . "\n",
             '"2017-05-27","1234","article-bot-lef-x","83008","9568b51020c31f6e4e11f43ea8093967"' . "\n",
-            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n"
+            '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n",
         ];
 
-        self::assertEquals($expected, file($parser->getResults()['report-rows']));
+        self::assertEquals($expected, file((string) $parser->getResults()['report-rows']));
     }
 }

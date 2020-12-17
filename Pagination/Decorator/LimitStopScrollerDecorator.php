@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -7,6 +9,7 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Class LimitStopScrollerDecorator
@@ -14,27 +17,12 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var int
-     */
-    private $countLimit;
+    private ?int $countLimit = null;
 
-    /**
-     * @var string
-     */
-    private $fieldName;
+    private ?string $fieldName = null;
 
-    /**
-     * @var int
-     */
-    private $currentCount;
+    private int $currentCount;
 
-    /**
-     * Constructor.
-     * @param ScrollerInterface $scroller
-     * @param array $config
-     * @throws UserException
-     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         parent::__construct($scroller);
@@ -71,7 +59,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     {
         $this->currentCount += count($data);
         if ($this->fieldName) {
-            $limit = \Keboola\Utils\getDataFromPath($this->fieldName, $response, '.');
+            $limit = getDataFromPath($this->fieldName, $response, '.');
         } else {
             $limit = $this->countLimit;
         }
@@ -85,7 +73,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->currentCount = 0;
         parent::reset();

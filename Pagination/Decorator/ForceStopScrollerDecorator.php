@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -13,10 +15,7 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var int|null
-     */
-    protected $pageLimit = null;
+    protected ?int $pageLimit = null;
 
     /**
      * Time in seconds
@@ -26,36 +25,20 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Size in bytes
-     * @var int|null
      */
-    protected $volumeLimit = null;
+    protected ?int $volumeLimit = null;
 
-    /**
-     * @var int
-     */
-    protected $pageCounter;
+    protected ?int $pageCounter = null;
 
-    /**
-     * @var int
-     */
-    protected $volumeCounter;
+    protected ?int $volumeCounter = null;
 
     /**
      * Timestamp
-     * @var int
      */
-    protected $startTime;
+    protected ?int $startTime = null;
 
-    /**
-     * @var bool
-     */
-    protected $limitReached = false;
+    protected bool $limitReached = false;
 
-    /**
-     * ForceStopScrollerDecorator constructor.
-     * @param ScrollerInterface $scroller
-     * @param array $config
-     */
     public function __construct(ScrollerInterface $scroller, array $config)
     {
         parent::__construct($scroller);
@@ -103,7 +86,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * @param mixed $response
      * @return bool Returns true if a limit is reached
      */
-    private function checkLimits($response)
+    private function checkLimits($response): bool
     {
         if ($this->checkPages() || $this->checkTime() || $this->checkVolume($response)) {
             return true;
@@ -113,9 +96,8 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Uses internal counter to check page limit
-     * @return bool
      */
-    private function checkPages()
+    private function checkPages(): bool
     {
         if (is_null($this->pageLimit)) {
             return false;
@@ -131,7 +113,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      * Checks time between first and current request
      * @return bool
      */
-    private function checkTime()
+    private function checkTime(): bool
     {
         if (is_null($this->timeLimit)) {
             return false;
@@ -146,15 +128,14 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * Count the size of $response and check the limit
      * @param object|array $response
-     * @return bool
      */
-    private function checkVolume($response)
+    private function checkVolume($response): bool
     {
         if (is_null($this->volumeLimit)) {
             return false;
         }
 
-        $this->volumeCounter += strlen(json_encode($response));
+        $this->volumeCounter += strlen((string) json_encode($response));
         if ($this->volumeCounter > $this->volumeLimit) {
             return true;
         }
@@ -164,7 +145,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->pageCounter = 0;
         $this->volumeCounter = 0;
@@ -172,10 +153,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         parent::reset();
     }
 
-    /**
-     * @return bool
-     */
-    public function getLimitReached()
+    public function getLimitReached(): bool
     {
         return $this->limitReached;
     }

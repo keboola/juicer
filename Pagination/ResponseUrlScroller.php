@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -11,25 +13,14 @@ use GuzzleHttp\Query;
  */
 class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {
-    /**
-     * @var string
-     */
-    protected $urlParam = 'next_page';
+    protected string $urlParam = 'next_page';
 
-    /**
-     * @var bool
-     */
-    protected $includeParams = false;
+    protected bool $includeParams = false;
 
-    /**
-     * @var bool
-     */
-    protected $paramIsQuery = false;
-    
-    /**
-     * @var string
-     */
-    protected $delimiter = '.';
+    protected bool $paramIsQuery = false;
+
+
+    protected string $delimiter = '.';
 
     /**
      * ResponseUrlScroller constructor.
@@ -41,16 +32,16 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      *          'delimiter' => string // Data path separator char
      *      ]
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];
         }
         if (isset($config['includeParams'])) {
-            $this->includeParams = (bool)$config['includeParams'];
+            $this->includeParams = (bool) $config['includeParams'];
         }
         if (isset($config['paramIsQuery'])) {
-            $this->paramIsQuery = (bool)$config['paramIsQuery'];
+            $this->paramIsQuery = (bool) $config['paramIsQuery'];
         }
         if (isset($config['delimiter'])) {
             $this->delimiter = $config['delimiter'];

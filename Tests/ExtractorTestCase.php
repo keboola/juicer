@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests;
 
 use PHPUnit\Framework\TestCase;
 
 class ExtractorTestCase extends TestCase
 {
-    protected static function callMethod($obj, $name, array $args)
+    /**
+     * @return mixed
+     */
+    protected static function callMethod(object $obj, string $name, array $args)
     {
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
@@ -15,7 +20,10 @@ class ExtractorTestCase extends TestCase
         return $method->invokeArgs($obj, $args);
     }
 
-    protected static function getProperty($obj, $name)
+    /**
+     * @return mixed
+     */
+    protected static function getProperty(object $obj, string $name)
     {
         $class = new \ReflectionClass($obj);
         $property = $class->getProperty($name);

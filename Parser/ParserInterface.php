@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Parser;
 
 use Keboola\CsvTable\Table;
@@ -13,18 +15,15 @@ interface ParserInterface
      * Parse the data
      * @param array $data shall be the response body
      * @param string $type data type
-     * @param null $parentId
+     * @param string|array $parentId
      */
-    public function process(array $data, $type, $parentId = null);
+    public function process(array $data, string $type, $parentId = null): void;
 
 
     /**
      * @return Table[]
      */
-    public function getResults();
+    public function getResults(): array;
 
-    /**
-     * @return array
-     */
-    public function getMetadata();
+    public function getMetadata(): array;
 }

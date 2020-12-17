@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -11,48 +13,48 @@ use Psr\Log\NullLogger;
 
 class MultipleScrollerTest extends TestCase
 {
-    public function testGetNextRequest()
+    public function testGetNextRequest(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
 
         $cursorResponse = [
-            (object)['id' => 2],
-            (object)['id' => 1]
+            (object) ['id' => 2],
+            (object) ['id' => 1],
         ];
 
-        $paramResponse = (object)[
-            'next_page_id' => 'page2'
+        $paramResponse = (object) [
+            'next_page_id' => 'page2',
         ];
 
-        $noScrollerResponse = (object)[
+        $noScrollerResponse = (object) [
             'results' => [
-                (object)['data' => 'val1'],
-                (object)['data' => 'val2']
-            ]
+                (object) ['data' => 'val1'],
+                (object) ['data' => 'val2'],
+            ],
         ];
 
         $client = new RestClient(new NullLogger());
 
         $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
-            'scroller' => 'param'
+            'scroller' => 'param',
         ]);
 
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
-            'scroller' => 'cursor'
+            'scroller' => 'cursor',
         ]);
 
         $noScrollerConfig = new JobConfig([
-            'endpoint' => 'data'
+            'endpoint' => 'data',
         ]);
 
         $nextParam = $scroller->getNextRequest($client, $paramConfig, $paramResponse, []);
         $expectedParam = $client->createRequest([
             'endpoint' => 'structuredData',
             'params' => [
-                'page_id' => 'page2'
-            ]
+                'page_id' => 'page2',
+            ],
         ]);
         self::assertEquals($expectedParam, $nextParam);
 
@@ -60,16 +62,21 @@ class MultipleScrollerTest extends TestCase
         $expectedCursor = $client->createRequest([
             'endpoint' => 'arrData',
             'params' => [
-                'newerThan' => 2
-            ]
+                'newerThan' => 2,
+            ],
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
 
-        $nextNone = $scroller->getNextRequest($client, $noScrollerConfig, $noScrollerResponse, $noScrollerResponse->results);
+        $nextNone = $scroller->getNextRequest(
+            $client,
+            $noScrollerConfig,
+            $noScrollerResponse,
+            $noScrollerResponse->results
+        );
         self::assertFalse($nextNone);
     }
 
-    public function testGetNextRequestDefault()
+    public function testGetNextRequestDefault(): void
     {
         $config = $this->getScrollerConfig();
         $config['default'] = 'cursor';
@@ -77,20 +84,20 @@ class MultipleScrollerTest extends TestCase
 
         $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
-            'scroller' => 'param'
+            'scroller' => 'param',
         ]);
 
         $noScrollerConfig = new JobConfig([
-            'endpoint' => 'data'
+            'endpoint' => 'data',
         ]);
 
         $cursorResponse = [
-            (object)['id' => 2],
-            (object)['id' => 1]
+            (object) ['id' => 2],
+            (object) ['id' => 1],
         ];
 
-        $paramResponse = (object)[
-            'next_page_id' => 'page2'
+        $paramResponse = (object) [
+            'next_page_id' => 'page2',
         ];
 
         $client = new RestClient(new NullLogger());
@@ -99,8 +106,8 @@ class MultipleScrollerTest extends TestCase
         $expectedParam = $client->createRequest([
             'endpoint' => 'structuredData',
             'params' => [
-                'page_id' => 'page2'
-            ]
+                'page_id' => 'page2',
+            ],
         ]);
         self::assertEquals($expectedParam, $nextParam);
 
@@ -108,107 +115,105 @@ class MultipleScrollerTest extends TestCase
         $expectedCursor = $client->createRequest([
             'endpoint' => 'data',
             'params' => [
-                'newerThan' => 2
-            ]
+                'newerThan' => 2,
+            ],
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Default scroller 'def' does not exist
-     */
-    public function testGetNextRequestDefaultException()
+    public function testGetNextRequestDefaultException(): void
     {
         $config = $this->getScrollerConfig();
         $config['default'] = 'def';
         $scroller = new MultipleScroller($config);
 
         $noScrollerConfig = new JobConfig([
-            'endpoint' => 'data'
+            'endpoint' => 'data',
         ]);
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage("Default scroller 'def' does not exist");
         $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
-    /**
-     * @expectedException \Keboola\Juicer\Exception\UserException
-     * @expectedExceptionMessage Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page
-     */
-    public function testUndefinedScrollerException()
+    public function testUndefinedScrollerException(): void
     {
         $config = $this->getScrollerConfig();
         $scroller = new MultipleScroller($config);
 
         $noScrollerConfig = new JobConfig([
             'endpoint' => 'data',
-            'scroller' => 'nonExistentScroller'
+            'scroller' => 'nonExistentScroller',
         ]);
 
+        $this->expectException(UserException::class);
+        $this->expectExceptionMessage(
+            "Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page"
+        );
         $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
     }
 
-    protected function getScrollerConfig()
+    protected function getScrollerConfig(): array
     {
         $responseParamConfig = [
             'method' => 'response.param',
             'responseParam' => 'next_page_id',
-            'queryParam' => 'page_id'
+            'queryParam' => 'page_id',
         ];
 
         $cursorConfig = [
             'method' => 'cursor',
             'idKey' => 'id',
-            'param' => 'newerThan'
+            'param' => 'newerThan',
         ];
 
         $pageConfig = [
-            'method' => 'pagenum'
+            'method' => 'pagenum',
         ];
 
         return [
             'scrollers' => [
                 'param' => $responseParamConfig,
                 'cursor' => $cursorConfig,
-                'page' => $pageConfig
-            ]
+                'page' => $pageConfig,
+            ],
         ];
     }
 
-    public function testInvalid()
+    public function testInvalid(): void
     {
         try {
             new MultipleScroller([]);
-            self::fail("Invalid config must raise exception.");
+            self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertContains('At least one scroller must be configured for "multiple" scroller.', $e->getMessage());
         }
         try {
             new MultipleScroller(['scrollers' => []]);
-            self::fail("Invalid config must raise exception.");
+            self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertContains('At least one scroller must be configured for "multiple" scroller.', $e->getMessage());
         }
         try {
             new MultipleScroller(['scrollers' => ['noScroller']]);
-            self::fail("Invalid config must raise exception.");
+            self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertContains('Scroller configuration for 0must be array.', $e->getMessage());
         }
         new MultipleScroller(['scrollers' => ['noScroller' => ['noScroller']]]);
     }
 
-    public function testReset()
+    public function testReset(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
         $client = new RestClient(new NullLogger());
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
-            'scroller' => 'cursor'
+            'scroller' => 'cursor',
         ]);
         $pageConfig = new JobConfig([
             'endpoint' => 'someData',
-            'scroller' => 'page'
+            'scroller' => 'page',
         ]);
 
         $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
@@ -221,8 +226,8 @@ class MultipleScrollerTest extends TestCase
         $expectedCursor = $client->createRequest([
             'endpoint' => 'arrData',
             'params' => [
-                'newerThan' => 2
-            ]
+                'newerThan' => 2,
+            ],
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
 
@@ -230,23 +235,23 @@ class MultipleScrollerTest extends TestCase
         $expectedPage = $client->createRequest([
             'endpoint' => 'someData',
             'params' => [
-                'page' => 2
-            ]
+                'page' => 2,
+            ],
         ]);
         self::assertEquals($expectedPage, $nextPage);
     }
-    
-    public function testCloneSafety()
+
+    public function testCloneSafety(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
         $client = new RestClient(new NullLogger());
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
-            'scroller' => 'cursor'
+            'scroller' => 'cursor',
         ]);
         $pageConfig = new JobConfig([
             'endpoint' => 'someData',
-            'scroller' => 'page'
+            'scroller' => 'page',
         ]);
 
         $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
@@ -256,16 +261,16 @@ class MultipleScrollerTest extends TestCase
         $expectedCursor = $client->createRequest([
             'endpoint' => 'arrData',
             'params' => [
-                'newerThan' => 4
-            ]
+                'newerThan' => 4,
+            ],
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
         $nextPage = $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
         $expectedPage = $client->createRequest([
             'endpoint' => 'someData',
             'params' => [
-                'page' => 4
-            ]
+                'page' => 4,
+            ],
         ]);
         self::assertEquals($expectedPage, $nextPage);
 
@@ -276,21 +281,21 @@ class MultipleScrollerTest extends TestCase
         $expectedCursor = $client->createRequest([
             'endpoint' => 'arrData',
             'params' => [
-                'newerThan' => 4
-            ]
+                'newerThan' => 4,
+            ],
         ]);
         self::assertEquals($expectedCursor, $nextCursor);
         $nextPage = $scroller->getNextRequest($client, $pageConfig, [], ['foo', 'bar']);
         $expectedPage = $client->createRequest([
             'endpoint' => 'someData',
             'params' => [
-                'page' => 5
-            ]
+                'page' => 5,
+            ],
         ]);
         self::assertEquals($expectedPage, $nextPage);
     }
-    
-    public function testScrollers()
+
+    public function testScrollers(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
         self::assertCount(3, $scroller->getScrollers());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -13,20 +15,11 @@ use Keboola\Juicer\Exception\UserException;
  */
 class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 {
-    /**
-     * @var string
-     */
-    protected $field = null;
+    protected ?string $field = null;
 
-    /**
-     * @var bool
-     */
-    protected $stopOn = false;
+    protected bool $stopOn = false;
 
-    /**
-     * @var bool
-     */
-    protected $ifNotSet = false;
+    protected bool $ifNotSet = false;
 
     /**
      * HasMoreScrollerDecorator constructor.
@@ -50,9 +43,22 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
                 throw new UserException("'stopOn' value must be set to a boolean value for 'nextPageFlag'");
             }
 
+            if (!is_bool($config['nextPageFlag']['stopOn'])) {
+                throw new UserException(sprintf(
+                    "'stopOn' value must be set to a boolean value for 'nextPageFlag', given '%s' type.",
+                    gettype($config['nextPageFlag']['stopOn'])
+                ));
+            }
+
             $this->field = $config['nextPageFlag']['field'];
             $this->stopOn = $config['nextPageFlag']['stopOn'];
             if (isset($config['nextPageFlag']['ifNotSet'])) {
+                if (!is_bool($config['nextPageFlag']['ifNotSet'])) {
+                    throw new UserException(sprintf(
+                        "'ifNotSet' value must be boolean, given '%s' type.",
+                        gettype($config['nextPageFlag']['ifNotSet'])
+                    ));
+                }
                 $this->ifNotSet = $config['nextPageFlag']['ifNotSet'];
             } else {
                 $this->ifNotSet = $this->stopOn;
@@ -67,7 +73,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
     {
-        if (false === $this->hasMore($response)) {
+        if ($this->hasMore($response) === false) {
             return false;
         }
 
@@ -76,9 +82,8 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * @param mixed $response
-     * @return bool|null Returns null if this option isn't used
      */
-    protected function hasMore($response)
+    protected function hasMore($response): ?bool
     {
         if (empty($this->field)) {
             return null;
@@ -90,7 +95,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             $value = $response->{$this->field};
         }
 
-        if ((bool)$value === $this->stopOn) {
+        if ((bool) $value === $this->stopOn) {
             return false;
         } else {
             return true;

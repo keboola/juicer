@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -14,35 +16,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class OffsetScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int
-     */
-    protected $limit;
+    protected int $limit;
 
-    /**
-     * @var string
-     */
-    protected $limitParam = 'limit';
+    protected string $limitParam = 'limit';
 
-    /**
-     * @var string
-     */
-    protected $offsetParam = 'offset';
+    protected string $offsetParam = 'offset';
 
-    /**
-     * @var bool
-     */
-    protected $firstPageParams = true;
+    protected bool $firstPageParams = true;
 
-    /**
-     * @var int
-     */
-    protected $pointer = 0;
+    protected int $pointer = 0;
 
-    /**
-     * @var bool
-     */
-    protected $offsetFromJob = false;
+    protected bool $offsetFromJob = false;
 
     /**
      * OffsetScroller constructor.
@@ -51,7 +35,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      *          'limit' => int // mandatory parameter; size of each page
      *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
      *          'offsetParam' => string // the offset parameter
-     *          'firstPageParams' => bool // whether to include the limit and offset in the first request (default = true)
+     *          'firstPageParams' => bool // whether to include the limit and offset in the first request (def. true)
      *          'offsetFromJob' => bool // use offset parameter provided in the job parameters
      *      ]
      * @throws UserException
@@ -61,7 +45,16 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         if (empty($config['limit'])) {
             throw new UserException("Missing 'pagination.limit' attribute required for offset pagination");
         }
-        $this->limit = $config['limit'];
+
+        if (!is_numeric($config['limit'])) {
+            throw new UserException(sprintf(
+                "Parameter 'pagination.limit' is not numeric. Value '%s'.",
+                json_encode($config['limit'])
+            ));
+        }
+
+        $this->limit = (int) $config['limit'];
+
         if (!empty($config['limitParam'])) {
             $this->limitParam = $config['limitParam'];
         }
@@ -69,10 +62,10 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
             $this->offsetParam = $config['offsetParam'];
         }
         if (isset($config['firstPageParams'])) {
-            $this->firstPageParams = (bool)$config['firstPageParams'];
+            $this->firstPageParams = (bool) $config['firstPageParams'];
         }
         if (isset($config['offsetFromJob'])) {
-            $this->offsetFromJob = (bool)$config['offsetFromJob'];
+            $this->offsetFromJob = (bool) $config['offsetFromJob'];
         }
     }
 
@@ -109,33 +102,27 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->pointer = 0;
     }
 
     /**
      * Returns a config with scroller params
-     * @param JobConfig $jobConfig
-     * @return array
      */
-    private function getParams(JobConfig $jobConfig)
+    private function getParams(JobConfig $jobConfig): array
     {
         $config = $jobConfig->getConfig();
         $scrollParams = [
             $this->limitParam => $this->getLimit($jobConfig),
-            $this->offsetParam => $this->pointer
+            $this->offsetParam => $this->pointer,
         ];
 
         $config['params'] = array_replace($jobConfig->getParams(), $scrollParams);
         return $config;
     }
 
-    /**
-     * @param JobConfig $jobConfig
-     * @return int
-     */
-    private function getLimit(JobConfig $jobConfig)
+    private function getLimit(JobConfig $jobConfig): int
     {
         $params = $jobConfig->getParams();
         return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];

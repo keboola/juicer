@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
@@ -8,15 +10,8 @@ use Keboola\Juicer\Config\JobConfig;
 
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
-    /**
-     * @var ScrollerInterface
-     */
-    protected $scroller;
+    protected ScrollerInterface $scroller;
 
-    /**
-     * AbstractScrollerDecorator constructor.
-     * @param ScrollerInterface $scroller
-     */
     public function __construct(ScrollerInterface $scroller)
     {
         $this->scroller = $scroller;
@@ -47,16 +42,15 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->scroller->reset();
     }
 
     /**
      * Get decorated scroller
-     * @return ScrollerInterface
      */
-    public function getScroller()
+    public function getScroller(): ScrollerInterface
     {
         return $this->scroller;
     }
@@ -64,18 +58,18 @@ abstract class AbstractScrollerDecorator implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getState()
+    public function getState(): array
     {
         return [
             'decorator' => get_object_vars($this),
-            'scroller' => get_object_vars($this->scroller)
+            'scroller' => get_object_vars($this->scroller),
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function setState(array $state)
+    public function setState(array $state): void
     {
         if (isset($state['scroller'])) {
             $this->scroller->setState($state['scroller']);

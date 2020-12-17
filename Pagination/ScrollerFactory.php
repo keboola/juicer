@@ -1,24 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Exception\UserException;
 
 class ScrollerFactory
 {
-    /**
-     * @param array $config
-     * @return ScrollerInterface
-     * @throws UserException
-     */
-    public static function getScroller(array $config)
+    public static function getScroller(array $config): ScrollerInterface
     {
         $scroller = self::createScroller($config);
         $scroller = self::decorateScroller($scroller, $config);
         return $scroller;
     }
 
-    private static function decorateScroller(ScrollerInterface $scroller, array $config)
+    private static function decorateScroller(ScrollerInterface $scroller, array $config): ScrollerInterface
     {
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
@@ -35,7 +32,7 @@ class ScrollerFactory
         return $scroller;
     }
 
-    private static function createScroller(array $config)
+    private static function createScroller(array $config): ScrollerInterface
     {
         if (empty($config['method'])) {
             return new NoScroller();

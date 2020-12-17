@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Config;
 
 use Keboola\Juicer\Exception\UserException;
@@ -9,20 +11,14 @@ use Keboola\Juicer\Exception\UserException;
  */
 class JobConfig
 {
-    /**
-     * @var string
-     */
-    protected $jobId;
+    protected string $jobId;
 
     /**
      * @var JobConfig[]
      */
-    protected $childJobs = [];
+    protected array $childJobs = [];
 
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     /**
      * Create an instance of Job configuration from configuration associative array
@@ -61,7 +57,7 @@ class JobConfig
             }
             foreach ($config['children'] as $child) {
                 if (!is_array($child)) {
-                    throw new UserException("Job configuration must be an array: " . var_export($child, true));
+                    throw new UserException('Job configuration must be an array: ' . var_export($child, true));
                 }
                 $child = new JobConfig($child);
                 $this->childJobs[$child->getJobId()] = $child;
@@ -72,55 +68,37 @@ class JobConfig
     /**
      * @return JobConfig[]
      */
-    public function getChildJobs() : array
+    public function getChildJobs(): array
     {
         return $this->childJobs;
     }
 
-    /**
-     * @return string
-     */
-    public function getJobId() : string
+    public function getJobId(): string
     {
         return $this->jobId;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return string
-     */
-    public function getEndpoint() : string
+    public function getEndpoint(): string
     {
         return $this->config['endpoint'];
     }
 
-    /**
-     * @param string $endpoint
-     */
-    public function setEndpoint($endpoint)
+    public function setEndpoint(string $endpoint): void
     {
         $this->config['endpoint'] = $endpoint;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->config['params'];
     }
 
-    /**
-     * @param array $params
-     */
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
         $this->config['params'] = $params;
     }
@@ -129,15 +107,12 @@ class JobConfig
      * @param string $name
      * @param mixed $value
      */
-    public function setParam($name, $value)
+    public function setParam(string $name, $value): void
     {
         $this->config['params'][$name] = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getDataType() : string
+    public function getDataType(): string
     {
         return $this->config['dataType'];
     }

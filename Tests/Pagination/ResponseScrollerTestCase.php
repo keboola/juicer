@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Config\JobConfig;
@@ -7,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseScrollerTestCase extends TestCase
 {
-    protected function getConfig()
+    protected function getConfig(): JobConfig
     {
         return new JobConfig([
             'endpoint' => 'test',
             'params' => [
                 'a' => 1,
-                'b' => 2
-            ]
+                'b' => 2,
+            ],
         ]);
     }
 }

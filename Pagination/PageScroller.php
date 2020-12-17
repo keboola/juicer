@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
@@ -15,35 +17,17 @@ use Keboola\Juicer\Config\JobConfig;
  */
 class PageScroller extends AbstractScroller implements ScrollerInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $limit = null;
+    protected ?int $limit = null;
 
-    /**
-     * @var string
-     */
-    protected $limitParam = 'limit';
+    protected string $limitParam = 'limit';
 
-    /**
-     * @var string
-     */
-    protected $pageParam = 'page';
+    protected string $pageParam = 'page';
 
-    /**
-     * @var int
-     */
-    protected $firstPage = 1;
+    protected int $firstPage = 1;
 
-    /**
-     * @var bool
-     */
-    protected $firstPageParams = true;
+    protected bool $firstPageParams = true;
 
-    /**
-     * @var int
-     */
-    protected $page;
+    protected int $page;
 
     /**
      * PageScroller constructor.
@@ -53,7 +37,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      *          'limit' => int // page size limit
      *          'limitParam' => string // the limit parameter (usually 'limit', 'count', ...)
      *          'firstPage' => int // number of the first page
-     *          'firstPageParams` => bool // whether to include the limit and offset in the first request (default = true)
+     *          'firstPageParams` => bool // whether to include the limit and offset in the first request (def. true)
      *      ]
      */
     public function __construct(array $config)
@@ -111,17 +95,15 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function reset()
+    public function reset(): void
     {
         $this->page = $this->firstPage;
     }
 
     /**
      * Returns a config with scroller params
-     * @param JobConfig $jobConfig
-     * @return array
      */
-    private function getParams(JobConfig $jobConfig)
+    private function getParams(JobConfig $jobConfig): array
     {
         $params = [$this->pageParam => $this->page];
         if (!empty($this->limitParam) && !is_null($this->getLimit($jobConfig))) {
@@ -136,11 +118,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         return $config;
     }
 
-    /**
-     * @param JobConfig $jobConfig
-     * @return int|null
-     */
-    private function getLimit(JobConfig $jobConfig)
+    private function getLimit(JobConfig $jobConfig): ?int
     {
         $params = $jobConfig->getParams();
         return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];
