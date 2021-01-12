@@ -7,12 +7,13 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         bootstrap="vendor/autoload.php">
-
-	<testsuite name="Extractor Test Suite">
-		<directory>Tests</directory>
-	</testsuite>
-
+         bootstrap="tests/phpunit/bootstrap.php">
+    <testsuite name="Main Test Suite">
+        <directory>tests/phpunit</directory>
+    </testsuite>
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">.</directory>
