@@ -43,19 +43,19 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     public function __construct(array $config)
     {
         if (!empty($config['pageParam'])) {
-            $this->pageParam = $config['pageParam'];
+            $this->pageParam = (string) $config['pageParam'];
         }
         if (!empty($config['limit'])) {
-            $this->limit = $config['limit'];
+            $this->limit = (int) $config['limit'];
         }
         if (!empty($config['limitParam'])) {
-            $this->limitParam = $config['limitParam'];
+            $this->limitParam = (string) $config['limitParam'];
         }
         if (isset($config['firstPage'])) {
-            $this->firstPage = $config['firstPage'];
+            $this->firstPage = (int) $config['firstPage'];
         }
         if (isset($config['firstPageParams'])) {
-            $this->firstPageParams = $config['firstPageParams'];
+            $this->firstPageParams = (bool) $config['firstPageParams'];
         }
 
         $this->reset();
@@ -121,6 +121,6 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     private function getLimit(JobConfig $jobConfig): ?int
     {
         $params = $jobConfig->getParams();
-        return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];
+        return empty($params[$this->limitParam]) ? $this->limit : (int) $params[$this->limitParam];
     }
 }

@@ -56,10 +56,10 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         $this->limit = (int) $config['limit'];
 
         if (!empty($config['limitParam'])) {
-            $this->limitParam = $config['limitParam'];
+            $this->limitParam = (string) $config['limitParam'];
         }
         if (!empty($config['offsetParam'])) {
-            $this->offsetParam = $config['offsetParam'];
+            $this->offsetParam = (string) $config['offsetParam'];
         }
         if (isset($config['firstPageParams'])) {
             $this->firstPageParams = (bool) $config['firstPageParams'];
@@ -125,6 +125,6 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     private function getLimit(JobConfig $jobConfig): int
     {
         $params = $jobConfig->getParams();
-        return empty($params[$this->limitParam]) ? $this->limit : $params[$this->limitParam];
+        return empty($params[$this->limitParam]) ? $this->limit : (int) $params[$this->limitParam];
     }
 }

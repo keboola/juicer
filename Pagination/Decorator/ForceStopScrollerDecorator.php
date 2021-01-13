@@ -88,10 +88,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
      */
     private function checkLimits($response): bool
     {
-        if ($this->checkPages() || $this->checkTime() || $this->checkVolume($response)) {
-            return true;
-        }
-        return false;
+        return $this->checkPages() || $this->checkTime() || $this->checkVolume($response);
     }
 
     /**
