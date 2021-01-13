@@ -132,6 +132,69 @@ class OffsetScrollerTest extends TestCase
         self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
     }
 
+    public function testLimitFromJob(): void
+    {
+        $client = new RestClient(new NullLogger());
+        $limit = 10;
+        $config = new JobConfig([
+            'endpoint' => 'test',
+            'params' => [
+                'startAt' => 3,
+                'limit' => $limit,
+            ],
+        ]);
+
+        $scroller = new OffsetScroller([
+            'limit' => 5,
+            'offsetFromJob' => true,
+            'offsetParam' => 'startAt',
+        ]);
+
+        /** @var RestRequest $first */
+        $first = $scroller->getFirstRequest($client, $config);
+
+        self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
+
+        $response = new \stdClass();
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
+
+        /** @var RestRequest $second */
+        $second = $scroller->getNextRequest($client, $config, $response, $response->data);
+        self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
+    }
+
+    public function testLimitStringValue(): void
+    {
+        $client = new RestClient(new NullLogger());
+        $limit = 10;
+        $config = new JobConfig([
+            'endpoint' => 'test',
+            'params' => [
+                'startAt' => 3,
+                'limit' => (string) $limit,
+            ],
+        ]);
+
+        $scroller = new OffsetScroller([
+            'limit' => '5',
+            'offsetFromJob' => true,
+            'offsetParam' => 'startAt',
+        ]);
+
+        /** @var RestRequest $first */
+        $first = $scroller->getFirstRequest($client, $config);
+
+        self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
+
+        $response = new \stdClass();
+        $response->data = array_fill(0, 10, (object) ['key' => 'value']);
+
+        /** @var RestRequest $second */
+        $second = $scroller->getNextRequest($client, $config, $response, $response->data);
+        self::assertEquals($config->getParams()['startAt'] + $limit, $second->getParams()['startAt']);
+    }
+
+
     public function testMissingLimit(): void
     {
         try {
