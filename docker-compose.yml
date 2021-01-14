@@ -1,28 +1,7 @@
-version: '2'
-
+version: '3'
 services:
-  tests:
-    build:
-      context: .
-      dockerfile: Dockerfile-tests
+  dev:
+    build: .
     volumes:
-      - ./.git:/code/.git
-      - .tmp:/tmp
-    command:
-      - /code/phpunit.sh
-    tty: true
-    stdin_open: true
-
-  tests-local:
-    build:
-      context: .
-      dockerfile: Dockerfile-tests
-    volumes:
-      - .:/code
-      - .tmp:/tmp
-    command:
-      - /bin/sh
-      - -c
-      - "composer install --no-interaction && /code/phpunit.sh"
-    tty: true
-    stdin_open: true
+      - ./:/code
+      - ./data:/data
