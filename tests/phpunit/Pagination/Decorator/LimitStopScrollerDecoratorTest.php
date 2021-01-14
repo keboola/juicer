@@ -46,7 +46,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $response,
             $response->results->data
         );
-        self::assertFalse($noNext);
+        self::assertNull($noNext);
     }
 
     public function testLimit(): void
@@ -79,7 +79,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $response,
             $response->results->data
         );
-        self::assertFalse($noNext);
+        self::assertNull($noNext);
     }
 
     public function testInvalid1(): void

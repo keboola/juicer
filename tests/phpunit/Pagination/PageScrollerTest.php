@@ -175,7 +175,7 @@ class PageScrollerTest extends TestCase
         self::assertEquals(1, $first->getParams()['page']);
         self::assertEquals(2, $second->getParams()['page']);
         self::assertEquals(3, $third->getParams()['page']);
-        self::assertFalse($last);
+        self::assertNull($last);
     }
 
     public function testSetState(): void

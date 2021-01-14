@@ -61,7 +61,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         $this->startTime = time();
         $this->pageCounter = 1;
@@ -72,11 +72,11 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         if ($this->checkLimits($response)) {
             $this->limitReached = true;
-            return false;
+            return null;
         }
 
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);

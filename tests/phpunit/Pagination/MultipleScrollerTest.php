@@ -73,7 +73,7 @@ class MultipleScrollerTest extends TestCase
             $noScrollerResponse,
             $noScrollerResponse->results
         );
-        self::assertFalse($nextNone);
+        self::assertNull($nextNone);
     }
 
     public function testGetNextRequestDefault(): void

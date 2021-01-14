@@ -6,6 +6,7 @@ namespace Keboola\Juicer\Pagination;
 
 use GuzzleHttp\Url;
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use GuzzleHttp\Query;
 
@@ -44,12 +45,12 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, '.');
 
         if (empty($nextUrl)) {
-            return false;
+            return null;
         }
 
         // start_time validation
@@ -59,7 +60,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
         $startDateTime = $startDateTimeStr ? \DateTime::createFromFormat('U', $startDateTimeStr) : null;
 
         if ($startDateTime && $startDateTime > $now->modify(sprintf('-%d minutes', self::NEXT_PAGE_FILTER_MINUTES))) {
-            return false;
+            return null;
         }
 
         $config = $jobConfig->getConfig();

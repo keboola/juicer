@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 
 /**
@@ -64,7 +65,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         if ($this->firstPageParams) {
             $config = $this->getParams($jobConfig);
@@ -78,13 +79,13 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         if ((is_null($this->getLimit($jobConfig)) && empty($data))
             || (count($data) < $this->getLimit($jobConfig))
         ) {
             $this->reset();
-            return false;
+            return null;
         } else {
             $this->page++;
 

@@ -36,7 +36,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
             self::assertInstanceOf('Keboola\Juicer\Client\RestRequest', $request);
             $i++;
         }
-        self::assertFalse($decorator->getNextRequest($client, $jobConfig, $response, $response));
+        self::assertNull($decorator->getNextRequest($client, $jobConfig, $response, $response));
         // Assert 3 pages were true
         self::assertEquals(3, $i);
     }
@@ -84,7 +84,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
             $i++;
             sleep(1);
         }
-        self::assertFalse($decorator->getNextRequest($client, $jobConfig, $response, $response));
+        self::assertNull($decorator->getNextRequest($client, $jobConfig, $response, $response));
         // Assert 3 pages were true
         self::assertEquals(3, $i);
     }

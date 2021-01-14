@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
@@ -71,10 +72,10 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         if ($this->hasMore($response) === false) {
-            return false;
+            return null;
         }
 
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);

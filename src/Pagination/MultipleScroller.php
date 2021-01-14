@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
 
@@ -58,7 +59,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         return $this->getScrollerForJob($jobConfig)->getFirstRequest($client, $jobConfig);
     }
@@ -66,7 +67,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         return $this->getScrollerForJob($jobConfig)->getNextRequest($client, $jobConfig, $response, $data);
     }

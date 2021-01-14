@@ -46,7 +46,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         $this->currentCount = 0;
         return $this->scroller->getFirstRequest($client, $jobConfig);
@@ -55,7 +55,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         $this->currentCount += count($data);
         if ($this->fieldName) {
@@ -64,7 +64,7 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
             $limit = $this->countLimit;
         }
         if ($this->currentCount >= $limit) {
-            return false;
+            return null;
         }
 
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);

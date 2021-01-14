@@ -10,21 +10,12 @@ use Keboola\Juicer\Config\JobConfig;
 
 interface ScrollerInterface
 {
-    /**
-     * @param RestClient $client
-     * @param JobConfig $jobConfig
-     * @return RestRequest|false
-     */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig);
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest;
 
     /**
-     * @param RestClient $client
-     * @param JobConfig $jobConfig
      * @param array|object $response
-     * @param array $data
-     * @return RestRequest|false
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data);
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest;
 
     /**
      * Reset the pagination pointer
