@@ -45,7 +45,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             (object) ['hasMore' => false],
             array_fill(0, 10, ['k' => 'v'])
         );
-        self::assertFalse($noNext);
+        self::assertNull($noNext);
     }
 
     public function testHasMore(): void

@@ -36,7 +36,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             $next = $scroller->getNextRequest($client, $config, $response, $response->data);
 
             if (!$i) {
-                self::assertFalse($next);
+                self::assertNull($next);
             } else {
                 if (!$next instanceof RestRequest) {
                     self::fail('ZendeskResponseUrlScroller::getNextRequest should return new RestRequest');

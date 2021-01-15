@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
 
@@ -72,7 +73,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getFirstRequest(RestClient $client, JobConfig $jobConfig)
+    public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         if ($this->offsetFromJob && !empty($jobConfig->getParams()[$this->offsetParam])) {
             $this->pointer = $jobConfig->getParams()[$this->offsetParam];
@@ -90,11 +91,11 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     /**
      * @inheritdoc
      */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, $data)
+    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
         if (count($data) < $this->getLimit($jobConfig)) {
             $this->reset();
-            return false;
+            return null;
         } else {
             $this->pointer += $this->getLimit($jobConfig);
 

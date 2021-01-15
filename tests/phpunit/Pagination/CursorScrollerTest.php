@@ -40,7 +40,7 @@ class CursorScrollerTest extends TestCase
 
         $emptyResponse = [];
         $last = $scroller->getNextRequest($client, $config, $emptyResponse, $emptyResponse);
-        self::assertFalse($last);
+        self::assertNull($last);
     }
 
     public function testGetNextRequestNested(): void
