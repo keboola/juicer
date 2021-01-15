@@ -81,7 +81,7 @@ class JsonMapTest extends TestCase
                 '"1","","iAreId"' . "\n",
                 '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n",
             ],
-            file((string) $parser->getResults()['first'])
+            file((string) $parser->getResults()['first']->getPathName())
         );
         self::assertEquals(
             [
@@ -89,7 +89,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
                 '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
             ],
-            file((string) $parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags']->getPathName())
         );
 
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
@@ -173,7 +173,7 @@ class JsonMapTest extends TestCase
         $parser->process($data, 'first');
         $parser->process($data, 'notfirst');
 
-        self::assertStringContainsStringOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
+        self::assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
         self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 
@@ -244,7 +244,8 @@ class JsonMapTest extends TestCase
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
-            "Error saving 'first' data to CSV column: Error writing 'col' column: Cannot write object into a column"
+            "Error saving 'first' data to CSV column: " .
+            "Error writing 'col' column: Cannot write data into column: (object)"
         );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
@@ -352,7 +353,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag3"' . "\n",
                 '"asd","tag4"' . "\n",
             ],
-            file((string) $parser->getResults()['tags'])
+            file((string) $parser->getResults()['tags']->getPathName())
         );
     }
 
@@ -412,6 +413,6 @@ class JsonMapTest extends TestCase
             '"2017-05-27","5678","article-bot-mob-x","105723","9568b51020c31f6e4e11f43ea8093967"' . "\n",
         ];
 
-        self::assertEquals($expected, file((string) $parser->getResults()['report-rows']));
+        self::assertEquals($expected, file((string) $parser->getResults()['report-rows']->getPathName()));
     }
 }
