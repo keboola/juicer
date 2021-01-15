@@ -18,8 +18,7 @@
         "keboola/php-utils": "^4.1",
         "keboola/php-csvtable": "^1.1",
         "keboola/csvmap": "^1.1",
-        "guzzlehttp/retry-subscriber": "dev-master#270393c",
-        "guzzlehttp/guzzle": "^5.3",
+        "guzzlehttp/guzzle": "^7.2",
         "keboola/codebuilder": "^1.0",
         "keboola/php-temp": "^2.0"
     },
