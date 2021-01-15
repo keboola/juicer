@@ -173,7 +173,7 @@ class JsonMapTest extends TestCase
         $parser->process($data, 'first');
         $parser->process($data, 'notfirst');
 
-        self::assertContainsOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
+        self::assertStringContainsStringOnlyInstancesOf('Keboola\CsvTable\Table', $parser->getResults());
         self::assertEquals(['notfirst', 'first', 'first_arr', 'first_tags'], array_keys($parser->getResults()));
     }
 

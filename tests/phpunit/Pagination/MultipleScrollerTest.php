@@ -186,19 +186,25 @@ class MultipleScrollerTest extends TestCase
             new MultipleScroller([]);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
-            self::assertContains('At least one scroller must be configured for "multiple" scroller.', $e->getMessage());
+            self::assertStringContainsString(
+                'At least one scroller must be configured for "multiple" scroller.',
+                $e->getMessage()
+            );
         }
         try {
             new MultipleScroller(['scrollers' => []]);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
-            self::assertContains('At least one scroller must be configured for "multiple" scroller.', $e->getMessage());
+            self::assertStringContainsString(
+                'At least one scroller must be configured for "multiple" scroller.',
+                $e->getMessage()
+            );
         }
         try {
             new MultipleScroller(['scrollers' => ['noScroller']]);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
-            self::assertContains('Scroller configuration for 0must be array.', $e->getMessage());
+            self::assertStringContainsString('Scroller configuration for 0must be array.', $e->getMessage());
         }
         new MultipleScroller(['scrollers' => ['noScroller' => ['noScroller']]]);
     }

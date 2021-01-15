@@ -201,7 +201,7 @@ class OffsetScrollerTest extends TestCase
             new OffsetScroller([]);
             self::fail('Must cause exception');
         } catch (UserException $e) {
-            self::assertContains(
+            self::assertStringContainsString(
                 'Missing \'pagination.limit\' attribute required for offset pagination',
                 $e->getMessage()
             );
@@ -214,7 +214,7 @@ class OffsetScrollerTest extends TestCase
             new OffsetScroller(['limit' => 'foo']);
             self::fail('Must cause exception');
         } catch (UserException $e) {
-            self::assertContains(
+            self::assertStringContainsString(
                 'Parameter \'pagination.limit\' is not numeric. Value \'"foo"\'.',
                 $e->getMessage()
             );

@@ -253,8 +253,8 @@ class RestClientTest extends ExtractorTestCase
             $client->download(new RestRequest(['endpoint' => 'ep']));
             self::fail('Request should fail');
         } catch (\Throwable $e) {
-            self::assertContains('Not Found', $e->getMessage());
-            self::assertContains('404', $e->getMessage());
+            self::assertStringContainsString('Not Found', $e->getMessage());
+            self::assertStringContainsString('404', $e->getMessage());
         }
     }
 
