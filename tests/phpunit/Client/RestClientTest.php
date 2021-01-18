@@ -7,10 +7,6 @@ namespace Keboola\Juicer\Tests\Client;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
-use GuzzleHttp\Message\Response;
-use GuzzleHttp\Stream\Stream;
-use GuzzleHttp\Subscriber\Mock;
-use GuzzleHttp\Subscriber\History;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Monolog\Handler\TestHandler;
@@ -36,26 +32,6 @@ class RestClientTest extends ExtractorTestCase
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
 
         self::assertEquals($expected, $request);
-    }
-
-    public function testGetGuzzleRequest(): void
-    {
-        $client = new RestClient(new NullLogger(), [], []);
-        $requestGet = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
-        $requestPost = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST']);
-        $requestForm = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM']);
-
-        $get = self::callMethod($client, 'getGuzzleRequest', [$requestGet]);
-        $post = self::callMethod($client, 'getGuzzleRequest', [$requestPost]);
-        $form = self::callMethod($client, 'getGuzzleRequest', [$requestForm]);
-
-        self::assertEquals('ep?a=1', $get->getUrl());
-
-        self::assertEquals('ep', $post->getUrl());
-        self::assertEquals('{"a":1}', $post->getBody());
-
-        self::assertEquals('ep', $form->getUrl());
-        self::assertEquals(['a' => 1], $form->getBody()->getFields());
     }
 
     public function testDownload(): void

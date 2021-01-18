@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\HandlerStack;
 use Keboola\Juicer\Exception\UserException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
-use GuzzleHttp\Event\AbstractTransferEvent;
-use GuzzleHttp\Event\ErrorEvent;
 use Keboola\Utils\Exception\JsonDecodeException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use function Keboola\Utils\isValidDateTimeString;
 use function Keboola\Utils\jsonDecode;
@@ -27,6 +24,8 @@ class RestClient
     private LoggerInterface $logger;
 
     private array $ignoreErrors;
+
+    private GuzzleRequestFactory $guzzleRequestFactory;
 
     /**
      * @param LoggerInterface $logger
@@ -51,20 +50,17 @@ class RestClient
         array $defaultOptions = [],
         array $ignoreErrors = []
     ) {
-        $guzzle = new Client($guzzleConfig);
-        $guzzle->getEmitter()->attach(self::createBackoff($retryConfig, $logger));
 
-        $guzzle->getEmitter()->on('error', function (ErrorEvent $errorEvent): void {
-            $errno = $errorEvent->getTransferInfo('errno');
-            $error = $errorEvent->getTransferInfo('error');
-            if ($errno > 0) {
-                throw new UserException(sprintf('CURL error %d: %s', $errno, $error));
-            }
-        }, 'last');
+        $handler = HandlerStack::create();
+        $guzzleConfig['handler'] = $handler;
+        $guzzle = new Client($guzzleConfig);
+        // TODO retry
+
         $this->logger = $logger;
         $this->client = $guzzle;
         $this->defaultRequestOptions = $defaultOptions;
         $this->ignoreErrors = $ignoreErrors;
+        $this->guzzleRequestFactory = new GuzzleRequestFactory();
     }
 
     /**
@@ -119,7 +115,7 @@ class RestClient
     public function download(RestRequest $request)
     {
         try {
-            $response = $this->client->send($this->getGuzzleRequest($request));
+            $response = $this->client->send($this->guzzleRequestFactory->create($request));
             try {
                 return $this->getObjectFromResponse($response);
             } catch (UserException $e) {
@@ -184,39 +180,6 @@ class RestClient
         }
 
         return $decoded;
-    }
-
-    public function getGuzzleRequest(RestRequest $request): RequestInterface
-    {
-        switch ($request->getMethod()) {
-            case 'GET':
-                $method = $request->getMethod();
-                $endpoint = \Keboola\Utils\buildUrl($request->getEndpoint(), $request->getParams());
-                $options = [];
-                break;
-            case 'POST':
-                $method = $request->getMethod();
-                $endpoint = $request->getEndpoint();
-                $options = ['json' => $request->getParams()];
-                break;
-            case 'FORM':
-                $method = 'POST';
-                $endpoint = $request->getEndpoint();
-                $options = ['body' => $request->getParams()];
-                break;
-            default:
-                throw new UserException(sprintf(
-                    "Unknown request method '%s' for '%s'",
-                    $request->getMethod(),
-                    $request->getEndpoint()
-                ));
-        }
-
-        if (!empty($request->getHeaders())) {
-            $options['headers'] = $request->getHeaders();
-        }
-
-        return $this->client->createRequest($method, $endpoint, $options);
     }
 
     /**
