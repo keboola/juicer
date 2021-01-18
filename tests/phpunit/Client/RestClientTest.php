@@ -62,7 +62,7 @@ class RestClientTest extends ExtractorTestCase
         /** @var RequestInterface $lastRequest */
         $lastRequest = array_pop($this->history)['request'];
         self::assertEquals(json_decode($body), $result);
-        self::assertEquals('ep?a=1', (string)$lastRequest->getUri());
+        self::assertEquals('ep?a=1', (string) $lastRequest->getUri());
         self::assertEquals('GET', $lastRequest->getMethod());
         self::assertEquals([1234], $lastRequest->getHeaders()['X-Test']);
     }
@@ -90,7 +90,7 @@ class RestClientTest extends ExtractorTestCase
         /** @var RequestInterface $lastRequest */
         $lastRequest = array_pop($this->history)['request'];
         $headers = $lastRequest->getHeaders();
-        self::assertEquals((object)[], $result);
+        self::assertEquals((object) [], $result);
         self::assertSame(['requestHeader'], $headers['X-RTest']);
         self::assertSame(['1234'], $headers['X-Test']);
     }
@@ -230,7 +230,7 @@ class RestClientTest extends ExtractorTestCase
         $ignoredErrors = [503];
         $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
         $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['a' => 'b'], (array)$response);
+        self::assertEquals(['a' => 'b'], (array) $response);
     }
 
     public function testErrorCodesIgnoreInvalidResponse(): void
@@ -239,7 +239,7 @@ class RestClientTest extends ExtractorTestCase
         $ignoredErrors = [200];
         $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
         $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => '{"a": bcd"'], (array)$response);
+        self::assertEquals(['errorData' => '{"a": bcd"'], (array) $response);
     }
 
     public function testErrorCodesIgnoreInvalidResponseAndCode(): void

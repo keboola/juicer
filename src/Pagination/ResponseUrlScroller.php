@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Pagination;
 
+use GuzzleHttp\Psr7\Query;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
-use GuzzleHttp\Query;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
@@ -69,7 +69,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
                 $config['endpoint'] = $nextUrl;
             } else {
                 // Create an array from the query string
-                $responseQuery = Query::fromString(ltrim($nextUrl, '?'))->toArray();
+                $responseQuery = Query::parse(ltrim($nextUrl, '?'));
                 $config['params'] = array_replace($config['params'], $responseQuery);
             }
 
