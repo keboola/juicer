@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Client;
 
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
+use Hoa\Iterator\Mock;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
@@ -11,10 +17,13 @@ use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use Psr\Log\NullLogger;
 
 class RestClientTest extends ExtractorTestCase
 {
+    private array $history = [];
+
     public function testCreateRequest(): void
     {
         $arr = [
@@ -28,9 +37,7 @@ class RestClientTest extends ExtractorTestCase
 
         $client = new RestClient(new NullLogger(), [], []);
         $request = $client->createRequest($jobConfig->getConfig());
-
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
-
         self::assertEquals($expected, $request);
     }
 
@@ -40,39 +47,37 @@ class RestClientTest extends ExtractorTestCase
                 {"field": "data"},
                 {"field": "more"}
         ]';
-
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($body)),
-        ]);
-
-        $history = new History();
-
-        $restClient = new RestClient(new NullLogger(), [], []);
-        $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
-        $restClient->getClient()->getEmitter()->attach($mock);
-        $restClient->getClient()->getEmitter()->attach($history);
+        $restClient = $this->createMockClient(
+            [
+                new Response(200, [], Utils::streamFor($body)),
+            ],
+            [
+                'headers' => ['X-Test' => '1234'],
+            ]
+        );
 
         $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
+        $result = $restClient->download($request);
 
-        self::assertEquals(json_decode($body), $restClient->download($request));
-        self::assertEquals('ep?a=1', $history->getLastRequest()->getUrl());
-        self::assertEquals('GET', $history->getLastRequest()->getMethod());
-        self::assertEquals(
-            [1234],
-            $history->getLastRequest()->getHeaders()['X-Test']
-        );
+        /** @var RequestInterface $lastRequest */
+        $lastRequest = array_pop($this->history)['request'];
+        self::assertEquals(json_decode($body), $result);
+        self::assertEquals('ep?a=1', (string)$lastRequest->getUri());
+        self::assertEquals('GET', $lastRequest->getMethod());
+        self::assertEquals([1234], $lastRequest->getHeaders()['X-Test']);
     }
 
     public function testRequestHeaders(): void
     {
-        $mock = new Mock([
-            new Response(200, [], Stream::factory('{}')),
-        ]);
-        $history = new History();
-        $restClient = new RestClient(new NullLogger(), [], []);
-        $restClient->getClient()->setDefaultOption('headers', ['X-Test' => '1234']);
-        $restClient->getClient()->getEmitter()->attach($mock);
-        $restClient->getClient()->getEmitter()->attach($history);
+        $body = '{}';
+        $restClient = $this->createMockClient(
+            [
+                new Response(200, [], Utils::streamFor($body)),
+            ],
+            [
+                'headers' => ['X-Test' => '1234'],
+            ]
+        );
 
         $request = new RestRequest([
             'endpoint' => 'ep',
@@ -80,36 +85,14 @@ class RestClientTest extends ExtractorTestCase
             'method' => 'GET',
             'headers' => ['X-RTest' => 'requestHeader'],
         ]);
-        $restClient->download($request);
+        $result = $restClient->download($request);
 
-        self::assertEquals(
-            [
-                'X-RTest' => ['requestHeader'],
-                'X-Test' => ['1234'],
-            ],
-            $history->getLastRequest()->getHeaders()
-        );
-    }
-
-    protected function runBackoff(RestClient $restClient, Response $errResponse): void
-    {
-        $body = '[
-                {"field": "data"},
-                {"field": "more"}
-        ]';
-
-        $mock = new Mock([
-            $errResponse,
-            new Response(200, [], Stream::factory($body)),
-        ]);
-        $restClient->getClient()->getEmitter()->attach($mock);
-
-        $history = new History();
-        $restClient->getClient()->getEmitter()->attach($history);
-
-        $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
-        self::assertEquals(json_decode($body), $restClient->download($request));
-        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '');
+        /** @var RequestInterface $lastRequest */
+        $lastRequest = array_pop($this->history)['request'];
+        $headers = $lastRequest->getHeaders();
+        self::assertEquals((object)[], $result);
+        self::assertSame(['requestHeader'], $headers['X-RTest']);
+        self::assertSame(['1234'], $headers['X-Test']);
     }
 
     /**
@@ -120,31 +103,28 @@ class RestClientTest extends ExtractorTestCase
     {
         $sets = [
             'default' => [
-                new RestClient(new NullLogger()),
+                [],
                 new Response(429, ['Retry-After' => 5]),
             ],
             'custom' => [
-                new RestClient(
-                    new NullLogger(),
-                    [],
-                    [
-                        'http' => [
-                            'retryHeader' => 'X-Rate-Limit-Reset',
-                            'codes' => [403, 429],
-                        ],
-                        'maxRetries' => 8,
-                    ]
-                ),
+                [
+                    'http' => [
+                        'retryHeader' => 'X-Rate-Limit-Reset',
+                        'codes' => [403, 429],
+                    ],
+                    'maxRetries' => 8,
+                ],
                 new Response(403, ['X-Rate-Limit-Reset' => 5]),
             ],
             'absolute' => [
-                new RestClient(new NullLogger()),
+                [],
                 new Response(429, ['Retry-After' => time() + 5]),
             ],
         ];
 
         foreach ($sets as $set) {
-            $this->runBackoff($set[0], $set[1]);
+            [$retryOptions, $errorResponse] = $set;
+            $this->runBackoff($retryOptions, $errorResponse);
         }
     }
 
@@ -218,15 +198,13 @@ class RestClientTest extends ExtractorTestCase
 
     public function testErrorCodesIgnoreNoIgnore(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], []);
-        $mock = new Mock([
-            new Response(404, [], Stream::factory('{"a": "b"}')),
-        ]);
-        $client->getClient()->getEmitter()->attach($mock);
+        $restClient = $this->createMockClient(
+            [
+                new Response(404, [], Utils::streamFor('{"a": "b"}')),
+            ]
+        );
         try {
-            $client->download(new RestRequest(['endpoint' => 'ep']));
+            $restClient->download(new RestRequest(['endpoint' => 'ep']));
             self::fail('Request should fail');
         } catch (\Throwable $e) {
             self::assertStringContainsString('Not Found', $e->getMessage());
@@ -236,69 +214,50 @@ class RestClientTest extends ExtractorTestCase
 
     public function testErrorCodesIgnore(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], [404]);
-        $mock = new Mock([
-            new Response(404, [], Stream::factory('{"a": "b"}')),
-        ]);
-        $client ->getClient()->getEmitter()->attach($mock);
-        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['a' => 'b'], (array) $response);
+        $responses = [new Response(404, [], Utils::streamFor('{"a": "b"}'))];
+        $ignoredErrors = [404];
+        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals((object) ['a' => 'b'], $response);
     }
 
     public function testErrorCodesIgnoreServer(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], [503]);
         $responses = [];
         for ($i = 0; $i < 15; $i++) {
-            $responses[] = new Response(503, [], Stream::factory('{"a": "b"}'));
+            $responses[] = new Response(503, [], Utils::streamFor('{"a": "b"}'));
         }
-        $mock = new Mock($responses);
-        $client ->getClient()->getEmitter()->attach($mock);
-        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['a' => 'b'], (array) $response);
+        $ignoredErrors = [503];
+        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals(['a' => 'b'], (array)$response);
     }
 
     public function testErrorCodesIgnoreInvalidResponse(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], [200]);
-        $mock = new Mock([
-            new Response(200, [], Stream::factory('{"a": bcd"')),
-        ]);
-        $client ->getClient()->getEmitter()->attach($mock);
-        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => '{"a": bcd"'], (array) $response);
+        $responses = [new Response(200, [], Utils::streamFor('{"a": bcd"'))];
+        $ignoredErrors = [200];
+        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals(['errorData' => '{"a": bcd"'], (array)$response);
     }
 
     public function testErrorCodesIgnoreInvalidResponseAndCode(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], [404]);
-        $mock = new Mock([
-            new Response(404, [], Stream::factory('{"a": bcd"')),
-        ]);
-        $client ->getClient()->getEmitter()->attach($mock);
-        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => '{"a": bcd"'], (array) $response);
+        $responses = [new Response(404, [], Utils::streamFor('{"a": bcd"'))];
+        $ignoredErrors = [404];
+        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals((object) ['errorData' => '{"a": bcd"'], $response);
     }
 
     public function testErrorCodesIgnoreEmptyResponse(): void
     {
-        $handler = new TestHandler();
-        $logger = new Logger('test', [$handler]);
-        $client = new RestClient($logger, [], [], [], [404]);
-        $mock = new Mock([
-            new Response(404, [], null),
-        ]);
-        $client ->getClient()->getEmitter()->attach($mock);
-        $response = $client->download(new RestRequest(['endpoint' => 'ep']));
-        self::assertEquals(['errorData' => ''], (array) $response);
+        $responses = [new Response(404, [], null)];
+        $ignoredErrors = [404];
+        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
+        self::assertEquals((object) ['errorData' => ''], $response);
     }
 
     public function testMalformedJson(): void
@@ -306,20 +265,13 @@ class RestClientTest extends ExtractorTestCase
         $body = '[
                 {"field": "d
         ]';
-
-        $restClient = new RestClient(new NullLogger());
-
-        $mock = new Mock([
-            new Response(200, [], Stream::factory($body)),
-        ]);
-        $restClient->getClient()->getEmitter()->attach($mock);
-
-        $request = new RestRequest(['endpoint' => 'ep']);
+        $responses = [new Response(200, [], Utils::streamFor($body))];
+        $restClient = $this->createMockClient($responses);
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage('Invalid JSON response from API: JSON decode error:');
         try {
-            $restClient->download($request);
+            $restClient->download(new RestRequest(['endpoint' => 'ep']));
         } catch (UserException $e) {
             self::assertArrayHasKey('errDetail', $e->getData());
             self::assertArrayHasKey('json', $e->getData());
@@ -352,5 +304,44 @@ class RestClientTest extends ExtractorTestCase
             array_replace($defaultOptions['params'], $requestOptions['params']),
             $request->getParams()
         );
+    }
+
+    protected function runBackoff(array $retryOptions, Response $errResponse): void
+    {
+        $body = '[
+                {"field": "data"},
+                {"field": "more"}
+        ]';
+        $restClient = $this->createMockClient(
+            [
+                $errResponse,
+                new Response(200, [], Utils::streamFor($body)),
+            ],
+            [
+                'headers' => ['X-Test' => '1234'],
+            ],
+            $retryOptions
+        );
+
+        $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
+        $result = $restClient->download($request);
+
+        /** @var array $lastOptions */
+        $lastOptions = array_pop($this->history)['options'];
+        self::assertEquals(json_decode($body), $result);
+        self::assertEquals(5000, $lastOptions['delay']);
+    }
+
+    private function createMockClient(
+        array $queue,
+        array $options = [],
+        array $retryOptions = [],
+        array $defaultOptions = [],
+        array $ignoreErrors = []
+    ): RestClient {
+        $handler = HandlerStack::create(new MockHandler($queue));
+        $handler->push(Middleware::history($this->history));
+        $options['handler'] = $handler;
+        return new RestClient(new NullLogger(), $options, $retryOptions, $defaultOptions, $ignoreErrors);
     }
 }

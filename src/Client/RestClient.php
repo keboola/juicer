@@ -50,9 +50,7 @@ class RestClient
         array $defaultOptions = [],
         array $ignoreErrors = []
     ) {
-
-        $handler = HandlerStack::create();
-        $guzzleConfig['handler'] = $handler;
+        $guzzleConfig['handler'] = $guzzleConfig['handler'] ?? HandlerStack::create();
         $guzzle = new Client($guzzleConfig);
         // TODO retry
 
