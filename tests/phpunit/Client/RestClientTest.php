@@ -9,7 +9,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
-use Hoa\Iterator\Mock;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
@@ -95,51 +94,53 @@ class RestClientTest extends ExtractorTestCase
         self::assertSame(['1234'], $headers['X-Test']);
     }
 
-    /**
-     * Cannot use dataProvider because that gets set up before all tests
-     * and the delay causes issues
-     */
-    public function testStatusBackoff(): void
-    {
-        $sets = [
-            'default' => [
-                [],
-                new Response(429, ['Retry-After' => 5]),
-            ],
-            'custom' => [
-                [
-                    'http' => [
-                        'retryHeader' => 'X-Rate-Limit-Reset',
-                        'codes' => [403, 429],
-                    ],
-                    'maxRetries' => 8,
-                ],
-                new Response(403, ['X-Rate-Limit-Reset' => 5]),
-            ],
-            'absolute' => [
-                [],
-                new Response(429, ['Retry-After' => time() + 5]),
-            ],
-        ];
 
-        foreach ($sets as $set) {
-            [$retryOptions, $errorResponse] = $set;
-            $this->runBackoff($retryOptions, $errorResponse);
-        }
+    public function testRetryHeaderRelative(): void
+    {
+        $delaySec = 5;
+        $retryOptions = [];
+        $errorResponse = new Response(429, ['Retry-After' => $delaySec]);
+        $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
     }
 
-    /**
-     * Cannot use dataProvider because that gets set up before all tests
-     * and the delay causes issues
-     */
-    public function testCurlBackoff(): void
+    public function testRetryHeaderAbsolute(): void
+    {
+        $delaySec = 5;
+        $retryOptions = [];
+        $errorResponse = new Response(429, ['Retry-After' => time() + $delaySec]);
+        $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
+    }
+
+    public function testRetryHeaderDate(): void
+    {
+        $delaySec = 5;
+        $date = new \DateTimeImmutable("+ ${delaySec} seconds");
+        $retryOptions = [];
+        $errorResponse = new Response(429, ['Retry-After' => $date->format(DATE_RFC1123)]);
+        $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
+    }
+
+
+    public function testRetryHeaderCustomName(): void
+    {
+        $delaySec = 5;
+        $retryOptions = [
+            'http' => [
+                'retryHeader' => 'X-Rate-Limit-Reset',
+                'codes' => [403, 429],
+            ],
+            'maxRetries' => 8,
+        ];
+        $errorResponse = new Response(403, ['X-Rate-Limit-Reset' => $delaySec]);
+        $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
+    }
+
+    public function testCurlBackoffMappedError(): void
     {
         // mapped curl error
         $retries = 3;
         $handler = new TestHandler();
-        $logger = new Logger('test', [
-            $handler,
-        ]);
+        $logger = new Logger('test', [$handler]);
 
         $client = new RestClient(
             $logger,
@@ -158,17 +159,23 @@ class RestClientTest extends ExtractorTestCase
         } catch (\Throwable $e) {
             self::assertCount($retries, $handler->getRecords());
 
-            foreach ($handler->getRecords() as $record) {
-                self::assertEquals(100, $record['level']);
-                self::assertMatchesRegularExpression('/retrying/ui', $record['message']);
+            $delays = [1, 2, 4]; // exponential
+            foreach ($handler->getRecords() as $i => $record) {
+                self::assertSame(Logger::DEBUG, $record['level']);
+                self::assertSame(
+                    sprintf('Http request failed, retrying in %.1f seconds [%dx].', $delays[$i], $i + 1),
+                    $record['message']
+                );
                 self::assertMatchesRegularExpression('/curl error 6\:/ui', $record['context']['message']);
             }
 
             self::assertMatchesRegularExpression('/curl error 6\:/ui', $e->getMessage());
             self::assertTrue($e instanceof UserException);
         }
+    }
 
-        // non-mapped curl error
+    public function testCurlBackoffNotMappedError(): void
+    {
         $retries = 3;
         $handler = new TestHandler();
         $logger = new Logger('test', [
@@ -223,12 +230,14 @@ class RestClientTest extends ExtractorTestCase
 
     public function testErrorCodesIgnoreServer(): void
     {
-        $responses = [];
-        for ($i = 0; $i < 15; $i++) {
-            $responses[] = new Response(503, [], Utils::streamFor('{"a": "b"}'));
-        }
+        $responses = [
+            new Response(503, [], Utils::streamFor('{"a": "b"}')),
+            new Response(503, [], Utils::streamFor('{"a": "b"}')),
+            new Response(503, [], Utils::streamFor('{"a": "b"}')),
+            new Response(503, [], Utils::streamFor('{"a": "b"}')),
+        ];
         $ignoredErrors = [503];
-        $restClient = $this->createMockClient($responses, [], [], [], $ignoredErrors);
+        $restClient = $this->createMockClient($responses, [], ['maxRetries' => 3], [], $ignoredErrors);
         $response = $restClient->download(new RestRequest(['endpoint' => 'ep']));
         self::assertEquals(['a' => 'b'], (array) $response);
     }
@@ -306,7 +315,7 @@ class RestClientTest extends ExtractorTestCase
         );
     }
 
-    protected function runBackoff(array $retryOptions, Response $errResponse): void
+    protected function runAndAssertDelay(array $retryOptions, Response $errResponse, int $expectedDelaySec): void
     {
         $body = '[
                 {"field": "data"},
@@ -324,12 +333,18 @@ class RestClientTest extends ExtractorTestCase
         );
 
         $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
+
+        // Run download
+        $startTime = microtime(true);
         $result = $restClient->download($request);
+        $endTime = microtime(true);
+        $measuredDelaySec = $endTime - $startTime;
 
         /** @var array $lastOptions */
         $lastOptions = array_pop($this->history)['options'];
         self::assertEquals(json_decode($body), $result);
-        self::assertEquals(5000, $lastOptions['delay']);
+        self::assertEquals($expectedDelaySec * 1000, $lastOptions['delay']);
+        self::assertGreaterThanOrEqual($expectedDelaySec, $measuredDelaySec);
     }
 
     private function createMockClient(
@@ -340,8 +355,12 @@ class RestClientTest extends ExtractorTestCase
         array $ignoreErrors = []
     ): RestClient {
         $handler = HandlerStack::create(new MockHandler($queue));
-        $handler->push(Middleware::history($this->history));
         $options['handler'] = $handler;
-        return new RestClient(new NullLogger(), $options, $retryOptions, $defaultOptions, $ignoreErrors);
+        $restClient = new RestClient(new NullLogger(), $options, $retryOptions, $defaultOptions, $ignoreErrors);
+
+        // To log retries, history middleware must be pushed after retry middleware in RestClient.
+        $handler->push(Middleware::history($this->history));
+
+        return $restClient;
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Client;
 
+use GuzzleHttp\Exception\ConnectException;
+use Keboola\Juicer\Retry\RetryMiddlewareFactory;
+use UnexpectedValueException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use Keboola\Juicer\Exception\UserException;
@@ -12,11 +15,12 @@ use GuzzleHttp\Exception\BadResponseException;
 use Keboola\Utils\Exception\JsonDecodeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use function Keboola\Utils\isValidDateTimeString;
 use function Keboola\Utils\jsonDecode;
 
 class RestClient
 {
+    protected HandlerStack $handlerStack;
+
     protected Client $client;
 
     protected array $defaultRequestOptions = [];
@@ -50,9 +54,19 @@ class RestClient
         array $defaultOptions = [],
         array $ignoreErrors = []
     ) {
+        // Get/create handler stack
         $guzzleConfig['handler'] = $guzzleConfig['handler'] ?? HandlerStack::create();
+        if (!$guzzleConfig['handler'] instanceof HandlerStack) {
+            throw new UnexpectedValueException('Type of the "handler" must be HandlerStack.');
+        }
+        $this->handlerStack = $guzzleConfig['handler'];
+
+        // Create retry middleware
+        $retryMiddlewareFactory = new RetryMiddlewareFactory($logger, $retryConfig);
+        $this->handlerStack->push($retryMiddlewareFactory->create());
+
+        // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
-        // TODO retry
 
         $this->logger = $logger;
         $this->client = $guzzle;
@@ -61,47 +75,9 @@ class RestClient
         $this->guzzleRequestFactory = new GuzzleRequestFactory();
     }
 
-    /**
-     * Update request config with default options
-     */
-    protected function getRequestConfig(array $config): array
-    {
-        if (!empty($this->defaultRequestOptions)) {
-            $config = array_replace_recursive($this->defaultRequestOptions, $config);
-        }
-
-        return $config;
-    }
-
     public function getClient(): Client
     {
         return $this->client;
-    }
-
-    private function handleException(\Throwable $e, ?ResponseInterface $response): ?\stdClass
-    {
-        if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
-            in_array($e->getCode(), $this->ignoreErrors)
-        ) {
-            if ($response) {
-                $this->logger->warning('Failed to get response ' . $e->getMessage());
-                try {
-                    /** @var \stdClass $result */
-                    $result = $this->getObjectFromResponse($response);
-                } catch (UserException $ex) {
-                    $this->logger->warning('Failed to parse response ' . $ex->getMessage());
-                    $result = new \stdClass();
-                    $result->errorData = (string) ($response->getBody());
-                }
-            } else {
-                $this->logger->warning('Failed to process response ' . $e->getMessage());
-                $result = new \stdClass();
-                $result->errorData = $e->getMessage();
-            }
-            return $result;
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -126,33 +102,44 @@ class RestClient
             }
         } catch (BadResponseException $e) {
             $respObj = $this->handleException($e, $e->getResponse());
-            if (!$respObj) {
-                /** @var ResponseInterface $response */
-                $response = $e->getResponse();
-                $data = json_decode((string) $response->getBody(), true);
-                if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                    $data = (string) $response->getBody();
-                }
-
-                throw new UserException(
-                    'The API request failed: [' . $response->getStatusCode() . '] ' . $e->getMessage(),
-                    400,
-                    $e,
-                    ['body' => $data]
-                );
-            } else {
+            if ($respObj) {
                 return $respObj;
             }
-        } catch (RequestException $e) {
-            $respObj = $this->handleException($e, null);
-            if (!$respObj) {
-                if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
-                    throw $e->getPrevious();
-                } else {
-                    throw new UserException($e->getMessage(), $e->getCode(), $e);
+
+            $response = $e->getResponse();
+            $data = json_decode((string) $response->getBody(), true);
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                $data = (string) $response->getBody();
+            }
+
+            throw new UserException(
+                'The API request failed: [' . $response->getStatusCode() . '] ' . $e->getMessage(),
+                400,
+                $e,
+                ['body' => $data]
+            );
+        } catch (RequestException|ConnectException $e) {
+            // ConnectException has no response
+            if ($e instanceof RequestException) {
+                $respObj = $this->handleException($e, $e->getResponse());
+                if ($respObj) {
+                    return $respObj;
                 }
+            }
+
+            // Curl exception
+            $context = $e->getHandlerContext();
+            $errno = $context['errno'] ?? null;
+            $error = $context['error'] ?? null;
+            if ($errno > 0) {
+                throw new UserException(sprintf('CURL error %d: %s', $errno, $error));
+            }
+
+            // Other exception
+            if ($e->getPrevious() && $e->getPrevious() instanceof UserException) {
+                throw $e->getPrevious();
             } else {
-                return $respObj;
+                throw new UserException($e->getMessage(), $e->getCode(), $e);
             }
         }
     }
@@ -198,84 +185,40 @@ class RestClient
     }
 
     /**
-     * Create exponential backoff for GuzzleClient
-     *
-     * options
-     *  - maxRetries: (integer) max retries count
-     *  - http
-     *      - retryHeader (string) header containing retry time header
-     *      - codes (array) list of status codes to retry on
-     * - curl
-     *      - codes (array) list of error codes to retry on
-     *
+     * Update request config with default options
      */
-    private static function createBackoff(array $options, LoggerInterface $logger): RetrySubscriber
+    protected function getRequestConfig(array $config): array
     {
-        $headerName = isset($options['http']['retryHeader']) ? $options['http']['retryHeader'] : 'Retry-After';
-        $httpRetryCodes = isset($options['http']['codes']) ?
-            $options['http']['codes'] : [500, 502, 503, 504, 408, 420, 429];
-        $maxRetries = isset($options['maxRetries']) ? (int) $options['maxRetries']: 10;
+        if (!empty($this->defaultRequestOptions)) {
+            $config = array_replace_recursive($this->defaultRequestOptions, $config);
+        }
 
-        $curlRetryCodes = isset($options['curl']['codes']) ? $options['curl']['codes'] : [
-            CURLE_OPERATION_TIMEOUTED,
-            CURLE_COULDNT_RESOLVE_HOST,
-            CURLE_COULDNT_CONNECT,
-            CURLE_SSL_CONNECT_ERROR,
-            CURLE_GOT_NOTHING,
-            CURLE_RECV_ERROR,
-        ];
-
-        return new RetrySubscriber([
-            'filter' => RetrySubscriber::createChainFilter([
-                RetrySubscriber::createStatusFilter($httpRetryCodes),
-                RetrySubscriber::createCurlFilter($curlRetryCodes),
-            ]),
-            'max' => $maxRetries,
-            'delay' => function (int $retries, AbstractTransferEvent $event) use ($headerName, $logger) {
-                $delay = self::getRetryDelay($retries, $event, $headerName);
-
-                $errData = [
-                    'http_code' => !empty($event->getTransferInfo()['http_code']) ?
-                        $event->getTransferInfo()['http_code'] : null,
-                    'body' => is_null($event->getResponse()) ? null : (string) $event->getResponse()->getBody(),
-                    'url' =>  !empty($event->getTransferInfo()['url']) ?
-                        $event->getTransferInfo()['url'] : $event->getRequest()->getUrl(),
-                ];
-                if ($event instanceof ErrorEvent) {
-                    $errData['message'] = $event->getException()->getMessage();
-                }
-                $logger->debug("Http request failed, retrying in {$delay}s", $errData);
-
-                // ms > s
-                return 1000 * $delay;
-            },
-        ]);
+        return $config;
     }
 
-    protected static function getRetryDelay(int $retries, AbstractTransferEvent $event, string $headerName): int
+    protected function handleException(\Throwable $e, ?ResponseInterface $response): ?\stdClass
     {
-        if (is_null($event->getResponse())
-            || !$event->getResponse()->hasHeader($headerName)
+        if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
+            in_array($e->getCode(), $this->ignoreErrors)
         ) {
-            return RetrySubscriber::exponentialDelay($retries, $event);
-        }
-
-        $retryAfter = $event->getResponse()->getHeader($headerName);
-        if (is_numeric($retryAfter)) {
-            $retryAfter = (int) $retryAfter;
-            if ($retryAfter < time() - strtotime('1 day', 0)) {
-                return $retryAfter;
+            if ($response) {
+                $this->logger->warning('Failed to get response ' . $e->getMessage());
+                try {
+                    /** @var \stdClass $result */
+                    $result = $this->getObjectFromResponse($response);
+                } catch (UserException $ex) {
+                    $this->logger->warning('Failed to parse response ' . $ex->getMessage());
+                    $result = new \stdClass();
+                    $result->errorData = (string) ($response->getBody());
+                }
             } else {
-                return $retryAfter - time();
+                $this->logger->warning('Failed to process response ' . $e->getMessage());
+                $result = new \stdClass();
+                $result->errorData = $e->getMessage();
             }
+            return $result;
+        } else {
+            return null;
         }
-
-        if (isValidDateTimeString($retryAfter, DATE_RFC1123)) {
-            /** @var \DateTime $date */
-            $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
-            return $date->getTimestamp() - time();
-        }
-
-        return RetrySubscriber::exponentialDelay($retries, $event);
     }
 }
