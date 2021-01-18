@@ -162,13 +162,19 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             new ResponseParamScroller([]);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains('Missing required \'pagination.responseParam\' parameter', $e->getMessage());
+            self::assertStringContainsString(
+                'Missing required \'pagination.responseParam\' parameter',
+                $e->getMessage()
+            );
         }
         try {
             new ResponseParamScroller(['responseParam' => 'foo']);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains('Missing required \'pagination.queryParam\' parameter', $e->getMessage());
+            self::assertStringContainsString(
+                'Missing required \'pagination.queryParam\' parameter',
+                $e->getMessage()
+            );
         }
         new ResponseParamScroller(['responseParam' => 'foo', 'queryParam' => 'bar']);
     }

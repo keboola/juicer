@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Parser;
 
+use NoRewindIterator;
+use Keboola\Csv\CsvReader;
 use Keboola\CsvMap\Mapper;
 use Keboola\CsvMap\Exception\BadConfigException;
 use Keboola\CsvMap\Exception\BadDataException;
-use Keboola\Csv\CsvFile;
 use Keboola\CsvTable\Table;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Exception\UserException;
@@ -50,7 +51,7 @@ class JsonMap implements ParserInterface
                 ));
             }
 
-            $mappers[$type] = new Mapper($mapping, $type);
+            $mappers[$type] = new Mapper($mapping, true, $type);
         }
 
         foreach ($config->getJobs() as $job) {
@@ -116,6 +117,12 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
+    /**
+     * @param Table[] $results
+     * @param Table[] $files
+     * @return array
+     * @throws UserException
+     */
     protected function mergeResults(array $results, array $files): array
     {
         foreach ($files as $name => $file) {
@@ -143,21 +150,14 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    protected function mergeFiles(CsvFile $file1, CsvFile $file2): void
+    protected function mergeFiles(Table $file1, Table $file2): void
     {
-        // CsvFile::getHeader resets it to the first line,
-        // so we need to forward it back to the end to append it
-        // Also, this is a dirty, dirty hack
-        while ($file1->valid()) {
-            $file1->next();
-        }
+        // Create reader for file2 and skip header
+        $file2Reader = new NoRewindIterator(new CsvReader($file2->getPathName()));
+        $file2Reader->next();
 
-        $header = true;
-        foreach ($file2 as $row) {
-            if ($header) {
-                $header = false;
-                continue;
-            }
+        // Copy content of the file2 to file1
+        foreach ($file2Reader as $row) {
             $file1->writeRow($row);
         }
     }

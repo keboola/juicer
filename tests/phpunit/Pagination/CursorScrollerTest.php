@@ -76,7 +76,7 @@ class CursorScrollerTest extends TestCase
             new CursorScroller([]);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains(
+            self::assertStringContainsString(
                 'Missing \'pagination.idKey\' attribute required for cursor pagination',
                 $e->getMessage()
             );
@@ -85,7 +85,7 @@ class CursorScrollerTest extends TestCase
             new CursorScroller(['idKey' => 'foo']);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains(
+            self::assertStringContainsString(
                 'Missing \'pagination.param\' attribute required for cursor pagination',
                 $e->getMessage()
             );
@@ -111,7 +111,7 @@ class CursorScrollerTest extends TestCase
             $scroller->getNextRequest($client, $config, $response, $response);
             self::fail('Must raise exception.');
         } catch (UserException $e) {
-            self::assertContains('Cursor value \'"foo"\' is not numeric.', $e->getMessage());
+            self::assertStringContainsString('Cursor value \'"foo"\' is not numeric.', $e->getMessage());
         }
     }
 }

@@ -35,7 +35,7 @@ class JsonTest extends ExtractorTestCase
 "1","test_2901753343d19a32b8cd49e31aab748c","iAreId"
 "2","test_5e36066fa62399eedd858f5e374c0c21","iAreId"
 ',
-            file_get_contents((string) $parser->getResults()['test'])
+            file_get_contents((string) $parser->getResults()['test']->getPathName())
         );
 
         self::assertEquals(
@@ -47,7 +47,7 @@ class JsonTest extends ExtractorTestCase
 "b","test_5e36066fa62399eedd858f5e374c0c21"
 "c","test_5e36066fa62399eedd858f5e374c0c21"
 ',
-            file_get_contents((string) $parser->getResults()['test_arr'])
+            file_get_contents((string) $parser->getResults()['test_arr']->getPathName())
         );
     }
 
@@ -272,24 +272,24 @@ class JsonTest extends ExtractorTestCase
 
         self::assertEquals('"id","arr"
 "1","root_a52f96d95586c8de1e8fa67b77597262"
-', file_get_contents((string) $parser->getResults()['root']));
+', file_get_contents((string) $parser->getResults()['root']->getPathName()));
 
         self::assertEquals(
             '"a","b","arr1","arr2","JSON_parentId"' . "\n" .
             '"hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997",' .
             '"root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
 ',
-            file_get_contents((string) $parser->getResults()['root_arr'])
+            file_get_contents((string) $parser->getResults()['root_arr']->getPathName())
         );
 
         self::assertEquals('"c","JSON_parentId"
 "d","root.arr_a75f0a3e0b848d52033929a761e6c997"
-', file_get_contents((string) $parser->getResults()['root_arr_arr1']));
+', file_get_contents((string) $parser->getResults()['root_arr_arr1']->getPathName()));
 
         self::assertEquals('"data","JSON_parentId"
 "1","root.arr_a75f0a3e0b848d52033929a761e6c997"
 "2","root.arr_a75f0a3e0b848d52033929a761e6c997"
-', file_get_contents((string) $parser->getResults()['root_arr_arr2']));
+', file_get_contents((string) $parser->getResults()['root_arr_arr2']->getPathName()));
         self::assertTrue($handler->hasWarning(
             'Using legacy JSON parser, because it is in configuration state.'
         ));
@@ -333,7 +333,7 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
-            file_get_contents((string) $parser->getResults()['root'])
+            file_get_contents((string) $parser->getResults()['root']->getPathName())
         );
         self::assertTrue($handler->hasWarning(
             'Using legacy JSON parser, because it is in configuration state.'
@@ -382,7 +382,7 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
-            file_get_contents((string) $parser->getResults()['root'])
+            file_get_contents((string) $parser->getResults()['root']->getPathName())
         );
         self::assertFalse($handler->hasWarning(
             'Using legacy JSON parser, because it is in configuration state.'
@@ -408,7 +408,7 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
-            file_get_contents((string) $parser->getResults()['root'])
+            file_get_contents((string) $parser->getResults()['root']->getPathName())
         );
         self::assertTrue($handler->hasWarning(
             'Using legacy JSON parser, because it has been explicitly requested.'
@@ -437,7 +437,7 @@ class JsonTest extends ExtractorTestCase
         self::assertEquals(
             "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
-            file_get_contents((string) $parser->getResults()['root'])
+            file_get_contents((string) $parser->getResults()['root']->getPathName())
         );
         self::assertFalse($handler->hasWarning(
             'Using legacy JSON parser, because it has been explicitly requested.'

@@ -80,13 +80,13 @@ class ScrollerFactoryTest extends TestCase
             ScrollerFactory::getScroller(['method' => 'fooBar']);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains('Unknown pagination method \'fooBar\'', $e->getMessage());
+            self::assertStringContainsString('Unknown pagination method \'fooBar\'', $e->getMessage());
         }
         try {
             ScrollerFactory::getScroller(['method' => ['foo' => 'bar']]);
             self::fail('Must raise exception');
         } catch (UserException $e) {
-            self::assertContains('Unknown pagination method \'{"foo":"bar"}\'', $e->getMessage());
+            self::assertStringContainsString('Unknown pagination method \'{"foo":"bar"}\'', $e->getMessage());
         }
     }
 }

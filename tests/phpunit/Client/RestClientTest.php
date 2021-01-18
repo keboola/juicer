@@ -133,7 +133,7 @@ class RestClientTest extends ExtractorTestCase
 
         $request = new RestRequest(['endpoint' => 'ep', 'params' => ['a' => 1]]);
         self::assertEquals(json_decode($body), $restClient->download($request));
-        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '', 1000);
+        self::assertEquals(5000, $history->getLastRequest()->getConfig()['delay'], '');
     }
 
     /**
@@ -204,11 +204,11 @@ class RestClientTest extends ExtractorTestCase
 
             foreach ($handler->getRecords() as $record) {
                 self::assertEquals(100, $record['level']);
-                self::assertRegExp('/retrying/ui', $record['message']);
-                self::assertRegExp('/curl error 6\:/ui', $record['context']['message']);
+                self::assertMatchesRegularExpression('/retrying/ui', $record['message']);
+                self::assertMatchesRegularExpression('/curl error 6\:/ui', $record['context']['message']);
             }
 
-            self::assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            self::assertMatchesRegularExpression('/curl error 6\:/ui', $e->getMessage());
             self::assertTrue($e instanceof UserException);
         }
 
@@ -235,7 +235,7 @@ class RestClientTest extends ExtractorTestCase
             self::fail('Request should fail');
         } catch (\Throwable $e) {
             self::assertCount(0, $handler->getRecords());
-            self::assertRegExp('/curl error 6\:/ui', $e->getMessage());
+            self::assertMatchesRegularExpression('/curl error 6\:/ui', $e->getMessage());
             self::assertTrue($e instanceof UserException);
         }
     }
@@ -253,8 +253,8 @@ class RestClientTest extends ExtractorTestCase
             $client->download(new RestRequest(['endpoint' => 'ep']));
             self::fail('Request should fail');
         } catch (\Throwable $e) {
-            self::assertContains('Not Found', $e->getMessage());
-            self::assertContains('404', $e->getMessage());
+            self::assertStringContainsString('Not Found', $e->getMessage());
+            self::assertStringContainsString('404', $e->getMessage());
         }
     }
 
