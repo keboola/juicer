@@ -15,7 +15,6 @@ use Keboola\Juicer\Tests\HistoryContainer;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use Psr\Http\Message\RequestInterface;
 use Psr\Log\NullLogger;
 
 class RestClientTest extends ExtractorTestCase
@@ -31,7 +30,7 @@ class RestClientTest extends ExtractorTestCase
             'params' => $arr,
         ]);
 
-        $client = new RestClient(new NullLogger(), [], []);
+        $client = RestClientMockBuilder::create()->getRestClient();
         $request = $client->createRequest($jobConfig->getConfig());
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
         self::assertEquals($expected, $request);
@@ -47,6 +46,7 @@ class RestClientTest extends ExtractorTestCase
         $history = new HistoryContainer();
         $restClient = RestClientMockBuilder::create()
             ->addResponse200($body)
+            ->setBaseUri('http://example.com')
             ->setGuzzleConfig(['headers' => ['X-Test' => '1234']])
             ->setHistoryContainer($history)
             ->getRestClient();
@@ -56,7 +56,7 @@ class RestClientTest extends ExtractorTestCase
 
         $lastRequest = $history->last()->getRequest();
         self::assertEquals(json_decode($body), $result);
-        self::assertEquals('ep?a=1', (string) $lastRequest->getUri());
+        self::assertEquals('http://example.com/ep?a=1', (string) $lastRequest->getUri());
         self::assertEquals('GET', $lastRequest->getMethod());
         self::assertEquals([1234], $lastRequest->getHeaders()['X-Test']);
     }
@@ -136,6 +136,7 @@ class RestClientTest extends ExtractorTestCase
 
         $client = new RestClient(
             $logger,
+            'http://keboolakeboolakeboola.com',
             [],
             [
                 'maxRetries' => $retries,
@@ -146,7 +147,7 @@ class RestClientTest extends ExtractorTestCase
         );
 
         try {
-            $client->download(new RestRequest(['endpoint' => 'http://keboolakeboolakeboola.com']));
+            $client->download(new RestRequest(['endpoint' => '/']));
             self::fail('Request should fail');
         } catch (\Throwable $e) {
             self::assertCount($retries, $handler->getRecords());
@@ -176,6 +177,7 @@ class RestClientTest extends ExtractorTestCase
 
         $client = new RestClient(
             $logger,
+            'http://keboolakeboolakeboola.com',
             [],
             [
                 'maxRetries' => $retries,
@@ -186,7 +188,7 @@ class RestClientTest extends ExtractorTestCase
         );
 
         try {
-            $client->download(new RestRequest(['endpoint' => 'http://keboolakeboolakeboola.com']));
+            $client->download(new RestRequest(['endpoint' => '/']));
             self::fail('Request should fail');
         } catch (\Throwable $e) {
             self::assertCount(0, $handler->getRecords());
@@ -293,7 +295,10 @@ class RestClientTest extends ExtractorTestCase
             ],
         ];
 
-        $client = new RestClient(new NullLogger(), [], [], $defaultOptions);
+        $client = RestClientMockBuilder::create()
+            ->setDefaultOptions($defaultOptions)
+            ->getRestClient();
+
         $requestOptions = [
             'endpoint' => 'ep',
             'params' => [

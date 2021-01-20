@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\NoScroller;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class NoScrollerTest extends TestCase
 {
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -35,7 +34,7 @@ class NoScrollerTest extends TestCase
 
     public function testGetFirstRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [

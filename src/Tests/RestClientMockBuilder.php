@@ -24,6 +24,7 @@ class RestClientMockBuilder
     private ?LoggerInterface $logger = null;
     private ?HistoryContainer $history = null;
     private array $responses = [];
+    private string $baseUri = 'http://example.com';
     private array $guzzleConfig = [];
     private array $retryConfig = [];
     private array $defaultOptions = [];
@@ -41,6 +42,7 @@ class RestClientMockBuilder
         $this->guzzleConfig['handler'] = $handler;
         $restClient = new RestClient(
             $logger,
+            $this->baseUri,
             $this->guzzleConfig,
             $this->retryConfig,
             $this->defaultOptions,
@@ -62,6 +64,12 @@ class RestClientMockBuilder
     public function setInitCallback(callable $initCallback): self
     {
         $this->initCallback = $initCallback;
+        return $this;
+    }
+
+    public function setBaseUri(string $baseUri): self
+    {
+        $this->baseUri = $baseUri;
         return $this;
     }
 

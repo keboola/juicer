@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Client;
 
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Utils;
 use Keboola\Juicer\Retry\RetryMiddlewareFactory;
+use Psr\Http\Message\UriInterface;
 use UnexpectedValueException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -27,14 +29,17 @@ class RestClient
 
     private LoggerInterface $logger;
 
+    private UriInterface $baseUri;
+
     private array $ignoreErrors;
 
     private GuzzleRequestFactory $guzzleRequestFactory;
 
     /**
      * @param LoggerInterface $logger
-     * @param array $guzzleConfig GuzzleHttp\Client defaults
-     * @param array $retryConfig @see RestClient::createBackoff()
+     * @param string $baseUri
+     * @param array  $guzzleConfig GuzzleHttp\Client defaults
+     * @param array  $retryConfig @see RestClient::createBackoff()
      *
      * retryConfig options
      *  - maxRetries: (integer) max retries count
@@ -49,11 +54,16 @@ class RestClient
      */
     public function __construct(
         LoggerInterface $logger,
+        string $baseUri,
         array $guzzleConfig = [],
         array $retryConfig = [],
         array $defaultOptions = [],
         array $ignoreErrors = []
     ) {
+        // Add base url to guzzle config
+        $this->baseUri = Utils::uriFor($baseUri);
+        $guzzleConfig['base_uri'] = $this->baseUri;
+
         // Get/create handler stack
         $guzzleConfig['handler'] = $guzzleConfig['handler'] ?? HandlerStack::create();
         if (!$guzzleConfig['handler'] instanceof HandlerStack) {
@@ -73,6 +83,11 @@ class RestClient
         $this->defaultRequestOptions = $defaultOptions;
         $this->ignoreErrors = $ignoreErrors;
         $this->guzzleRequestFactory = new GuzzleRequestFactory();
+    }
+
+    public function getBaseUri(): UriInterface
+    {
+        return $this->baseUri;
     }
 
     public function getHandlerStack(): HandlerStack

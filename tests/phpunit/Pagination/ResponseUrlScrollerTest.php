@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Pagination\ResponseUrlScroller;
-use Psr\Log\NullLogger;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 
 class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'next']);
@@ -36,7 +35,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'pagination.next']);
@@ -57,7 +56,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -79,7 +78,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQuery(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = (object) [
@@ -105,7 +104,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQueryParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = (object) [
@@ -134,7 +133,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestDelimiterParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'links|next', 'delimiter' => '|']);

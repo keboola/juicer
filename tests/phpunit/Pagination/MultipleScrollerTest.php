@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\MultipleScroller;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class MultipleScrollerTest extends TestCase
 {
@@ -33,7 +32,7 @@ class MultipleScrollerTest extends TestCase
             ],
         ];
 
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
 
         $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
@@ -100,7 +99,7 @@ class MultipleScrollerTest extends TestCase
             'next_page_id' => 'page2',
         ];
 
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
 
         $nextParam = $scroller->getNextRequest($client, $paramConfig, $paramResponse, []);
         $expectedParam = $client->createRequest([
@@ -133,7 +132,7 @@ class MultipleScrollerTest extends TestCase
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("Default scroller 'def' does not exist");
-        $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
+        $scroller->getFirstRequest(RestClientMockBuilder::create()->getRestClient(), $noScrollerConfig);
     }
 
     public function testUndefinedScrollerException(): void
@@ -150,7 +149,7 @@ class MultipleScrollerTest extends TestCase
         $this->expectExceptionMessage(
             "Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page"
         );
-        $scroller->getFirstRequest(new RestClient(new NullLogger()), $noScrollerConfig);
+        $scroller->getFirstRequest(RestClientMockBuilder::create()->getRestClient(), $noScrollerConfig);
     }
 
     protected function getScrollerConfig(): array
@@ -212,7 +211,7 @@ class MultipleScrollerTest extends TestCase
     public function testReset(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
             'scroller' => 'cursor',
@@ -250,7 +249,7 @@ class MultipleScrollerTest extends TestCase
     public function testCloneSafety(): void
     {
         $scroller = new MultipleScroller($this->getScrollerConfig());
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
             'scroller' => 'cursor',

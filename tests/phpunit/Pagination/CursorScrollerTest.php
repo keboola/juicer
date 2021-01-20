@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class CursorScrollerTest extends TestCase
 {
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
         ]);
@@ -45,7 +44,7 @@ class CursorScrollerTest extends TestCase
 
     public function testGetNextRequestNested(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
         ]);
@@ -95,7 +94,7 @@ class CursorScrollerTest extends TestCase
 
     public function testInvalidScroll(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
         ]);
