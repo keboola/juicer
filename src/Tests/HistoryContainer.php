@@ -60,6 +60,12 @@ class HistoryContainer implements \ArrayAccess, \Countable
         return $this->count() === 0;
     }
 
+    public function clear(): self
+    {
+        $this->items = [];
+        return $this;
+    }
+
     public function count(): int
     {
         return count($this->items);
