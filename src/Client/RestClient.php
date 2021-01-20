@@ -75,6 +75,11 @@ class RestClient
         $this->guzzleRequestFactory = new GuzzleRequestFactory();
     }
 
+    public function getHandlerStack(): HandlerStack
+    {
+        return $this->handlerStack;
+    }
+
     public function getClient(): Client
     {
         return $this->client;
