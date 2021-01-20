@@ -80,6 +80,11 @@ class RestClient
         return $this->handlerStack;
     }
 
+    public function getGuzzleRequestFactory(): GuzzleRequestFactory
+    {
+        return $this->guzzleRequestFactory;
+    }
+
     public function getClient(): Client
     {
         return $this->client;
@@ -151,7 +156,7 @@ class RestClient
 
     /**
      * @param ResponseInterface $response
-     * @return array|object Should be anything that can result from json_decode
+     * @return array|object|mixed Should be anything that can result from json_decode
      * @throws UserException
      */
     public function getObjectFromResponse(ResponseInterface $response)
