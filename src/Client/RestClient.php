@@ -200,19 +200,21 @@ class RestClient
      *        'some' => 'parameter'
      *    ],
      *    'method' => 'GET', // REST only
+     *    'method' => 'GET', // REST only
      *    'options' => [], // SOAP only
      *    'inputHeader' => '' // SOAP only
      * ]
      */
-    public function createRequest(array $config): RestRequest
+    public function createRequest(array $config, bool $applyDefaults = true): RestRequest
     {
-        return new RestRequest($this->getRequestConfig($config));
+        $config = $applyDefaults ? $this->applyDefaultReuestOptions($config) : $config;
+        return new RestRequest($config);
     }
 
     /**
      * Update request config with default options
      */
-    protected function getRequestConfig(array $config): array
+    protected function applyDefaultReuestOptions(array $config): array
     {
         if (!empty($this->defaultRequestOptions)) {
             $config = array_replace_recursive($this->defaultRequestOptions, $config);

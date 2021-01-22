@@ -15,7 +15,6 @@ use Keboola\Juicer\Tests\HistoryContainer;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use Psr\Log\NullLogger;
 
 class RestClientTest extends ExtractorTestCase
 {
@@ -33,6 +32,45 @@ class RestClientTest extends ExtractorTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $request = $client->createRequest($jobConfig->getConfig());
         $expected = new RestRequest(['endpoint' => 'ep', 'params' => $arr]);
+        self::assertEquals($expected, $request);
+    }
+
+    public function testCreateRequestWithDefaults(): void
+    {
+        $arr = [
+            'first' => 1,
+            'second' => 'two',
+        ];
+        $jobConfig = new JobConfig(['endpoint' => 'ep', 'params' => $arr]);
+        $client = RestClientMockBuilder::create()
+            ->setRequestDefaultOptions(['params' => ['default' => 'param']])
+            ->getRestClient();
+
+        $request = $client->createRequest($jobConfig->getConfig());
+        $expected = new RestRequest(['endpoint' => 'ep', 'params' => [
+            'first' => 1,
+            'second' => 'two',
+            'default' => 'param',
+        ]]);
+        self::assertEquals($expected, $request);
+    }
+
+    public function testCreateRequestWithoutDefaults(): void
+    {
+        $arr = [
+            'first' => 1,
+            'second' => 'two',
+        ];
+        $jobConfig = new JobConfig(['endpoint' => 'ep', 'params' => $arr]);
+        $client = RestClientMockBuilder::create()
+            ->setRequestDefaultOptions(['params' => ['default' => 'param']])
+            ->getRestClient();
+
+        $request = $client->createRequest($jobConfig->getConfig(), false);
+        $expected = new RestRequest(['endpoint' => 'ep', 'params' => [
+            'first' => 1,
+            'second' => 'two',
+        ]]);
         self::assertEquals($expected, $request);
     }
 
@@ -296,7 +334,7 @@ class RestClientTest extends ExtractorTestCase
         ];
 
         $client = RestClientMockBuilder::create()
-            ->setDefaultOptions($defaultOptions)
+            ->setRequestDefaultOptions($defaultOptions)
             ->getRestClient();
 
         $requestOptions = [

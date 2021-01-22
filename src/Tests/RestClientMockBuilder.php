@@ -129,7 +129,7 @@ class RestClientMockBuilder
         return $this;
     }
 
-    public function setDefaultOptions(array $defaultOptions): self
+    public function setRequestDefaultOptions(array $defaultOptions): self
     {
         $this->defaultOptions = $defaultOptions;
         return $this;
