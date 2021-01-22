@@ -18,6 +18,7 @@ class GuzzleRequestFactory
     public function create(RestRequest $restRequest): RequestInterface
     {
         $body = null;
+        $headers = $restRequest->getHeaders();
         switch ($restRequest->getMethod()) {
             case 'GET':
                 $method = $restRequest->getMethod();
@@ -27,11 +28,13 @@ class GuzzleRequestFactory
                 $method = $restRequest->getMethod();
                 $endpoint = $restRequest->getEndpoint();
                 $body = Utils::jsonEncode($restRequest->getParams());
+                $headers['Content-Type'] = 'application/json';
                 break;
             case 'FORM':
                 $method = 'POST';
                 $endpoint = $restRequest->getEndpoint();
                 $body = \http_build_query($restRequest->getParams(), '', '&');
+                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 break;
             default:
                 throw new UserException(sprintf(
@@ -41,6 +44,6 @@ class GuzzleRequestFactory
                 ));
         }
 
-        return new Request($method, $endpoint, $restRequest->getHeaders(), $body);
+        return new Request($method, $endpoint, $headers, $body);
     }
 }
