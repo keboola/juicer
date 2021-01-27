@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
 use Keboola\Juicer\Tests\ExtractorTestCase;
-use Psr\Log\NullLogger;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 
 class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
     public function testGetNextRequestHasMore(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = [
@@ -73,7 +72,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 
     public function testCloneScrollerDecorator(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = [

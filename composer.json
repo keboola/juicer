@@ -11,17 +11,17 @@
     ],
     "require": {
         "php": ">=7.4",
-        "ext-json": "*",
         "ext-iconv": "*",
-        "keboola/json-parser": "^3.0",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "^7.2",
         "keboola-legacy/json-parser": "^3.0",
-        "keboola/php-utils": "^4.1",
-        "keboola/php-csvtable": "^1.1",
-        "keboola/csvmap": "^1.1",
-        "guzzlehttp/retry-subscriber": "dev-master#270393c",
-        "guzzlehttp/guzzle": "^5.3",
         "keboola/codebuilder": "^1.0",
-        "keboola/php-temp": "^2.0"
+        "keboola/csvmap": "^1.1",
+        "keboola/json-parser": "^3.0",
+        "keboola/php-csvtable": "^1.1",
+        "keboola/php-temp": "^2.0",
+        "keboola/php-utils": "^4.1"
     },
     "require-dev": {
         "keboola/coding-standard": ">=9.0",

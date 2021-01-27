@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
-use Psr\Log\NullLogger;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 
 class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -43,7 +42,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -69,7 +68,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestOverride(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([
@@ -103,7 +102,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -136,7 +135,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
     public function testGetFirstRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ResponseParamScroller([

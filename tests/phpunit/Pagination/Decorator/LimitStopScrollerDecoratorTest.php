@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
@@ -12,13 +11,13 @@ use Keboola\Juicer\Pagination\Decorator\LimitStopScrollerDecorator;
 use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
-use Psr\Log\NullLogger;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 
 class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 {
     public function testField(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = ['limitStop' => ['field' => 'results.totalNumber']];
@@ -51,7 +50,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
     public function testLimit(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = ['limitStop' => ['count' => 12]];
@@ -98,7 +97,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
     public function testCloneScrollerDecorator(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $jobConfig = new JobConfig(['endpoint' => 'test']);
 
         $config = ['limitStop' => ['count' => 12]];

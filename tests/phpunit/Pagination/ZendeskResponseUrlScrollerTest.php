@@ -11,6 +11,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ZendeskResponseUrlScroller;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 use Psr\Log\NullLogger;
 
 class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
@@ -20,7 +21,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $now = new \DateTime();
         $pagingStart = clone $now;
 
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next_page']);
@@ -47,7 +48,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next']);
@@ -71,7 +72,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestNested(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'pagination.next']);
@@ -92,7 +93,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = new \stdClass();
@@ -114,7 +115,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQuery(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = (object) [
@@ -140,7 +141,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
     public function testGetNextRequestQueryParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
         $response = (object) [

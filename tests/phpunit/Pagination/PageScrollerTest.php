@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
+use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 /**
  * @todo test with no limit until empty response
@@ -18,7 +17,7 @@ class PageScrollerTest extends TestCase
 {
     public function testGetFirstRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -39,7 +38,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstRequestExplicit(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -60,7 +59,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstRequestNoParams(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -79,7 +78,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetNextRequest(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -129,7 +128,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetNextRequestPost(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig([
             'endpoint' => 'test',
             'params' => [
@@ -158,7 +157,7 @@ class PageScrollerTest extends TestCase
 
     public function testGetFirstNext(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig(['endpoint' => 'test']);
 
         $scroller = new PageScroller([]);
@@ -180,7 +179,7 @@ class PageScrollerTest extends TestCase
 
     public function testSetState(): void
     {
-        $client = new RestClient(new NullLogger());
+        $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig(['endpoint' => 'test']);
 
         $scroller = new PageScroller(['pageParam' => 'p']);
