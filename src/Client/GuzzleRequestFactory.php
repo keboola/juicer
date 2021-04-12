@@ -15,6 +15,13 @@ use function Keboola\Utils\buildUrl;
  */
 class GuzzleRequestFactory
 {
+    private ?string $defaultHostHeader;
+
+    public function __construct(?string $defaultHostHeader)
+    {
+        $this->defaultHostHeader = $defaultHostHeader;
+    }
+
     public function create(RestRequest $restRequest): RequestInterface
     {
         $body = null;
@@ -44,6 +51,22 @@ class GuzzleRequestFactory
                 ));
         }
 
+        // Set default host header
+        if ($this->defaultHostHeader && !self::isHeaderSet('Host', $headers)) {
+            $headers['Host'] = $this->defaultHostHeader;
+        }
+
         return new Request($method, $endpoint, $headers, $body);
+    }
+
+    private static function isHeaderSet(string $header, array $headers): bool
+    {
+        foreach (array_keys($headers) as $name) {
+            if (strtolower((string) $name) === strtolower($header)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

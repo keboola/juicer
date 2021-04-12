@@ -364,7 +364,12 @@ class RestClientTest extends ExtractorTestCase
         $restClient = RestClientMockBuilder::create()
             ->addResponse200($body)
             ->setBaseUri('http://example.com')
-            ->setGuzzleConfig(['headers' => ['X-Test' => '1234']])
+            ->setGuzzleConfig([
+                'headers' => [
+                    'X-Test' => '1234',
+                    'Host' => 'default.com',
+                ],
+            ])
             ->setHistoryContainer($history)
             ->getRestClient();
 
