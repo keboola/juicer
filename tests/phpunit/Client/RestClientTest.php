@@ -353,6 +353,62 @@ class RestClientTest extends ExtractorTestCase
         );
     }
 
+    public function testHostHeaderInRequest(): void
+    {
+        $body = '[
+                {"field": "data"},
+                {"field": "more"}
+        ]';
+
+        $history = new HistoryContainer();
+        $restClient = RestClientMockBuilder::create()
+            ->addResponse200($body)
+            ->setBaseUri('http://example.com')
+            ->setGuzzleConfig(['headers' => ['X-Test' => '1234']])
+            ->setHistoryContainer($history)
+            ->getRestClient();
+
+        $request = new RestRequest([
+            'endpoint' => 'ep',
+            'headers' => [
+                'Host' => 'different.com',
+            ],
+        ]);
+
+        $restClient->download($request);
+        $lastRequest = $history->last()->getRequest();
+        self::assertEquals('different.com', $lastRequest->getHeaders()['Host'][0]);
+    }
+
+    public function testHostHeaderInConfig(): void
+    {
+        $body = '[
+                {"field": "data"},
+                {"field": "more"}
+        ]';
+
+        $history = new HistoryContainer();
+        $restClient = RestClientMockBuilder::create()
+            ->addResponse200($body)
+            ->setBaseUri('http://example.com')
+            ->setGuzzleConfig([
+                'headers' => [
+                    'X-Test' => '1234',
+                    'Host' => 'different.com',
+                ],
+            ])
+            ->setHistoryContainer($history)
+            ->getRestClient();
+
+        $request = new RestRequest([
+            'endpoint' => 'ep',
+        ]);
+
+        $restClient->download($request);
+        $lastRequest = $history->last()->getRequest();
+        self::assertEquals('different.com', $lastRequest->getHeaders()['Host'][0]);
+    }
+
     protected function runAndAssertDelay(array $retryConfig, Response $errResponse, int $expectedDelaySec): void
     {
         $body = '[
