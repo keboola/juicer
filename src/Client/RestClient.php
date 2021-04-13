@@ -78,11 +78,20 @@ class RestClient
         // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
 
+        // Use host from guzzle config if present (in previous versions of Guzzle, this was done automatically)
+        $defaultHostHeader = null;
+        foreach ($guzzleConfig['headers'] ?? [] as $name => $value) {
+            if (strtolower((string) $name) === 'host') {
+                $defaultHostHeader = $value;
+                break;
+            }
+        }
+
         $this->logger = $logger;
         $this->client = $guzzle;
         $this->defaultRequestOptions = $defaultOptions;
         $this->ignoreErrors = $ignoreErrors;
-        $this->guzzleRequestFactory = new GuzzleRequestFactory();
+        $this->guzzleRequestFactory = new GuzzleRequestFactory($defaultHostHeader);
     }
 
     public function getBaseUri(): UriInterface

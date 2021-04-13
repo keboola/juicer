@@ -15,7 +15,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->requestFactory = new GuzzleRequestFactory();
+        $this->requestFactory = new GuzzleRequestFactory(null);
     }
 
     public function testGet(): void
@@ -58,6 +58,80 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
         self::assertEquals('a=1', $request->getBody()->getContents());
         self::assertEquals(
             ['X-Test' => ['test'], 'Content-Type' => ['application/x-www-form-urlencoded']],
+            $request->getHeaders()
+        );
+    }
+
+    public function testDefaultHeaderNotSet(): void
+    {
+        // Default host header is not set
+        $this->requestFactory = new GuzzleRequestFactory(null);
+
+        // No host header in request config
+        $request = $this->requestFactory->create(new RestRequest([
+            'endpoint' => 'http://example.com', // <<<<<<<<<
+            'headers' => [
+                'X-Test' => 'test',
+            ],
+        ]));
+
+        // Used host header from URL
+        self::assertEquals(
+            [
+                'X-Test' => ['test'],
+                'Host' => ['example.com'], // <<<<<<<<<
+            ],
+            $request->getHeaders()
+        );
+    }
+
+    public function testDefaultHeaderUsed(): void
+    {
+        // Default host header is set
+        $this->requestFactory = new GuzzleRequestFactory(
+            'myhost.com' // <<<<<<<<<
+        );
+
+        // No host header in request config
+        $request = $this->requestFactory->create(new RestRequest([
+            'endpoint' => 'http://example.com',
+            'headers' => [
+                'X-Test' => 'test',
+            ],
+        ]));
+
+        // Used default header
+        self::assertEquals(
+            [
+                'X-Test' => ['test'],
+                'Host' => ['myhost.com'], // <<<<<<<<<
+            ],
+            $request->getHeaders()
+        );
+    }
+
+    public function testDefaultHeaderNotUsed(): void
+    {
+        // Default host header is set
+        $this->requestFactory = new GuzzleRequestFactory(
+            'myhost.com'
+        );
+
+        // Header set in request
+        $request = $this->requestFactory->create(new RestRequest([
+            'endpoint' => 'http://example.com',
+            'headers' => [
+                'X-Test' => 'test',
+                'Host' => 'host123.org', // <<<<<<<<<
+            ],
+        ]));
+
+        // Used header from request
+        self::assertEquals(
+            [
+                'X-Test' => ['test'],
+                'Host' => ['host123.org'], // <<<<<<<<<
+            ],
             $request->getHeaders()
         );
     }
