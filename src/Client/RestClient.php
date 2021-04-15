@@ -73,7 +73,7 @@ class RestClient
 
         // Create retry middleware
         $retryMiddlewareFactory = new RetryMiddlewareFactory($logger, $retryConfig);
-        $this->handlerStack->push($retryMiddlewareFactory->create());
+        $this->handlerStack->push($retryMiddlewareFactory->create(), 'retry');
 
         // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
