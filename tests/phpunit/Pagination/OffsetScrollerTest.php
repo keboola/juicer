@@ -10,6 +10,7 @@ use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class OffsetScrollerTest extends TestCase
 {
@@ -26,7 +27,7 @@ class OffsetScrollerTest extends TestCase
 
         $scroller = new OffsetScroller(['limit' => 10, 'limitParam' => 'max', 'offsetParam' => 'startAt']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -53,7 +54,7 @@ class OffsetScrollerTest extends TestCase
         ]);
         self::assertEquals($expected2, $next2);
 
-        $responseUnderLimit = new \stdClass();
+        $responseUnderLimit = new stdClass();
         $responseUnderLimit->data = array_fill(0, 5, (object) ['key' => 'value']);
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
         self::assertEquals(false, $next3);
@@ -123,7 +124,7 @@ class OffsetScrollerTest extends TestCase
 
         self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         /** @var RestRequest $second */
@@ -154,7 +155,7 @@ class OffsetScrollerTest extends TestCase
 
         self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         /** @var RestRequest $second */
@@ -185,7 +186,7 @@ class OffsetScrollerTest extends TestCase
 
         self::assertEquals($config->getParams()['startAt'], $first->getParams()['startAt']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         /** @var RestRequest $second */

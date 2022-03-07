@@ -11,6 +11,7 @@ use Keboola\Json\Exception\NoDataException;
 use Keboola\Json\Parser;
 use Keboola\Json\Structure;
 use Keboola\Juicer\Exception\UserException;
+use KeboolaLegacy;
 use KeboolaLegacy\Json\Analyzer as LegacyAnalyzer;
 use KeboolaLegacy\Json\Parser as LegacyParser;
 use KeboolaLegacy\Json\Struct;
@@ -81,7 +82,7 @@ class Json implements ParserInterface
             $this->parser->process($data, $type, $parentId);
         } catch (NoDataException $e) {
             $this->logger->debug("No data returned in '{$type}'");
-        } catch (\KeboolaLegacy\Json\Exception\NoDataException $e) {
+        } catch (KeboolaLegacy\Json\Exception\NoDataException $e) {
             $this->logger->debug("No data returned in '{$type}'");
         } catch (JsonParserException $e) {
             throw new UserException(
@@ -90,7 +91,7 @@ class Json implements ParserInterface
                 $e,
                 $e->getData()
             );
-        } catch (\KeboolaLegacy\Json\Exception\JsonParserException $e) {
+        } catch (KeboolaLegacy\Json\Exception\JsonParserException $e) {
             throw new UserException(
                 'Error parsing response JSON: ' . $e->getMessage(),
                 500,

@@ -104,7 +104,6 @@ class JobConfig
     }
 
     /**
-     * @param string $name
      * @param mixed $value
      */
     public function setParam(string $name, $value): void

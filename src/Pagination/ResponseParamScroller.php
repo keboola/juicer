@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Scrolls using a parameter within page's response.
@@ -59,7 +60,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
-        $nextParam = \Keboola\Utils\getDataFromPath($this->responseParam, $response, '.');
+        $nextParam = getDataFromPath($this->responseParam, $response, '.');
         if (empty($nextParam)) {
             return null;
         } else {

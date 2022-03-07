@@ -6,8 +6,8 @@ namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 
 /**
  * Looks within the response **data** for an ID

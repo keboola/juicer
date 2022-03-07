@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Client;
 
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Psr7\Utils;
-use Keboola\Juicer\Retry\RetryMiddlewareFactory;
-use Psr\Http\Message\UriInterface;
-use UnexpectedValueException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\HandlerStack;
-use Keboola\Juicer\Exception\UserException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Utils;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Retry\RetryMiddlewareFactory;
 use Keboola\Utils\Exception\JsonDecodeException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
+use stdClass;
+use Throwable;
+use UnexpectedValueException;
 use function Keboola\Utils\jsonDecode;
 
 class RestClient
@@ -36,8 +38,6 @@ class RestClient
     private GuzzleRequestFactory $guzzleRequestFactory;
 
     /**
-     * @param LoggerInterface $logger
-     * @param string $baseUri
      * @param array  $guzzleConfig GuzzleHttp\Client defaults
      * @param array  $retryConfig @see RestClient::createBackoff()
      *
@@ -115,7 +115,6 @@ class RestClient
     }
 
     /**
-     * @param RestRequest $request
      * @return mixed Raw response as it comes from the client
      * @throws UserException
      * @throws \Exception
@@ -179,7 +178,6 @@ class RestClient
     }
 
     /**
-     * @param ResponseInterface $response
      * @return array|object|mixed Should be anything that can result from json_decode
      * @throws UserException
      */
@@ -232,7 +230,7 @@ class RestClient
         return $config;
     }
 
-    protected function handleException(\Throwable $e, ?ResponseInterface $response): ?\stdClass
+    protected function handleException(Throwable $e, ?ResponseInterface $response): ?stdClass
     {
         if (($response && in_array($response->getStatusCode(), $this->ignoreErrors)) ||
             in_array($e->getCode(), $this->ignoreErrors)
@@ -244,12 +242,12 @@ class RestClient
                     $result = $this->getObjectFromResponse($response);
                 } catch (UserException $ex) {
                     $this->logger->warning('Failed to parse response ' . $ex->getMessage());
-                    $result = new \stdClass();
+                    $result = new stdClass();
                     $result->errorData = (string) ($response->getBody());
                 }
             } else {
                 $this->logger->warning('Failed to process response ' . $e->getMessage());
-                $result = new \stdClass();
+                $result = new stdClass();
                 $result->errorData = $e->getMessage();
             }
             return $result;

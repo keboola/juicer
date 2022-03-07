@@ -12,6 +12,7 @@ use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
+use stdClass;
 
 class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 {
@@ -24,7 +25,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorated = new LimitStopScrollerDecorator($scroller, $config);
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 
@@ -57,7 +58,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorated = new LimitStopScrollerDecorator($scroller, $config);
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 
@@ -104,7 +105,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
         $decorator = new LimitStopScrollerDecorator($scroller, $config);
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
 

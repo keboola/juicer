@@ -7,6 +7,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ResponseParamScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
+use stdClass;
 
 class ResponseParamScrollerTest extends ResponseScrollerTestCase
 {
@@ -20,7 +21,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             'queryParam' => 'scroll_id',
         ]);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->_scroll_id = 'asdf';
 
@@ -33,7 +34,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         ]);
         self::assertEquals($expected, $next);
 
-        $responseLast = new \stdClass();
+        $responseLast = new stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
@@ -84,7 +85,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             ],
         ]);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->_scroll_id = 'asdf';
 
@@ -105,7 +106,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->_scroll_id = 'asdf';
 

@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Utils;
 use Keboola\Juicer\Exception\UserException;
 use Psr\Http\Message\RequestInterface;
+use function http_build_query;
 use function Keboola\Utils\buildUrl;
 
 /**
@@ -40,7 +41,7 @@ class GuzzleRequestFactory
             case 'FORM':
                 $method = 'POST';
                 $endpoint = $restRequest->getEndpoint();
-                $body = \http_build_query($restRequest->getParams(), '', '&');
+                $body = http_build_query($restRequest->getParams(), '', '&');
                 $headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 break;
             default:

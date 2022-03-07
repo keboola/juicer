@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Query;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 /**
  * Scrolls using URL or Endpoint within page's response.
@@ -54,7 +55,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
-        $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, $this->delimiter);
+        $nextUrl = getDataFromPath($this->urlParam, $response, $this->delimiter);
 
         if (empty($nextUrl)) {
             return null;

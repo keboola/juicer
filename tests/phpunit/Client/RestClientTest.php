@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Client;
 
+use DateTimeImmutable;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
-use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Client\RestClient;
+use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Tests\ExtractorTestCase;
@@ -15,6 +16,7 @@ use Keboola\Juicer\Tests\HistoryContainer;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use Throwable;
 
 class RestClientTest extends ExtractorTestCase
 {
@@ -129,7 +131,7 @@ class RestClientTest extends ExtractorTestCase
     {
         $delaySec = 5;
         $retryOptions = [];
-        $errorResponse = new Response(429, ['Retry-After' => $delaySec]);
+        $errorResponse = new Response(429, ['Retry-After' => (string) $delaySec]);
         $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
     }
 
@@ -137,14 +139,14 @@ class RestClientTest extends ExtractorTestCase
     {
         $delaySec = 5;
         $retryOptions = [];
-        $errorResponse = new Response(429, ['Retry-After' => time() + $delaySec]);
+        $errorResponse = new Response(429, ['Retry-After' => (string) (time() + $delaySec)]);
         $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
     }
 
     public function testRetryHeaderDate(): void
     {
         $delaySec = 5;
-        $date = new \DateTimeImmutable("+ ${delaySec} seconds");
+        $date = new DateTimeImmutable("+ ${delaySec} seconds");
         $retryOptions = [];
         $errorResponse = new Response(429, ['Retry-After' => $date->format(DATE_RFC1123)]);
         $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
@@ -161,7 +163,7 @@ class RestClientTest extends ExtractorTestCase
             ],
             'maxRetries' => 8,
         ];
-        $errorResponse = new Response(403, ['X-Rate-Limit-Reset' => $delaySec]);
+        $errorResponse = new Response(403, ['X-Rate-Limit-Reset' => (string) $delaySec]);
         $this->runAndAssertDelay($retryOptions, $errorResponse, $delaySec);
     }
 
@@ -187,7 +189,7 @@ class RestClientTest extends ExtractorTestCase
         try {
             $client->download(new RestRequest(['endpoint' => '/']));
             self::fail('Request should fail');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             self::assertCount($retries, $handler->getRecords());
 
             $delays = [1, 2, 4]; // exponential
@@ -228,7 +230,7 @@ class RestClientTest extends ExtractorTestCase
         try {
             $client->download(new RestRequest(['endpoint' => '/']));
             self::fail('Request should fail');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             self::assertCount(0, $handler->getRecords());
             self::assertMatchesRegularExpression('/curl error 6\:/ui', $e->getMessage());
             self::assertTrue($e instanceof UserException);
@@ -244,7 +246,7 @@ class RestClientTest extends ExtractorTestCase
         try {
             $restClient->download(new RestRequest(['endpoint' => 'ep']));
             self::fail('Request should fail');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             self::assertStringContainsString('Not Found', $e->getMessage());
             self::assertStringContainsString('404', $e->getMessage());
         }

@@ -6,8 +6,8 @@ namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
 
 /**
  * Scrolls using simple "limit" and "offset" query parameters.

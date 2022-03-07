@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Parser;
 
-use NoRewindIterator;
 use Keboola\Csv\CsvReader;
-use Keboola\CsvMap\Mapper;
 use Keboola\CsvMap\Exception\BadConfigException;
 use Keboola\CsvMap\Exception\BadDataException;
+use Keboola\CsvMap\Mapper;
 use Keboola\CsvTable\Table;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Exception\UserException;
+use NoRewindIterator;
 use Psr\Log\LoggerInterface;
 
 /**

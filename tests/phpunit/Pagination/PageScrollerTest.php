@@ -9,6 +9,7 @@ use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @todo test with no limit until empty response
@@ -89,7 +90,7 @@ class PageScrollerTest extends TestCase
 
         $scroller = new PageScroller([]);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -115,7 +116,7 @@ class PageScrollerTest extends TestCase
         self::assertEquals($expected2, $next2);
 
         // Empty response
-        $responseUnderLimit = new \stdClass();
+        $responseUnderLimit = new stdClass();
         $responseUnderLimit->data = [];
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
         self::assertEquals(false, $next3);
@@ -140,7 +141,7 @@ class PageScrollerTest extends TestCase
 
         $scroller = new PageScroller([]);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -165,11 +166,11 @@ class PageScrollerTest extends TestCase
         /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
         /** @var RestRequest $second */
-        $second = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $second = $scroller->getNextRequest($client, $config, new stdClass, ['item']);
         /** @var RestRequest $third */
-        $third = $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $third = $scroller->getNextRequest($client, $config, new stdClass, ['item']);
         /** @var RestRequest $last */
-        $last = $scroller->getNextRequest($client, $config, new \stdClass, []);
+        $last = $scroller->getNextRequest($client, $config, new stdClass, []);
 
         self::assertEquals(1, $first->getParams()['page']);
         self::assertEquals(2, $second->getParams()['page']);
@@ -185,13 +186,13 @@ class PageScrollerTest extends TestCase
         $scroller = new PageScroller(['pageParam' => 'p']);
 
         $scroller->getFirstRequest($client, $config);
-        $scroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $scroller->getNextRequest($client, $config, new stdClass, ['item']);
 
         $state = $scroller->getState();
         $newScroller = new PageScroller([]);
         $newScroller->setState($state);
         /** @var RestRequest $third */
-        $third = $newScroller->getNextRequest($client, $config, new \stdClass, ['item']);
+        $third = $newScroller->getNextRequest($client, $config, new stdClass, ['item']);
         self::assertEquals(3, $third->getParams()['p']);
     }
 }
