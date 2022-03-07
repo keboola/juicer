@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests;
 
-use Throwable;
-use UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
+use UnexpectedValueException;
 
 /**
  * One item from the HistoryContainer

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Parser;
 
-use Keboola\Juicer\Exception\UserException;
-use Keboola\Juicer\Parser\JsonMap;
-use Keboola\Juicer\Parser\Json;
 use Keboola\Juicer\Config\Config;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Parser\Json;
+use Keboola\Juicer\Parser\JsonMap;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Pagination\OffsetScroller;
-use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\Decorator\HasMoreScrollerDecorator;
+use Keboola\Juicer\Pagination\NoScroller;
+use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 

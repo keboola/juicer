@@ -6,6 +6,7 @@ namespace Keboola\Juicer\Tests\Pagination;
 
 use Keboola\Juicer\Pagination\ResponseUrlScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
+use stdClass;
 
 class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
@@ -16,7 +17,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'next']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
@@ -26,7 +27,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         ]);
         self::assertEquals($expected, $next);
 
-        $responseLast = new \stdClass();
+        $responseLast = new stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
@@ -59,7 +60,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
@@ -138,9 +139,9 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $scroller = new ResponseUrlScroller(['urlKey' => 'links|next', 'delimiter' => '|']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
-        $response->links = new \stdClass();
+        $response->links = new stdClass();
         $response->links->next = 'test?page=2';
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
@@ -149,7 +150,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         ]);
         self::assertEquals($expected, $next);
 
-        $responseLast = new \stdClass();
+        $responseLast = new stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);

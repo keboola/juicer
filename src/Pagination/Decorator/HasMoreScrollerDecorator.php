@@ -6,9 +6,9 @@ namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use Keboola\Juicer\Pagination\ScrollerInterface;
 
 /**
  * Class HasMoreScrollerDecorator
@@ -24,7 +24,6 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * HasMoreScrollerDecorator constructor.
-     * @param ScrollerInterface $scroller
      * @param array $config array with `nextPageFlag` item which is:
      *      [
      *          'field' => string // name of the boolean field

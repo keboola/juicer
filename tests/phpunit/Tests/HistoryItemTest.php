@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Tests;
 
-use RuntimeException;
-use UnexpectedValueException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Keboola\Juicer\Tests\HistoryItem;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use UnexpectedValueException;
 
 class HistoryItemTest extends TestCase
 {

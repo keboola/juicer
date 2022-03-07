@@ -6,8 +6,8 @@ namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\ScrollerInterface;
 
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {

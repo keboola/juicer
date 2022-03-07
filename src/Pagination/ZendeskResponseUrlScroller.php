@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Pagination;
 
+use DateTime;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Uri;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use function Keboola\Utils\getDataFromPath;
 
 class ZendeskResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
 {
@@ -47,7 +49,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
-        $nextUrl = \Keboola\Utils\getDataFromPath($this->urlParam, $response, '.');
+        $nextUrl = getDataFromPath($this->urlParam, $response, '.');
 
         if (empty($nextUrl)) {
             return null;
@@ -55,9 +57,9 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
 
         // start_time validation
         // https://developer.zendesk.com/rest_api/docs/core/incremental_export#incremental-ticket-export
-        $now = new \DateTime();
+        $now = new DateTime();
         $startDateTimeStr = Query::parse((new Uri($nextUrl))->getQuery())['start_time'] ?? null;
-        $startDateTime = $startDateTimeStr ? \DateTime::createFromFormat('U', $startDateTimeStr) : null;
+        $startDateTime = $startDateTimeStr ? DateTime::createFromFormat('U', $startDateTimeStr) : null;
 
         if ($startDateTime && $startDateTime > $now->modify(sprintf('-%d minutes', self::NEXT_PAGE_FILTER_MINUTES))) {
             return null;

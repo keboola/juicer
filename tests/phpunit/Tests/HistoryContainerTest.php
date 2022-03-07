@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Tests;
 
-use UnderflowException;
-use OutOfRangeException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Keboola\Juicer\Tests\HistoryContainer;
+use OutOfRangeException;
 use PHPUnit\Framework\TestCase;
+use UnderflowException;
 
 class HistoryContainerTest extends TestCase
 {

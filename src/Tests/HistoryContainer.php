@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests;
 
-use UnderflowException;
+use ArrayAccess;
+use Countable;
+use InvalidArgumentException;
 use OutOfRangeException;
+use UnderflowException;
 
 /**
  * Contains history of the requests in the mocked RestClient
  */
-class HistoryContainer implements \ArrayAccess, \Countable
+class HistoryContainer implements ArrayAccess, Countable
 {
     /** @var HistoryItem[] */
     private array $items = [];
@@ -94,7 +97,7 @@ class HistoryContainer implements \ArrayAccess, \Countable
     public function offsetSet($offset, $array): void
     {
         if (!is_array($array)) {
-            throw new \InvalidArgumentException('Value must be array.');
+            throw new InvalidArgumentException('Value must be array.');
         }
 
         // Map to object

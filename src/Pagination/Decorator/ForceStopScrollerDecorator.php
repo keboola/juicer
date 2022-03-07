@@ -6,8 +6,8 @@ namespace Keboola\Juicer\Pagination\Decorator;
 
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
-use Keboola\Juicer\Pagination\ScrollerInterface;
 use Keboola\Juicer\Config\JobConfig;
+use Keboola\Juicer\Pagination\ScrollerInterface;
 
 /**
  * Class ForceStopScrollerDecorator
@@ -19,9 +19,8 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Time in seconds
-     * @var int|null
      */
-    protected $timeLimit = null;
+    protected ?int $timeLimit = null;
 
     /**
      * Size in bytes
@@ -49,7 +48,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
             if (!empty($config['forceStop']['time'])) {
                 $this->timeLimit = is_int($config['forceStop']['time'])
                     ? $config['forceStop']['time']
-                    : strtotime($config['forceStop']['time'], 0);
+                    : (int) strtotime($config['forceStop']['time'], 0);
             }
             if (!empty($config['forceStop']['volume'])) {
                 $this->volumeLimit = intval($config['forceStop']['volume']);
@@ -108,7 +107,6 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     /**
      * Checks time between first and current request
-     * @return bool
      */
     private function checkTime(): bool
     {

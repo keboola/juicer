@@ -43,7 +43,6 @@ class Config
     }
 
     /**
-     * @param string $name
      * @return bool|mixed
      */
     public function getAttribute(string $name)

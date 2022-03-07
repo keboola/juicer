@@ -8,17 +8,19 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Tests\Pagination;
 
+use DateTime;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ZendeskResponseUrlScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use Psr\Log\NullLogger;
+use stdClass;
 
 class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 {
     public function testGetNextRequestStop(): void
     {
-        $now = new \DateTime();
+        $now = new DateTime();
         $pagingStart = clone $now;
 
         $client = RestClientMockBuilder::create()->getRestClient();
@@ -30,7 +32,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             $step = round(ZendeskResponseUrlScroller::NEXT_PAGE_FILTER_MINUTES * 0.5);
             $pagingStart->modify(sprintf('-%d minutes', $step));
 
-            $response = new \stdClass();
+            $response = new stdClass();
             $response->data = array_fill(0, 10, (object) ['key' => 'value']);
             $response->next_page = 'test?start_time=' . $pagingStart->getTimestamp();
 
@@ -53,7 +55,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next']);
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
@@ -63,7 +65,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         ]);
         self::assertEquals($expected, $next);
 
-        $responseLast = new \stdClass();
+        $responseLast = new stdClass();
         $responseLast->data = array_fill(0, 10, (object) ['key' => 'value']);
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
@@ -96,7 +98,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 

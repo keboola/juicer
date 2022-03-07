@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Pagination\Decorator;
 
 use Keboola\Juicer\Config\JobConfig;
-use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
+use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
 use PHPUnit\Framework\TestCase;
 

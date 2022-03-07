@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Retry;
 
+use DateTime;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use Throwable;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use function Keboola\Utils\isValidDateTimeString;
 
 class RetryHandler
@@ -125,7 +126,7 @@ class RetryHandler
 
         if (isValidDateTimeString($retryAfter, DATE_RFC1123)) {
             /** @var \DateTimeImmutable $date */
-            $date = \DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
+            $date = DateTime::createFromFormat(DATE_RFC1123, $retryAfter);
             return ($date->getTimestamp() - time()) * 1000;
         }
 
