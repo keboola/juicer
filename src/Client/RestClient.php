@@ -75,6 +75,12 @@ class RestClient
         $retryMiddlewareFactory = new RetryMiddlewareFactory($logger, $retryConfig);
         $this->handlerStack->push($retryMiddlewareFactory->create(), 'retry');
 
+        // Set default HTTP timeouts, 30 seconds for connect / 5 minutes for request
+        // https://docs.guzzlephp.org/en/stable/request-options.html#connect-timeout
+        // https://docs.guzzlephp.org/en/stable/request-options.html#timeout
+        $guzzleConfig['connect_timeout'] = $guzzleConfig['connect_timeout'] ?? 30;
+        $guzzleConfig['timeout'] = $guzzleConfig['connect_timeout'] ?? 300;
+
         // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
 
