@@ -23,6 +23,9 @@ use function Keboola\Utils\jsonDecode;
 
 class RestClient
 {
+    public const DEFAULT_CONNECT_TIMEOUT = 30;
+    public const DEFAULT_REQUEST_TIMEOUT = 5 * 60;
+
     protected HandlerStack $handlerStack;
 
     protected Client $client;
@@ -78,8 +81,8 @@ class RestClient
         // Set default HTTP timeouts, 30 seconds for connect / 5 minutes for request
         // https://docs.guzzlephp.org/en/stable/request-options.html#connect-timeout
         // https://docs.guzzlephp.org/en/stable/request-options.html#timeout
-        $guzzleConfig['connect_timeout'] = $guzzleConfig['connect_timeout'] ?? 30;
-        $guzzleConfig['timeout'] = $guzzleConfig['connect_timeout'] ?? 300;
+        $guzzleConfig['connect_timeout'] = $guzzleConfig['connect_timeout'] ?? self::DEFAULT_CONNECT_TIMEOUT;
+        $guzzleConfig['timeout'] = $guzzleConfig['connect_timeout'] ?? self::DEFAULT_REQUEST_TIMEOUT;
 
         // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
