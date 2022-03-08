@@ -82,7 +82,7 @@ class RestClient
         // https://docs.guzzlephp.org/en/stable/request-options.html#connect-timeout
         // https://docs.guzzlephp.org/en/stable/request-options.html#timeout
         $guzzleConfig['connect_timeout'] = $guzzleConfig['connect_timeout'] ?? self::DEFAULT_CONNECT_TIMEOUT;
-        $guzzleConfig['timeout'] = $guzzleConfig['connect_timeout'] ?? self::DEFAULT_REQUEST_TIMEOUT;
+        $guzzleConfig['timeout'] = $guzzleConfig['timeout'] ?? self::DEFAULT_REQUEST_TIMEOUT;
 
         // Create Guzzle client
         $guzzle = new Client($guzzleConfig);
