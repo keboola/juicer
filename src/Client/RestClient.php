@@ -149,9 +149,9 @@ class RestClient
             }
 
             $response = $e->getResponse();
-            $data = json_decode((string) $response->getBody(), true);
+            $data = json_decode($response->getBody()->getContents(), true);
             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                $data = (string) $response->getBody();
+                $data = $response->getBody()->getContents();
             }
 
             throw new UserException(
@@ -193,7 +193,7 @@ class RestClient
     public function getObjectFromResponse(ResponseInterface $response)
     {
         // Sanitize the JSON
-        $body = (string) iconv('UTF-8', 'UTF-8//IGNORE', (string) $response->getBody());
+        $body = (string) iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody()->getContents());
         try {
             $decoded = jsonDecode($body, false, 512, 0, true, true);
         } catch (JsonDecodeException $e) {
