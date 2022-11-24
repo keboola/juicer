@@ -41,7 +41,7 @@ class JobConfig
         if (!is_array($config['params'])) {
             throw new UserException("The 'params' property must be an array.", 0, null, $config);
         }
-        if (empty($config['endpoint'])) {
+        if (!isset($config['endpoint']) || $config['endpoint'] === '') {
             throw new UserException("The 'endpoint' property must be set in job.", 0, null, $config);
         }
         if (empty($config['dataType'])) {
