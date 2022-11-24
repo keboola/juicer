@@ -31,6 +31,22 @@ class JobConfigTest extends TestCase
         self::assertNotEmpty($job->getJobId());
     }
 
+    public function testZeroEndpoint(): void
+    {
+        $job = new JobConfig(['endpoint' => '0']);
+        self::assertEquals('0', $job->getEndpoint());
+        self::assertEquals([], $job->getParams());
+        self::assertEquals([], $job->getChildJobs());
+        $cfg = $job->getConfig();
+        self::assertArrayHasKey('id', $cfg);
+        unset($cfg['id']);
+        self::assertEquals(['endpoint' => '0', 'params' => [], 'dataType' => '0'], $cfg);
+        self::assertEquals('0', $job->getDataType());
+        self::assertNotEmpty($job->getJobId());
+    }
+
+
+
     public function testConstruct(): void
     {
         $config = ['endpoint' => 'fooBar', 'id' => 'baz', 'params' => ['a' => 'b'], 'dataType' => 'dt'];
