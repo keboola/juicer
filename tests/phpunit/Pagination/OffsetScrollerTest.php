@@ -65,6 +65,38 @@ class OffsetScrollerTest extends TestCase
         self::assertEquals($expected, $next4);
     }
 
+    public function testStringParams(): void
+    {
+
+        $client = RestClientMockBuilder::create()->getRestClient();
+        $config = new JobConfig([
+            'endpoint' => 'test',
+            'params' => [
+                'startAt' => '3',
+                'customLimit' => '10',
+            ],
+        ]);
+        $limit = 10;
+
+        $scroller = new OffsetScroller([
+            'limit' => $limit,
+            'offsetFromJob' => true,
+            'offsetParam' => 'startAt',
+            'limitParam' => 'customLimit',
+        ]);
+
+        /** @var RestRequest $req */
+        $req = $scroller->getFirstRequest($client, $config);
+        $expected = $client->createRequest([
+            'endpoint' => 'test',
+            'params' => [
+                'startAt' => 3,
+                'customLimit' => 10,
+            ],
+        ]);
+        self::assertEquals($expected, $req);
+    }
+
     public function testGetFirstRequest(): void
     {
         $client = RestClientMockBuilder::create()->getRestClient();
