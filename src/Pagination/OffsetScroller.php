@@ -76,7 +76,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest
     {
         if ($this->offsetFromJob && !empty($jobConfig->getParams()[$this->offsetParam])) {
-            $this->pointer = $jobConfig->getParams()[$this->offsetParam];
+            $this->pointer = (int) $jobConfig->getParams()[$this->offsetParam];
         }
 
         if ($this->firstPageParams) {
