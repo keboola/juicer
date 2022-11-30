@@ -42,6 +42,18 @@ class RestRequestTest extends TestCase
         self::assertEquals('GET ep first=foo&second=bar', (string) $request);
     }
 
+    public function testNumericEndpoint(): void
+    {
+        $request = new RestRequest([
+            'endpoint' => '0',
+        ]);
+
+        self::assertEquals([], $request->getHeaders());
+        self::assertEquals('0', $request->getEndpoint());
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals([], $request->getParams());
+    }
+
     public function testToStringPost(): void
     {
         $request = new RestRequest([
