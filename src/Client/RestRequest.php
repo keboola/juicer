@@ -29,7 +29,7 @@ class RestRequest
      */
     public function __construct(array $config)
     {
-        if (empty($config['endpoint']) || !is_string($config['endpoint'])) {
+        if (!isset($config['endpoint']) || !is_string($config['endpoint'])) {
             throw new UserException('The "endpoint" property must be specified in request as a string.');
         }
         $this->endpoint = $config['endpoint'];
