@@ -8,14 +8,18 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\ScrollerInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractScrollerDecorator implements ScrollerInterface
 {
     protected ScrollerInterface $scroller;
 
-    public function __construct(ScrollerInterface $scroller)
+    protected LoggerInterface $logger;
+
+    public function __construct(ScrollerInterface $scroller, LoggerInterface $logger)
     {
         $this->scroller = $scroller;
+        $this->logger = $logger;
     }
 
     public function __clone()

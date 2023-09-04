@@ -39,11 +39,9 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     protected bool $limitReached = false;
 
-    private LoggerInterface $logger;
-
     public function __construct(ScrollerInterface $scroller, array $config, LoggerInterface $logger)
     {
-        parent::__construct($scroller);
+        parent::__construct($scroller, $logger);
         if (!empty($config['forceStop'])) {
             if (!empty($config['forceStop']['pages'])) {
                 $this->pageLimit = $config['forceStop']['pages'];
@@ -58,7 +56,6 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
             }
         }
         $this->reset();
-        $this->logger = $logger;
     }
 
     /**

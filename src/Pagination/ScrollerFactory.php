@@ -23,7 +23,7 @@ class ScrollerFactory
         LoggerInterface $logger
     ): ScrollerInterface {
         if (!empty($config['nextPageFlag'])) {
-            $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
+            $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config, $logger);
         }
 
         if (!empty($config['forceStop'])) {
@@ -31,7 +31,7 @@ class ScrollerFactory
         }
 
         if (!empty($config['limitStop'])) {
-            $scroller = new Decorator\LimitStopScrollerDecorator($scroller, $config);
+            $scroller = new Decorator\LimitStopScrollerDecorator($scroller, $config, $logger);
         }
 
         return $scroller;

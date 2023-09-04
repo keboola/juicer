@@ -9,6 +9,8 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ScrollerInterface;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class HasMoreScrollerDecorator
@@ -32,7 +34,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
      *      ]
      * @throws UserException
      */
-    public function __construct(ScrollerInterface $scroller, array $config)
+    public function __construct(ScrollerInterface $scroller, array $config, LoggerInterface $logger)
     {
         if (!empty($config['nextPageFlag'])) {
             if (empty($config['nextPageFlag']['field'])) {
@@ -65,7 +67,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             }
         }
 
-        parent::__construct($scroller);
+        parent::__construct($scroller, $logger);
     }
 
     /**
@@ -96,6 +98,11 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
         }
 
         if ((bool) $value === $this->stopOn) {
+            $this->logger->info(sprintf(
+                "Stopping scrolling because '%s' is '%s'",
+                $this->field,
+                $value ? 'true' : 'false',
+            ));
             return false;
         } else {
             return true;

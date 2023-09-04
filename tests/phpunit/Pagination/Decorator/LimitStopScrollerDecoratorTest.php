@@ -12,6 +12,9 @@ use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
+use Psr\Log\NullLogger;
 use stdClass;
 
 class LimitStopScrollerDecoratorTest extends ExtractorTestCase
@@ -24,7 +27,12 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $config = ['limitStop' => ['field' => 'results.totalNumber']];
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorated = new LimitStopScrollerDecorator($scroller, $config);
+
+        $testHandler = new TestHandler();
+        $logger = new Logger('limit-stop-test-logger');
+        $logger->setHandlers([$testHandler]);
+
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -47,6 +55,10 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $response->results->data,
         );
         self::assertNull($noNext);
+
+        self::assertTrue($testHandler->hasInfoThatContains(
+            sprintf('Limit reached, stopping scrolling. Current count: 15, limit: 15'),
+        ));
     }
 
     public function testLimit(): void
@@ -57,7 +69,12 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $config = ['limitStop' => ['count' => 12]];
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorated = new LimitStopScrollerDecorator($scroller, $config);
+
+        $testHandler = new TestHandler();
+        $logger = new Logger('limit-stop-test-logger');
+        $logger->setHandlers([$testHandler]);
+
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -80,20 +97,28 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $response->results->data,
         );
         self::assertNull($noNext);
+
+        self::assertTrue($testHandler->hasInfoThatContains(
+            sprintf('Limit reached, stopping scrolling. Current count: 15, limit: 12'),
+        ));
     }
 
     public function testInvalid1(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
-        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]]);
+        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]], new NullLogger());
     }
 
     public function testInvalid2(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("Specify only one of 'limitStop.field' or 'limitStop.count'");
-        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 12, 'field' => 'whatever']]);
+        new LimitStopScrollerDecorator(
+            new NoScroller(),
+            ['limitStop' => ['count' => 12, 'field' => 'whatever']],
+            new NullLogger(),
+        );
     }
 
     public function testCloneScrollerDecorator(): void
@@ -104,7 +129,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         $config = ['limitStop' => ['count' => 12]];
 
         $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorator = new LimitStopScrollerDecorator($scroller, $config);
+        $decorator = new LimitStopScrollerDecorator($scroller, $config, new NullLogger());
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
