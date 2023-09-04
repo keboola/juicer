@@ -77,7 +77,7 @@ class CursorScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Missing \'pagination.idKey\' attribute required for cursor pagination',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
         try {
@@ -86,7 +86,7 @@ class CursorScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Missing \'pagination.param\' attribute required for cursor pagination',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
         new CursorScroller(['idKey' => 'foo', 'param' => 'bar']);

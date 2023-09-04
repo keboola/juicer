@@ -34,7 +34,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             (object) ['hasMore' => true],
-            array_fill(0, 10, ['k' => 'v'])
+            array_fill(0, 10, ['k' => 'v']),
         );
         self::assertInstanceOf('Keboola\Juicer\Client\RestRequest', $next);
 
@@ -42,7 +42,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             (object) ['hasMore' => false],
-            array_fill(0, 10, ['k' => 'v'])
+            array_fill(0, 10, ['k' => 'v']),
         );
         self::assertNull($noNext);
     }
@@ -90,7 +90,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             (object) ['hasMore' => true],
-            array_fill(0, 10, ['k' => 'v'])
+            array_fill(0, 10, ['k' => 'v']),
         );
 
         $cloneDecorator = clone $decorator;

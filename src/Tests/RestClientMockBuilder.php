@@ -46,7 +46,7 @@ class RestClientMockBuilder
             $this->guzzleConfig,
             $this->retryConfig,
             $this->defaultOptions,
-            $this->ignoreErrors
+            $this->ignoreErrors,
         );
 
         if ($this->initCallback !== null) {

@@ -22,13 +22,13 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     {
         $request = $this->requestFactory->create(
             new RestRequest(
-                ['endpoint' => 'ep', 'params' => ['a' => 1], 'headers' => ['X-Test' => 'test']]
-            )
+                ['endpoint' => 'ep', 'params' => ['a' => 1], 'headers' => ['X-Test' => 'test']],
+            ),
         );
         self::assertEquals('ep?a=1', (string) $request->getUri());
         self::assertEquals(
             ['X-Test' => ['test']],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 
@@ -36,14 +36,14 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     {
         $request = $this->requestFactory->create(
             new RestRequest(
-                ['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST', 'headers' => ['X-Test' => 'test']]
-            )
+                ['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'POST', 'headers' => ['X-Test' => 'test']],
+            ),
         );
         self::assertEquals('ep', (string) $request->getUri());
         self::assertEquals('{"a":1}', $request->getBody()->getContents());
         self::assertEquals(
             ['X-Test' => ['test'], 'Content-Type' => ['application/json']],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 
@@ -51,14 +51,14 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     {
         $request = $this->requestFactory->create(
             new RestRequest(
-                ['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM', 'headers' => ['X-Test' => 'test']]
-            )
+                ['endpoint' => 'ep', 'params' => ['a' => 1], 'method' => 'FORM', 'headers' => ['X-Test' => 'test']],
+            ),
         );
         self::assertEquals('ep', (string) $request->getUri());
         self::assertEquals('a=1', $request->getBody()->getContents());
         self::assertEquals(
             ['X-Test' => ['test'], 'Content-Type' => ['application/x-www-form-urlencoded']],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 
@@ -81,7 +81,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
                 'X-Test' => ['test'],
                 'Host' => ['example.com'], // <<<<<<<<<
             ],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 
@@ -89,7 +89,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     {
         // Default host header is set
         $this->requestFactory = new GuzzleRequestFactory(
-            'myhost.com' // <<<<<<<<<
+            'myhost.com', // <<<<<<<<<
         );
 
         // No host header in request config
@@ -106,7 +106,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
                 'X-Test' => ['test'],
                 'Host' => ['myhost.com'], // <<<<<<<<<
             ],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 
@@ -114,7 +114,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
     {
         // Default host header is set
         $this->requestFactory = new GuzzleRequestFactory(
-            'myhost.com'
+            'myhost.com',
         );
 
         // Header set in request
@@ -132,7 +132,7 @@ class GuzzleRequestFactoryTest extends ExtractorTestCase
                 'X-Test' => ['test'],
                 'Host' => ['host123.org'], // <<<<<<<<<
             ],
-            $request->getHeaders()
+            $request->getHeaders(),
         );
     }
 }

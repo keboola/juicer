@@ -82,7 +82,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
                 if (!is_numeric($cursorVal)) {
                     throw new UserException(sprintf(
                         "Cursor value '%s' is not numeric.",
-                        json_encode($cursorVal)
+                        json_encode($cursorVal),
                     ));
                 }
                 $cursorVal = (int) $cursorVal;

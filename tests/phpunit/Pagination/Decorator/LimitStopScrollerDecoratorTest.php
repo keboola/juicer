@@ -33,7 +33,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
@@ -44,7 +44,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertNull($noNext);
     }
@@ -66,7 +66,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
@@ -77,7 +77,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertNull($noNext);
     }
@@ -113,7 +113,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
 
         $cloneDecorator = clone $decorator;

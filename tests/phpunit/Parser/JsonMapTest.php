@@ -81,7 +81,7 @@ class JsonMapTest extends TestCase
                 '"1","","iAreId"' . "\n",
                 '"2","593bf3944ed10e12aeafe50d03bc6cd5","iAreId"' . "\n",
             ],
-            file((string) $parser->getResults()['first']->getPathName())
+            file((string) $parser->getResults()['first']->getPathName()),
         );
         self::assertEquals(
             [
@@ -89,7 +89,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag1","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
                 '"asd","tag2","593bf3944ed10e12aeafe50d03bc6cd5"' . "\n",
             ],
-            file((string) $parser->getResults()['tags']->getPathName())
+            file((string) $parser->getResults()['tags']->getPathName()),
         );
 
         self::assertEquals(['user', 'tag'], $parser->getResults()['tags']->getPrimaryKey(true));
@@ -126,7 +126,7 @@ class JsonMapTest extends TestCase
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
-            "Mapping must be 'array' type, 'string' type given, for 'first' data type in 'mappings' config."
+            "Mapping must be 'array' type, 'string' type given, for 'first' data type in 'mappings' config.",
         );
         new JsonMap($config, new NullLogger());
     }
@@ -213,7 +213,7 @@ class JsonMapTest extends TestCase
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
-            "Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'."
+            "Bad Json to CSV Mapping configuration: Key 'mapping.destination' is not set for column 'id'.",
         );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
@@ -245,7 +245,7 @@ class JsonMapTest extends TestCase
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
             "Error saving 'first' data to CSV column: " .
-            "Error writing 'col' column: Cannot write data into column: (object)"
+            "Error writing 'col' column: Cannot write data into column: (object)",
         );
         $parser->process($data, 'first', ['parent' => 'iAreId']);
     }
@@ -353,7 +353,7 @@ class JsonMapTest extends TestCase
                 '"asd","tag3"' . "\n",
                 '"asd","tag4"' . "\n",
             ],
-            file((string) $parser->getResults()['tags']->getPathName())
+            file((string) $parser->getResults()['tags']->getPathName()),
         );
     }
 

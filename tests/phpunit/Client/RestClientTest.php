@@ -183,7 +183,7 @@ class RestClientTest extends ExtractorTestCase
                 'curl' => [
                     'codes' => [6],
                 ],
-            ]
+            ],
         );
 
         try {
@@ -197,7 +197,7 @@ class RestClientTest extends ExtractorTestCase
                 self::assertSame(Logger::DEBUG, $record['level']);
                 self::assertSame(
                     sprintf('Http request failed, retrying in %.1f seconds [%dx].', $delays[$i], $i + 1),
-                    $record['message']
+                    $record['message'],
                 );
                 self::assertMatchesRegularExpression('/curl error 6\:/ui', $record['context']['message']);
             }
@@ -224,7 +224,7 @@ class RestClientTest extends ExtractorTestCase
                 'curl' => [
                     'codes' => [77],
                 ],
-            ]
+            ],
         );
 
         try {
@@ -351,7 +351,7 @@ class RestClientTest extends ExtractorTestCase
         self::assertEquals($requestOptions['endpoint'], $request->getEndpoint());
         self::assertEquals(
             array_replace($defaultOptions['params'], $requestOptions['params']),
-            $request->getParams()
+            $request->getParams(),
         );
     }
 

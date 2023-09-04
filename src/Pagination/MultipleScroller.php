@@ -110,7 +110,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         if (empty($this->scrollers[$scrollerId])) {
             throw new UserException(
                 "Scroller '{$scrollerId}' not set in API definitions. Scrollers defined: "
-                . join(', ', array_keys($this->scrollers))
+                . join(', ', array_keys($this->scrollers)),
             );
         }
 

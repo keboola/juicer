@@ -46,7 +46,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             if (!is_bool($config['nextPageFlag']['stopOn'])) {
                 throw new UserException(sprintf(
                     "'stopOn' value must be set to a boolean value for 'nextPageFlag', given '%s' type.",
-                    gettype($config['nextPageFlag']['stopOn'])
+                    gettype($config['nextPageFlag']['stopOn']),
                 ));
             }
 
@@ -56,7 +56,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
                 if (!is_bool($config['nextPageFlag']['ifNotSet'])) {
                     throw new UserException(sprintf(
                         "'ifNotSet' value must be boolean, given '%s' type.",
-                        gettype($config['nextPageFlag']['ifNotSet'])
+                        gettype($config['nextPageFlag']['ifNotSet']),
                     ));
                 }
                 $this->ifNotSet = $config['nextPageFlag']['ifNotSet'];

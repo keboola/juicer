@@ -70,7 +70,7 @@ class MultipleScrollerTest extends TestCase
             $client,
             $noScrollerConfig,
             $noScrollerResponse,
-            $noScrollerResponse->results
+            $noScrollerResponse->results,
         );
         self::assertNull($nextNone);
     }
@@ -147,7 +147,7 @@ class MultipleScrollerTest extends TestCase
 
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
-            "Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page"
+            "Scroller 'nonExistentScroller' not set in API definitions. Scrollers defined: param, cursor, page",
         );
         $scroller->getFirstRequest(RestClientMockBuilder::create()->getRestClient(), $noScrollerConfig);
     }
@@ -187,7 +187,7 @@ class MultipleScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'At least one scroller must be configured for "multiple" scroller.',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
         try {
@@ -196,7 +196,7 @@ class MultipleScrollerTest extends TestCase
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'At least one scroller must be configured for "multiple" scroller.',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
         try {

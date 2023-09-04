@@ -48,7 +48,7 @@ class GuzzleRequestFactory
                 throw new UserException(sprintf(
                     "Unknown request method '%s' for '%s'",
                     $restRequest->getMethod(),
-                    $restRequest->getEndpoint()
+                    $restRequest->getEndpoint(),
                 ));
         }
 

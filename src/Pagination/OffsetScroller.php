@@ -50,7 +50,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         if (!is_numeric($config['limit'])) {
             throw new UserException(sprintf(
                 "Parameter 'pagination.limit' is not numeric. Value '%s'.",
-                json_encode($config['limit'])
+                json_encode($config['limit']),
             ));
         }
 

@@ -28,7 +28,7 @@ class HistoryItem
             $array['request'],
             $array['response'],
             $array['error'],
-            $array['options']
+            $array['options'],
         );
     }
 

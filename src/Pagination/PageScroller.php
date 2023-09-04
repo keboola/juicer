@@ -114,7 +114,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         $config = $jobConfig->getConfig();
         $config['params'] = array_replace(
             $jobConfig->getParams(),
-            $params
+            $params,
         );
         return $config;
     }

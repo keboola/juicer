@@ -39,7 +39,7 @@ class JsonMap implements ParserInterface
             if (empty($mapping)) {
                 throw new UserException(sprintf(
                     "Empty mapping for '%s' data type in 'mappings' config.",
-                    $type
+                    $type,
                 ));
             }
 
@@ -47,7 +47,7 @@ class JsonMap implements ParserInterface
                 throw new UserException(sprintf(
                     "Mapping must be 'array' type, '%s' type given, for '%s' data type in 'mappings' config.",
                     gettype($mapping),
-                    $type
+                    $type,
                 ));
             }
 
@@ -60,7 +60,7 @@ class JsonMap implements ParserInterface
                 if (is_null($fallbackParser)) {
                     throw new UserException(sprintf(
                         "No mapping for '%s' data type in 'mappings' config.",
-                        $type
+                        $type,
                     ));
                 }
             }
@@ -93,7 +93,7 @@ class JsonMap implements ParserInterface
                 "Error saving '{$type}' data to CSV column: " . $e->getMessage(),
                 0,
                 $e,
-                $e->getData()
+                $e->getData(),
             );
         }
     }
@@ -137,7 +137,7 @@ class JsonMap implements ParserInterface
                         "Multiple results for '{$name}' table have different columns!",
                         0,
                         null,
-                        ['differentColumns' => array_diff($existingHeader, $newHeader)]
+                        ['differentColumns' => array_diff($existingHeader, $newHeader)],
                     );
                 }
 

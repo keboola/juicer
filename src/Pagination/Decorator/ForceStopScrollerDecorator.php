@@ -106,7 +106,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if (++$this->pageCounter > $this->pageLimit) {
             $this->logger->info(sprintf(
                 'Force stopping: page limit reached (%d pages).',
-                $this->pageLimit
+                $this->pageLimit,
             ));
             return true;
         }
@@ -125,7 +125,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if (($this->startTime + $this->timeLimit) <= time()) {
             $this->logger->info(sprintf(
                 'Force stopping: time limit reached (%d seconds).',
-                $this->timeLimit
+                $this->timeLimit,
             ));
             return true;
         }
@@ -146,7 +146,7 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         if ($this->volumeCounter > $this->volumeLimit) {
             $this->logger->info(sprintf(
                 'Force stopping: volume limit reached (%d bytes).',
-                $this->volumeLimit
+                $this->volumeLimit,
             ));
             return true;
         }

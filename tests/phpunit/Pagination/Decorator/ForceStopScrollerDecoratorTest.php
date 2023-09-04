@@ -46,11 +46,11 @@ class ForceStopScrollerDecoratorTest extends TestCase
 
         if (isset($config['pages'])) {
             self::assertTrue($testHandler->hasInfoThatContains(
-                sprintf("Force stopping: page limit reached (%d pages).", $config['pages'])
+                sprintf('Force stopping: page limit reached (%d pages).', $config['pages']),
             ));
         } elseif (isset($config['volume'])) {
             self::assertTrue($testHandler->hasInfoThatContains(
-                sprintf("Force stopping: volume limit reached (%d bytes).", $config['volume'])
+                sprintf('Force stopping: volume limit reached (%d bytes).', $config['volume']),
             ));
         } else {
             $this->fail('No limit was reached');
@@ -104,7 +104,7 @@ class ForceStopScrollerDecoratorTest extends TestCase
         self::assertEquals(3, $i);
 
         self::assertTrue($testHandler->hasInfoThatContains(
-            sprintf("Force stopping: time limit reached (%d seconds).", 3)
+            sprintf('Force stopping: time limit reached (%d seconds).', 3),
         ));
     }
 

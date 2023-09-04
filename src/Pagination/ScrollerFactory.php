@@ -21,7 +21,7 @@ class ScrollerFactory
         ScrollerInterface $scroller,
         array $config,
         LoggerInterface $logger
-    ): ScrollerInterface{
+    ): ScrollerInterface {
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
         }
