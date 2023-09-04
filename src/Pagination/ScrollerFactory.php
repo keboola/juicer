@@ -5,24 +5,29 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Pagination;
 
 use Keboola\Juicer\Exception\UserException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class ScrollerFactory
 {
-    public static function getScroller(array $config): ScrollerInterface
+    public static function getScroller(array $config, ?LoggerInterface $logger = null): ScrollerInterface
     {
         $scroller = self::createScroller($config);
-        $scroller = self::decorateScroller($scroller, $config);
+        $scroller = self::decorateScroller($scroller, $config, $logger ?? new NullLogger);
         return $scroller;
     }
 
-    private static function decorateScroller(ScrollerInterface $scroller, array $config): ScrollerInterface
-    {
+    private static function decorateScroller(
+        ScrollerInterface $scroller,
+        array $config,
+        LoggerInterface $logger
+    ): ScrollerInterface{
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config);
         }
 
         if (!empty($config['forceStop'])) {
-            $scroller = new Decorator\ForceStopScrollerDecorator($scroller, $config);
+            $scroller = new Decorator\ForceStopScrollerDecorator($scroller, $config, $logger);
         }
 
         if (!empty($config['limitStop'])) {
