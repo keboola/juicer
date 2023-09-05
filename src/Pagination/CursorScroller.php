@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use Psr\Log\LoggerInterface;
 use function Keboola\Utils\getDataFromPath;
 
 /**
@@ -39,7 +40,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
      *      ]
      * @throws UserException
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (empty($config['idKey'])) {
             throw new UserException("Missing 'pagination.idKey' attribute required for cursor pagination");
@@ -56,6 +57,8 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
         if (!empty($config['increment'])) {
             $this->increment = $config['increment'];
         }
+
+        parent::__construct($logger);
     }
 
     /**
@@ -73,6 +76,7 @@ class CursorScroller extends AbstractScroller implements ScrollerInterface
     {
         if (empty($data)) {
             $this->reset();
+            $this->logger->info('No data in response, stopping scrolling.');
             return null;
         } else {
             $cursor = 0;

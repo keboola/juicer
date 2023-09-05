@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use Psr\Log\LoggerInterface;
 use function Keboola\Utils\getDataFromPath;
 
 /**
@@ -34,7 +35,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      *      ]
      * @throws UserException
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (empty($config['responseParam'])) {
             throw new UserException("Missing required 'pagination.responseParam' parameter.");
@@ -53,6 +54,8 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
         if (!empty($config['scrollRequest'])) {
             $this->scrollRequest = $config['scrollRequest'];
         }
+
+        parent::__construct($logger);
     }
 
     /**
@@ -62,6 +65,7 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
     {
         $nextParam = getDataFromPath($this->responseParam, $response, '.');
         if (empty($nextParam)) {
+            $this->logger->info('No more pages found, stopping pagination.');
             return null;
         } else {
             $config = $jobConfig->getConfig();

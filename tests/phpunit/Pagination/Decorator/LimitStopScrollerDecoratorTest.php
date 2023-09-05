@@ -12,9 +12,6 @@ use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\PageScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use Monolog\Handler\TestHandler;
-use Monolog\Logger;
-use Psr\Log\NullLogger;
 use stdClass;
 
 class LimitStopScrollerDecoratorTest extends ExtractorTestCase
@@ -26,13 +23,9 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['field' => 'results.totalNumber']];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
 
-        $testHandler = new TestHandler();
-        $logger = new Logger('limit-stop-test-logger');
-        $logger->setHandlers([$testHandler]);
-
-        $decorated = new LimitStopScrollerDecorator($scroller, $config, $logger);
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -56,9 +49,10 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         );
         self::assertNull($noNext);
 
-        self::assertTrue($testHandler->hasInfoThatContains(
+        self::assertLoggerContains(
             sprintf('Limit reached, stopping scrolling. Current count: 15, limit: 15'),
-        ));
+            'info',
+        );
     }
 
     public function testLimit(): void
@@ -68,13 +62,9 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['count' => 12]];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
 
-        $testHandler = new TestHandler();
-        $logger = new Logger('limit-stop-test-logger');
-        $logger->setHandlers([$testHandler]);
-
-        $decorated = new LimitStopScrollerDecorator($scroller, $config, $logger);
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -98,16 +88,17 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         );
         self::assertNull($noNext);
 
-        self::assertTrue($testHandler->hasInfoThatContains(
-            sprintf('Limit reached, stopping scrolling. Current count: 15, limit: 12'),
-        ));
+        self::assertLoggerContains(
+            'Limit reached, stopping scrolling. Current count: 15, limit: 12',
+            'info',
+        );
     }
 
     public function testInvalid1(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
-        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]], new NullLogger());
+        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]], $this->logger);
     }
 
     public function testInvalid2(): void
@@ -117,7 +108,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
         new LimitStopScrollerDecorator(
             new NoScroller(),
             ['limitStop' => ['count' => 12, 'field' => 'whatever']],
-            new NullLogger(),
+            $this->logger,
         );
     }
 
@@ -128,8 +119,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['count' => 12]];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorator = new LimitStopScrollerDecorator($scroller, $config, new NullLogger());
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
+        $decorator = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);

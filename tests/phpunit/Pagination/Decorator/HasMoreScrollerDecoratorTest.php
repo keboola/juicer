@@ -10,9 +10,6 @@ use Keboola\Juicer\Pagination\NoScroller;
 use Keboola\Juicer\Pagination\OffsetScroller;
 use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use Monolog\Handler\TestHandler;
-use Monolog\Logger;
-use Psr\Log\NullLogger;
 
 class HasMoreScrollerDecoratorTest extends ExtractorTestCase
 {
@@ -28,13 +25,9 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             ],
         ];
 
-        $scroller = new OffsetScroller(['limit' => 10]);
+        $scroller = new OffsetScroller(['limit' => 10], $this->logger);
 
-        $testHandler = new TestHandler();
-        $logger = new Logger('has-more-test-logger');
-        $logger->setHandlers([$testHandler]);
-
-        $decorated = new HasMoreScrollerDecorator($scroller, $config, $logger);
+        $decorated = new HasMoreScrollerDecorator($scroller, $config, $this->logger);
         self::assertInstanceOf('Keboola\Juicer\Pagination\OffsetScroller', $decorated->getScroller());
 
         $next = $decorated->getNextRequest(
@@ -53,17 +46,11 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         );
         self::assertNull($noNext);
 
-        self::assertTrue($testHandler->hasInfoThatContains(
-            sprintf('Stopping scrolling because \'hasMore\' is \'false\''),
-        ));
+        self::assertLoggerContains(sprintf('Stopping scrolling because \'hasMore\' is \'false\''), 'info');
     }
 
     public function testHasMore(): void
     {
-        $testHandler = new TestHandler();
-        $logger = new Logger('has-more-test-logger');
-        $logger->setHandlers([$testHandler]);
-
         $scroller = new HasMoreScrollerDecorator(
             new NoScroller,
             [
@@ -72,7 +59,7 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
                 'stopOn' => true,
             ],
             ],
-            $logger,
+            $this->logger,
         );
 
         $yes = self::callMethod($scroller, 'hasMore', [(object) ['finished' => false]]);
@@ -80,14 +67,12 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
         $no = self::callMethod($scroller, 'hasMore', [(object) ['finished' => true]]);
         self::assertFalse($no);
 
-        self::assertTrue($testHandler->hasInfoThatContains(
-            sprintf('Stopping scrolling because \'finished\' is \'true\''),
-        ));
+        self::assertLoggerContains(sprintf('Stopping scrolling because \'finished\' is \'true\''), 'info');
     }
 
     public function testHasMoreNotSet(): void
     {
-        $scroller = new HasMoreScrollerDecorator(new NoScroller, [], new NullLogger());
+        $scroller = new HasMoreScrollerDecorator(new NoScroller, [], $this->logger);
 
         $null = self::callMethod($scroller, 'hasMore', [(object) ['finished' => false]]);
         self::assertNull($null);
@@ -105,9 +90,9 @@ class HasMoreScrollerDecoratorTest extends ExtractorTestCase
             ],
         ];
 
-        $scroller = new OffsetScroller(['limit' => 10]);
+        $scroller = new OffsetScroller(['limit' => 10], $this->logger);
 
-        $decorator = new HasMoreScrollerDecorator($scroller, $config, new NullLogger());
+        $decorator = new HasMoreScrollerDecorator($scroller, $config, $this->logger);
 
         $decorator->getNextRequest(
             $client,

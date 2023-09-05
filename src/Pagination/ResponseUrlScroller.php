@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Query;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use Psr\Log\LoggerInterface;
 use function Keboola\Utils\getDataFromPath;
 
 /**
@@ -34,7 +35,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
      *          'delimiter' => string // Data path separator char
      *      ]
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];
@@ -48,6 +49,8 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
         if (isset($config['delimiter'])) {
             $this->delimiter = $config['delimiter'];
         }
+
+        parent::__construct($logger);
     }
 
     /**
@@ -58,6 +61,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
         $nextUrl = getDataFromPath($this->urlParam, $response, $this->delimiter);
 
         if (empty($nextUrl)) {
+            $this->logger->info('No more pages, stopping pagination.');
             return null;
         } else {
             $config = $jobConfig->getConfig();

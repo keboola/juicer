@@ -7,14 +7,14 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\MultipleScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use PHPUnit\Framework\TestCase;
 
-class MultipleScrollerTest extends TestCase
+class MultipleScrollerTest extends ExtractorTestCase
 {
     public function testGetNextRequest(): void
     {
-        $scroller = new MultipleScroller($this->getScrollerConfig());
+        $scroller = new MultipleScroller($this->getScrollerConfig(), $this->logger);
 
         $cursorResponse = [
             (object) ['id' => 2],
@@ -79,7 +79,7 @@ class MultipleScrollerTest extends TestCase
     {
         $config = $this->getScrollerConfig();
         $config['default'] = 'cursor';
-        $scroller = new MultipleScroller($config);
+        $scroller = new MultipleScroller($config, $this->logger);
 
         $paramConfig = new JobConfig([
             'endpoint' => 'structuredData',
@@ -124,7 +124,7 @@ class MultipleScrollerTest extends TestCase
     {
         $config = $this->getScrollerConfig();
         $config['default'] = 'def';
-        $scroller = new MultipleScroller($config);
+        $scroller = new MultipleScroller($config, $this->logger);
 
         $noScrollerConfig = new JobConfig([
             'endpoint' => 'data',
@@ -138,7 +138,7 @@ class MultipleScrollerTest extends TestCase
     public function testUndefinedScrollerException(): void
     {
         $config = $this->getScrollerConfig();
-        $scroller = new MultipleScroller($config);
+        $scroller = new MultipleScroller($config, $this->logger);
 
         $noScrollerConfig = new JobConfig([
             'endpoint' => 'data',
@@ -182,7 +182,7 @@ class MultipleScrollerTest extends TestCase
     public function testInvalid(): void
     {
         try {
-            new MultipleScroller([]);
+            new MultipleScroller([], $this->logger);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertStringContainsString(
@@ -191,7 +191,7 @@ class MultipleScrollerTest extends TestCase
             );
         }
         try {
-            new MultipleScroller(['scrollers' => []]);
+            new MultipleScroller(['scrollers' => []], $this->logger);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertStringContainsString(
@@ -200,17 +200,17 @@ class MultipleScrollerTest extends TestCase
             );
         }
         try {
-            new MultipleScroller(['scrollers' => ['noScroller']]);
+            new MultipleScroller(['scrollers' => ['noScroller']], $this->logger);
             self::fail('Invalid config must raise exception.');
         } catch (UserException $e) {
             self::assertStringContainsString('Scroller configuration for 0must be array.', $e->getMessage());
         }
-        new MultipleScroller(['scrollers' => ['noScroller' => ['noScroller']]]);
+        new MultipleScroller(['scrollers' => ['noScroller' => ['noScroller']]], $this->logger);
     }
 
     public function testReset(): void
     {
-        $scroller = new MultipleScroller($this->getScrollerConfig());
+        $scroller = new MultipleScroller($this->getScrollerConfig(), $this->logger);
         $client = RestClientMockBuilder::create()->getRestClient();
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
@@ -248,7 +248,7 @@ class MultipleScrollerTest extends TestCase
 
     public function testCloneSafety(): void
     {
-        $scroller = new MultipleScroller($this->getScrollerConfig());
+        $scroller = new MultipleScroller($this->getScrollerConfig(), $this->logger);
         $client = RestClientMockBuilder::create()->getRestClient();
         $cursorConfig = new JobConfig([
             'endpoint' => 'arrData',
@@ -302,7 +302,7 @@ class MultipleScrollerTest extends TestCase
 
     public function testScrollers(): void
     {
-        $scroller = new MultipleScroller($this->getScrollerConfig());
+        $scroller = new MultipleScroller($this->getScrollerConfig(), $this->logger);
         self::assertCount(3, $scroller->getScrollers());
     }
 }

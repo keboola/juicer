@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Uri;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use Psr\Log\LoggerInterface;
 use function Keboola\Utils\getDataFromPath;
 
 class ZendeskResponseUrlScroller extends AbstractResponseScroller implements ScrollerInterface
@@ -31,7 +32,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
      *          'paramIsQuery' => bool // Pick parameters from the scroll URL and use them with job configuration
      *      ]
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (!empty($config['urlKey'])) {
             $this->urlParam = $config['urlKey'];
@@ -42,6 +43,8 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
         if (isset($config['paramIsQuery'])) {
             $this->paramIsQuery = (bool) $config['paramIsQuery'];
         }
+
+        parent::__construct($logger);
     }
 
     /**
@@ -52,6 +55,7 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
         $nextUrl = getDataFromPath($this->urlParam, $response, '.');
 
         if (empty($nextUrl)) {
+            $this->logger->info('No more pages to scroll.');
             return null;
         }
 
@@ -62,6 +66,10 @@ class ZendeskResponseUrlScroller extends AbstractResponseScroller implements Scr
         $startDateTime = $startDateTimeStr ? DateTime::createFromFormat('U', $startDateTimeStr) : null;
 
         if ($startDateTime && $startDateTime > $now->modify(sprintf('-%d minutes', self::NEXT_PAGE_FILTER_MINUTES))) {
+            $this->logger->info(sprintf(
+                'Next page start_time "%s" is too recent, skipping...',
+                $startDateTime->format('Y-m-d H:i:s'),
+            ));
             return null;
         }
 

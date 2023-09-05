@@ -15,7 +15,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ResponseUrlScroller(['urlKey' => 'next']);
+        $scroller = new ResponseUrlScroller(['urlKey' => 'next'], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -32,6 +32,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
         self::assertEquals(false, $last);
+        self::assertLoggerContains('No more pages, stopping pagination.', 'info');
     }
 
     public function testGetNextRequestNested(): void
@@ -39,7 +40,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ResponseUrlScroller(['urlKey' => 'pagination.next']);
+        $scroller = new ResponseUrlScroller(['urlKey' => 'pagination.next'], $this->logger);
 
         $response = (object) [
             'pagination' => (object) [
@@ -64,7 +65,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
-        $scroller = new ResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
+        $scroller = new ResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true], $this->logger);
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -90,7 +91,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $scroller = new ResponseUrlScroller([
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
-        ]);
+        ], $this->logger);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -117,7 +118,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
             'includeParams' => true,
-        ]);
+        ], $this->logger);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -137,7 +138,7 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ResponseUrlScroller(['urlKey' => 'links|next', 'delimiter' => '|']);
+        $scroller = new ResponseUrlScroller(['urlKey' => 'links|next', 'delimiter' => '|'], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -155,5 +156,6 @@ class ResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
         self::assertEquals(false, $last);
+        self::assertLoggerContains('No more pages, stopping pagination.', 'info');
     }
 }

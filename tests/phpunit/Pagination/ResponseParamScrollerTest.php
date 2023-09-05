@@ -19,7 +19,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $scroller = new ResponseParamScroller([
             'responseParam' => '_scroll_id',
             'queryParam' => 'scroll_id',
-        ]);
+        ], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -39,6 +39,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
         self::assertEquals(false, $last);
+        self::assertLoggerContains('No more pages found, stopping pagination.', 'info');
     }
 
     public function testGetNextRequestNested(): void
@@ -49,7 +50,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
         $scroller = new ResponseParamScroller([
             'responseParam' => 'scroll.id',
             'queryParam' => 'scroll_id',
-        ]);
+        ], $this->logger);
 
         $response = (object) [
             'scroll' => (object) [
@@ -83,7 +84,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                     'scroll' => '1m',
                 ],
             ],
-        ]);
+        ], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -119,7 +120,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                     'scroll' => '1m',
                 ],
             ],
-        ]);
+        ], $this->logger);
 
         $nextParams = $scrollerParams->getNextRequest($client, $config, $response, $response->data);
         $expectedParams = $client->createRequest([
@@ -150,7 +151,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                     'scroll' => '1m',
                 ],
             ],
-        ]);
+        ], $this->logger);
 
         $expected = $client->createRequest($config->getConfig());
         self::assertEquals($expected, $scroller->getFirstRequest($client, $config));
@@ -159,7 +160,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
     public function testInvalid(): void
     {
         try {
-            new ResponseParamScroller([]);
+            new ResponseParamScroller([], $this->logger);
             self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
@@ -168,7 +169,7 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
             );
         }
         try {
-            new ResponseParamScroller(['responseParam' => 'foo']);
+            new ResponseParamScroller(['responseParam' => 'foo'], $this->logger);
             self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
@@ -176,6 +177,6 @@ class ResponseParamScrollerTest extends ResponseScrollerTestCase
                 $e->getMessage(),
             );
         }
-        new ResponseParamScroller(['responseParam' => 'foo', 'queryParam' => 'bar']);
+        new ResponseParamScroller(['responseParam' => 'foo', 'queryParam' => 'bar'], $this->logger);
     }
 }
