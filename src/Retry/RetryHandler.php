@@ -166,7 +166,7 @@ class RetryHandler
 
         $this->logger->debug(
             sprintf('Http request failed, retrying in %.1f seconds [%dx].', $delayMs / 1000, $retries),
-            $errData
+            $errData,
         );
     }
 }

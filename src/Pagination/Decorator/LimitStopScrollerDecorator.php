@@ -9,6 +9,7 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ScrollerInterface;
+use Psr\Log\LoggerInterface;
 use function Keboola\Utils\getDataFromPath;
 
 /**
@@ -23,9 +24,9 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
 
     private int $currentCount;
 
-    public function __construct(ScrollerInterface $scroller, array $config)
+    public function __construct(ScrollerInterface $scroller, array $config, LoggerInterface $logger)
     {
-        parent::__construct($scroller);
+        parent::__construct($scroller, $logger);
         if (!empty($config['limitStop'])) {
             if (empty($config['limitStop']['field']) && empty($config['limitStop']['count'])) {
                 throw new UserException("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
@@ -64,6 +65,11 @@ class LimitStopScrollerDecorator extends AbstractScrollerDecorator
             $limit = $this->countLimit;
         }
         if ($this->currentCount >= $limit) {
+            $this->logger->info(sprintf(
+                'Limit reached, stopping scrolling. Current count: %d, limit: %d',
+                $this->currentCount,
+                $limit,
+            ));
             return null;
         }
 

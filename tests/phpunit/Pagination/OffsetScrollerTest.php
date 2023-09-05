@@ -8,11 +8,11 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\OffsetScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class OffsetScrollerTest extends TestCase
+class OffsetScrollerTest extends ExtractorTestCase
 {
     public function testGetNextRequest(): void
     {
@@ -25,7 +25,10 @@ class OffsetScrollerTest extends TestCase
             ],
         ]);
 
-        $scroller = new OffsetScroller(['limit' => 10, 'limitParam' => 'max', 'offsetParam' => 'startAt']);
+        $scroller = new OffsetScroller(
+            ['limit' => 10, 'limitParam' => 'max', 'offsetParam' => 'startAt'],
+            $this->logger,
+        );
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -63,6 +66,7 @@ class OffsetScrollerTest extends TestCase
         // must match the first one, because #3 should reset the scroller
         $next4 = $scroller->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals($expected, $next4);
+        self::assertLoggerContains('Offset limit reached, stopping scrolling.', 'info');
     }
 
     public function testStringParams(): void
@@ -83,7 +87,7 @@ class OffsetScrollerTest extends TestCase
             'offsetFromJob' => true,
             'offsetParam' => 'startAt',
             'limitParam' => 'customLimit',
-        ]);
+        ], $this->logger);
 
         /** @var RestRequest $req */
         $req = $scroller->getFirstRequest($client, $config);
@@ -109,7 +113,7 @@ class OffsetScrollerTest extends TestCase
         ]);
         $limit = 10;
 
-        $scroller = new OffsetScroller(['limit' => $limit]);
+        $scroller = new OffsetScroller(['limit' => $limit], $this->logger);
         $req = $scroller->getFirstRequest($client, $config);
         $expected = $client->createRequest([
             'endpoint' => 'test',
@@ -118,7 +122,7 @@ class OffsetScrollerTest extends TestCase
                 [
                     'limit' => $limit,
                     'offset' => 0,
-                ]
+                ],
             ),
         ]);
         self::assertEquals($expected, $req);
@@ -128,7 +132,7 @@ class OffsetScrollerTest extends TestCase
             'limitParam' => 'count',
             'offsetParam' => 'first',
             'firstPageParams' => false,
-        ]);
+        ], $this->logger);
         $noParamsRequest = $noParamsScroller->getFirstRequest($client, $config);
         $noParamsExpected = $client->createRequest($config->getConfig());
         self::assertEquals($noParamsExpected, $noParamsRequest);
@@ -149,7 +153,7 @@ class OffsetScrollerTest extends TestCase
             'limit' => $limit,
             'offsetFromJob' => true,
             'offsetParam' => 'startAt',
-        ]);
+        ], $this->logger);
 
         /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
@@ -180,7 +184,7 @@ class OffsetScrollerTest extends TestCase
             'limit' => 5,
             'offsetFromJob' => true,
             'offsetParam' => 'startAt',
-        ]);
+        ], $this->logger);
 
         /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
@@ -211,7 +215,7 @@ class OffsetScrollerTest extends TestCase
             'limit' => '5',
             'offsetFromJob' => true,
             'offsetParam' => 'startAt',
-        ]);
+        ], $this->logger);
 
         /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
@@ -230,12 +234,12 @@ class OffsetScrollerTest extends TestCase
     public function testMissingLimit(): void
     {
         try {
-            new OffsetScroller([]);
+            new OffsetScroller([], $this->logger);
             self::fail('Must cause exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Missing \'pagination.limit\' attribute required for offset pagination',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -243,12 +247,12 @@ class OffsetScrollerTest extends TestCase
     public function testNotNumericLimit(): void
     {
         try {
-            new OffsetScroller(['limit' => 'foo']);
+            new OffsetScroller(['limit' => 'foo'], $this->logger);
             self::fail('Must cause exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Parameter \'pagination.limit\' is not numeric. Value \'"foo"\'.',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }

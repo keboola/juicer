@@ -7,6 +7,7 @@ namespace Keboola\Juicer\Pagination;
 use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
+use Psr\Log\LoggerInterface;
 
 /**
  * Scrolls using simple "limit" and "page" query parameters.
@@ -41,7 +42,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      *          'firstPageParams` => bool // whether to include the limit and offset in the first request (def. true)
      *      ]
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (!empty($config['pageParam'])) {
             $this->pageParam = (string) $config['pageParam'];
@@ -60,6 +61,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         }
 
         $this->reset();
+        parent::__construct($logger);
     }
 
     /**
@@ -81,10 +83,13 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
      */
     public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest
     {
-        if ((is_null($this->getLimit($jobConfig)) && empty($data))
-            || (count($data) < $this->getLimit($jobConfig))
-        ) {
+        if (is_null($this->getLimit($jobConfig)) && empty($data)) {
             $this->reset();
+            $this->logger->info('Pagination stopped, response is empty.');
+            return null;
+        } elseif (count($data) < $this->getLimit($jobConfig)) {
+            $this->reset();
+            $this->logger->info('Pagination stopped, response is smaller than limit.');
             return null;
         } else {
             $this->page++;
@@ -114,7 +119,7 @@ class PageScroller extends AbstractScroller implements ScrollerInterface
         $config = $jobConfig->getConfig();
         $config['params'] = array_replace(
             $jobConfig->getParams(),
-            $params
+            $params,
         );
         return $config;
     }

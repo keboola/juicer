@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\ScrollerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ForceStopScrollerDecorator
@@ -38,9 +39,9 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
     protected bool $limitReached = false;
 
-    public function __construct(ScrollerInterface $scroller, array $config)
+    public function __construct(ScrollerInterface $scroller, array $config, LoggerInterface $logger)
     {
-        parent::__construct($scroller);
+        parent::__construct($scroller, $logger);
         if (!empty($config['forceStop'])) {
             if (!empty($config['forceStop']['pages'])) {
                 $this->pageLimit = $config['forceStop']['pages'];
@@ -100,6 +101,10 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         }
 
         if (++$this->pageCounter > $this->pageLimit) {
+            $this->logger->info(sprintf(
+                'Force stopping: page limit reached (%d pages).',
+                $this->pageLimit,
+            ));
             return true;
         }
         return false;
@@ -115,6 +120,10 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
         }
 
         if (($this->startTime + $this->timeLimit) <= time()) {
+            $this->logger->info(sprintf(
+                'Force stopping: time limit reached (%d seconds).',
+                $this->timeLimit,
+            ));
             return true;
         }
         return false;
@@ -132,6 +141,10 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
 
         $this->volumeCounter += strlen((string) json_encode($response));
         if ($this->volumeCounter > $this->volumeLimit) {
+            $this->logger->info(sprintf(
+                'Force stopping: volume limit reached (%d bytes).',
+                $this->volumeLimit,
+            ));
             return true;
         }
         return false;

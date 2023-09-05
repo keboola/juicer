@@ -9,11 +9,9 @@ declare(strict_types=1);
 namespace Keboola\Juicer\Tests\Pagination;
 
 use DateTime;
-use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Pagination\ZendeskResponseUrlScroller;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use Psr\Log\NullLogger;
 use stdClass;
 
 class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
@@ -26,7 +24,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next_page']);
+        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next_page'], $this->logger);
 
         for ($i = 0; $i < 4; $i++) {
             $step = round(ZendeskResponseUrlScroller::NEXT_PAGE_FILTER_MINUTES * 0.5);
@@ -40,6 +38,13 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
             if (!$i) {
                 self::assertNull($next);
+                self::assertLoggerContains(
+                    sprintf(
+                        'Next page start_time "%s" is too recent, skipping...',
+                        $pagingStart->format('Y-m-d H:i:s'),
+                    ),
+                    'info',
+                );
             } else {
                 if (!$next instanceof RestRequest) {
                     self::fail('ZendeskResponseUrlScroller::getNextRequest should return new RestRequest');
@@ -53,7 +58,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next']);
+        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next'], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -70,6 +75,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
 
         $last = $scroller->getNextRequest($client, $config, $responseLast, $responseLast->data);
         self::assertEquals(false, $last);
+        self::assertLoggerContains('No more pages to scroll.', 'info');
     }
 
     public function testGetNextRequestNested(): void
@@ -77,7 +83,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = $this->getConfig();
 
-        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'pagination.next']);
+        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'pagination.next'], $this->logger);
 
         $response = (object) [
             'pagination' => (object) [
@@ -102,7 +108,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
         $response->next = 'test?page=2';
 
-        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true]);
+        $scroller = new ZendeskResponseUrlScroller(['urlKey' => 'next', 'includeParams' => true], $this->logger);
 
         $next = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -128,7 +134,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
         $scroller = new ZendeskResponseUrlScroller([
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
-        ]);
+        ], $this->logger);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([
@@ -155,7 +161,7 @@ class ZendeskResponseUrlScrollerTest extends ResponseScrollerTestCase
             'urlKey' => 'scroll',
             'paramIsQuery' => true,
             'includeParams' => true,
-        ]);
+        ], $this->logger);
 
         $nextRequest = $scroller->getNextRequest($client, $config, $response, $response->data);
         $expected = $client->createRequest([

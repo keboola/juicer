@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Scrolls using simple "limit" and "offset" query parameters.
@@ -28,7 +29,6 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     protected int $pointer = 0;
 
     protected bool $offsetFromJob = false;
-
     /**
      * OffsetScroller constructor.
      * @param array $config
@@ -41,7 +41,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
      *      ]
      * @throws UserException
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (empty($config['limit'])) {
             throw new UserException("Missing 'pagination.limit' attribute required for offset pagination");
@@ -50,7 +50,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         if (!is_numeric($config['limit'])) {
             throw new UserException(sprintf(
                 "Parameter 'pagination.limit' is not numeric. Value '%s'.",
-                json_encode($config['limit'])
+                json_encode($config['limit']),
             ));
         }
 
@@ -68,6 +68,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
         if (isset($config['offsetFromJob'])) {
             $this->offsetFromJob = (bool) $config['offsetFromJob'];
         }
+        parent::__construct($logger);
     }
 
     /**
@@ -95,6 +96,7 @@ class OffsetScroller extends AbstractScroller implements ScrollerInterface
     {
         if (count($data) < $this->getLimit($jobConfig)) {
             $this->reset();
+            $this->logger->info('Offset limit reached, stopping scrolling.');
             return null;
         } else {
             $this->pointer += $this->getLimit($jobConfig);

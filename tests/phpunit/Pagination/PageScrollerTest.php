@@ -7,14 +7,14 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\PageScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
  * @todo test with no limit until empty response
  */
-class PageScrollerTest extends TestCase
+class PageScrollerTest extends ExtractorTestCase
 {
     public function testGetFirstRequest(): void
     {
@@ -27,7 +27,7 @@ class PageScrollerTest extends TestCase
             ],
         ]);
 
-        $scroller = new PageScroller(['limit' => 500]);
+        $scroller = new PageScroller(['limit' => 500], $this->logger);
 
         $req = $scroller->getFirstRequest($client, $config);
 
@@ -48,7 +48,7 @@ class PageScrollerTest extends TestCase
             ],
         ]);
 
-        $scroller = new PageScroller(['limit' => 500, 'firstPage' => 0]);
+        $scroller = new PageScroller(['limit' => 500, 'firstPage' => 0], $this->logger);
 
         $req = $scroller->getFirstRequest($client, $config);
 
@@ -71,7 +71,7 @@ class PageScrollerTest extends TestCase
 
         $scroller = new PageScroller([
             'firstPageParams' => false,
-        ]);
+        ], $this->logger);
 
         $req = $scroller->getFirstRequest($client, $config);
         self::assertEquals($client->createRequest($config->getConfig()), $req);
@@ -88,7 +88,7 @@ class PageScrollerTest extends TestCase
             ],
         ]);
 
-        $scroller = new PageScroller([]);
+        $scroller = new PageScroller([], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -120,11 +120,13 @@ class PageScrollerTest extends TestCase
         $responseUnderLimit->data = [];
         $next3 = $scroller->getNextRequest($client, $config, $responseUnderLimit, $responseUnderLimit->data);
         self::assertEquals(false, $next3);
+        self::assertLoggerContains('Pagination stopped, response is empty.', 'info');
 
         // Scroller limit higher than response size
-        $scrollerLimit = new PageScroller(['pageParam' => 'page', 'limit' => 100]);
+        $scrollerLimit = new PageScroller(['pageParam' => 'page', 'limit' => 100], $this->logger);
         $next4 = $scrollerLimit->getNextRequest($client, $config, $response, $response->data);
         self::assertEquals(false, $next4);
+        self::assertLoggerContains('Pagination stopped, response is smaller than limit.', 'info');
     }
 
     public function testGetNextRequestPost(): void
@@ -139,7 +141,7 @@ class PageScrollerTest extends TestCase
             'method' => 'POST',
         ]);
 
-        $scroller = new PageScroller([]);
+        $scroller = new PageScroller([], $this->logger);
 
         $response = new stdClass();
         $response->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -161,7 +163,7 @@ class PageScrollerTest extends TestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig(['endpoint' => 'test']);
 
-        $scroller = new PageScroller([]);
+        $scroller = new PageScroller([], $this->logger);
 
         /** @var RestRequest $first */
         $first = $scroller->getFirstRequest($client, $config);
@@ -176,6 +178,7 @@ class PageScrollerTest extends TestCase
         self::assertEquals(2, $second->getParams()['page']);
         self::assertEquals(3, $third->getParams()['page']);
         self::assertNull($last);
+        self::assertLoggerContains('Pagination stopped, response is empty.', 'info');
     }
 
     public function testSetState(): void
@@ -183,13 +186,13 @@ class PageScrollerTest extends TestCase
         $client = RestClientMockBuilder::create()->getRestClient();
         $config = new JobConfig(['endpoint' => 'test']);
 
-        $scroller = new PageScroller(['pageParam' => 'p']);
+        $scroller = new PageScroller(['pageParam' => 'p'], $this->logger);
 
         $scroller->getFirstRequest($client, $config);
         $scroller->getNextRequest($client, $config, new stdClass, ['item']);
 
         $state = $scroller->getState();
-        $newScroller = new PageScroller([]);
+        $newScroller = new PageScroller([], $this->logger);
         $newScroller->setState($state);
         /** @var RestRequest $third */
         $third = $newScroller->getNextRequest($client, $config, new stdClass, ['item']);

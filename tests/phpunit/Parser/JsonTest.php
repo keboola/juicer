@@ -35,7 +35,7 @@ class JsonTest extends ExtractorTestCase
 "1","test_2901753343d19a32b8cd49e31aab748c","iAreId"
 "2","test_5e36066fa62399eedd858f5e374c0c21","iAreId"
 ',
-            file_get_contents((string) $parser->getResults()['test']->getPathName())
+            file_get_contents((string) $parser->getResults()['test']->getPathName()),
         );
 
         self::assertEquals(
@@ -47,7 +47,7 @@ class JsonTest extends ExtractorTestCase
 "b","test_5e36066fa62399eedd858f5e374c0c21"
 "c","test_5e36066fa62399eedd858f5e374c0c21"
 ',
-            file_get_contents((string) $parser->getResults()['test_arr']->getPathName())
+            file_get_contents((string) $parser->getResults()['test_arr']->getPathName()),
         );
     }
 
@@ -82,7 +82,7 @@ class JsonTest extends ExtractorTestCase
                 ],
                 'json_parser.structVersion' => 3,
             ],
-            $parser->getMetadata()
+            $parser->getMetadata(),
         );
     }
 
@@ -141,7 +141,7 @@ class JsonTest extends ExtractorTestCase
                 ],
                 'json_parser.structVersion' => 3,
             ],
-            $parser->getMetadata()
+            $parser->getMetadata(),
         );
     }
 
@@ -200,10 +200,10 @@ class JsonTest extends ExtractorTestCase
                 ],
                 'json_parser.structVersion' => 3,
             ],
-            $parser->getMetadata()
+            $parser->getMetadata(),
         );
         self::assertTrue($handler->hasWarning(
-            'Ignored request for legacy JSON parser, because configuration is already upgraded.'
+            'Ignored request for legacy JSON parser, because configuration is already upgraded.',
         ));
     }
 
@@ -226,7 +226,7 @@ class JsonTest extends ExtractorTestCase
                 ],
                 'json_parser.structVersion' => 2.0,
             ],
-            $parser->getMetadata()
+            $parser->getMetadata(),
         );
     }
 
@@ -279,7 +279,7 @@ class JsonTest extends ExtractorTestCase
             '"hello","1.1","root.arr_a75f0a3e0b848d52033929a761e6c997",' .
             '"root.arr_a75f0a3e0b848d52033929a761e6c997","root_a52f96d95586c8de1e8fa67b77597262"
 ',
-            file_get_contents((string) $parser->getResults()['root_arr']->getPathName())
+            file_get_contents((string) $parser->getResults()['root_arr']->getPathName()),
         );
 
         self::assertEquals('"c","JSON_parentId"
@@ -291,7 +291,7 @@ class JsonTest extends ExtractorTestCase
 "2","root.arr_a75f0a3e0b848d52033929a761e6c997"
 ', file_get_contents((string) $parser->getResults()['root_arr_arr2']->getPathName()));
         self::assertTrue($handler->hasWarning(
-            'Using legacy JSON parser, because it is in configuration state.'
+            'Using legacy JSON parser, because it is in configuration state.',
         ));
     }
 
@@ -327,16 +327,16 @@ class JsonTest extends ExtractorTestCase
                     'some.property' => 'second_value',
                 ],
             ],
-            'root'
+            'root',
         );
 
         self::assertEquals(
             "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
-            file_get_contents((string) $parser->getResults()['root']->getPathName())
+            file_get_contents((string) $parser->getResults()['root']->getPathName()),
         );
         self::assertTrue($handler->hasWarning(
-            'Using legacy JSON parser, because it is in configuration state.'
+            'Using legacy JSON parser, because it is in configuration state.',
         ));
         /** @var Parser $oldParser */
         $oldParser = self::getProperty($parser, 'parser');
@@ -376,16 +376,16 @@ class JsonTest extends ExtractorTestCase
                     'some.property' => 'second_value',
                 ],
             ],
-            'root'
+            'root',
         );
 
         self::assertEquals(
             "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
-            file_get_contents((string) $parser->getResults()['root']->getPathName())
+            file_get_contents((string) $parser->getResults()['root']->getPathName()),
         );
         self::assertFalse($handler->hasWarning(
-            'Using legacy JSON parser, because it is in configuration state.'
+            'Using legacy JSON parser, because it is in configuration state.',
         ));
     }
 
@@ -402,16 +402,16 @@ class JsonTest extends ExtractorTestCase
                     'some.property' => 'second_value',
                 ],
             ],
-            'root'
+            'root',
         );
 
         self::assertEquals(
             "\"id\",\"some_property\",\"48d4950101ffec0dc0bd1c76f77ca4ef\"\n" .
             "\"1\",\"second_value\",\"\"\n",
-            file_get_contents((string) $parser->getResults()['root']->getPathName())
+            file_get_contents((string) $parser->getResults()['root']->getPathName()),
         );
         self::assertTrue($handler->hasWarning(
-            'Using legacy JSON parser, because it has been explicitly requested.'
+            'Using legacy JSON parser, because it has been explicitly requested.',
         ));
         /** @var Parser $oldParser */
         $oldParser = self::getProperty($parser, 'parser');
@@ -431,16 +431,16 @@ class JsonTest extends ExtractorTestCase
                     'some.property' => 'second_value',
                 ],
             ],
-            'root'
+            'root',
         );
 
         self::assertEquals(
             "\"id\",\"some_property\",\"some_property_u0\"\n" .
             "\"1\",\"first_value\",\"second_value\"\n",
-            file_get_contents((string) $parser->getResults()['root']->getPathName())
+            file_get_contents((string) $parser->getResults()['root']->getPathName()),
         );
         self::assertFalse($handler->hasWarning(
-            'Using legacy JSON parser, because it has been explicitly requested.'
+            'Using legacy JSON parser, because it has been explicitly requested.',
         ));
     }
 }

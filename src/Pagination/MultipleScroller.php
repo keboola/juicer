@@ -8,6 +8,7 @@ use Keboola\Juicer\Client\RestClient;
 use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Looks within the response **data** for an ID
@@ -31,7 +32,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
      *      ]
      * @throws UserException
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (empty($config['scrollers'])) {
             throw new UserException('At least one scroller must be configured for "multiple" scroller.');
@@ -41,12 +42,13 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
             if (!is_array($scrollerCfg)) {
                 throw new UserException('Scroller configuration for ' . $id . 'must be array.');
             }
-            $this->scrollers[$id] = ScrollerFactory::getScroller($scrollerCfg);
+            $this->scrollers[$id] = ScrollerFactory::getScroller($scrollerCfg, $logger);
         }
 
         if (!empty($config['default'])) {
             $this->defaultScroller = $config['default'];
         }
+        parent::__construct($logger);
     }
 
     public function __clone()
@@ -110,7 +112,7 @@ class MultipleScroller extends AbstractScroller implements ScrollerInterface
         if (empty($this->scrollers[$scrollerId])) {
             throw new UserException(
                 "Scroller '{$scrollerId}' not set in API definitions. Scrollers defined: "
-                . join(', ', array_keys($this->scrollers))
+                . join(', ', array_keys($this->scrollers)),
             );
         }
 

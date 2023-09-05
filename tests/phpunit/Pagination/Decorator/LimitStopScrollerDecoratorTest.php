@@ -23,8 +23,9 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['field' => 'results.totalNumber']];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorated = new LimitStopScrollerDecorator($scroller, $config);
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
+
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -33,7 +34,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
@@ -44,9 +45,14 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertNull($noNext);
+
+        self::assertLoggerContains(
+            sprintf('Limit reached, stopping scrolling. Current count: 15, limit: 15'),
+            'info',
+        );
     }
 
     public function testLimit(): void
@@ -56,8 +62,9 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['count' => 12]];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorated = new LimitStopScrollerDecorator($scroller, $config);
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
+
+        $decorated = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -66,7 +73,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertInstanceOf(RestRequest::class, $next);
         self::assertInstanceOf(PageScroller::class, $decorated->getScroller());
@@ -77,23 +84,32 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
         self::assertNull($noNext);
+
+        self::assertLoggerContains(
+            'Limit reached, stopping scrolling. Current count: 15, limit: 12',
+            'info',
+        );
     }
 
     public function testInvalid1(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("One of 'limitStop.field' or 'limitStop.count' attributes is required.");
-        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]]);
+        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 0]], $this->logger);
     }
 
     public function testInvalid2(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage("Specify only one of 'limitStop.field' or 'limitStop.count'");
-        new LimitStopScrollerDecorator(new NoScroller(), ['limitStop' => ['count' => 12, 'field' => 'whatever']]);
+        new LimitStopScrollerDecorator(
+            new NoScroller(),
+            ['limitStop' => ['count' => 12, 'field' => 'whatever']],
+            $this->logger,
+        );
     }
 
     public function testCloneScrollerDecorator(): void
@@ -103,8 +119,8 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
 
         $config = ['limitStop' => ['count' => 12]];
 
-        $scroller = new PageScroller(['pageParam' => 'pageNo']);
-        $decorator = new LimitStopScrollerDecorator($scroller, $config);
+        $scroller = new PageScroller(['pageParam' => 'pageNo'], $this->logger);
+        $decorator = new LimitStopScrollerDecorator($scroller, $config, $this->logger);
         $response = new stdClass();
         $response->results = (object) ['totalNumber' => 15, 'pageNumber' => 1];
         $response->results->data = array_fill(0, 10, (object) ['key' => 'value']);
@@ -113,7 +129,7 @@ class LimitStopScrollerDecoratorTest extends ExtractorTestCase
             $client,
             $jobConfig,
             $response,
-            $response->results->data
+            $response->results->data,
         );
 
         $cloneDecorator = clone $decorator;

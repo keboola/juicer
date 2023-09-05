@@ -7,10 +7,10 @@ namespace Keboola\Juicer\Tests\Pagination\Decorator;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Pagination\Decorator\ForceStopScrollerDecorator;
 use Keboola\Juicer\Pagination\PageScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use PHPUnit\Framework\TestCase;
 
-class ForceStopScrollerDecoratorTest extends TestCase
+class ForceStopScrollerDecoratorTest extends ExtractorTestCase
 {
     /**
      * @dataProvider limitProvider
@@ -24,11 +24,8 @@ class ForceStopScrollerDecoratorTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new PageScroller([]);
-
-        $decorator = new ForceStopScrollerDecorator($scroller, [
-            'forceStop' => $config,
-        ]);
+        $scroller = new PageScroller([], $this->logger);
+        $decorator = new ForceStopScrollerDecorator($scroller, ['forceStop' => $config], $this->logger);
 
         $i = 0;
         while ($request = $decorator->getNextRequest($client, $jobConfig, $response, $response)) {
@@ -38,6 +35,20 @@ class ForceStopScrollerDecoratorTest extends TestCase
         self::assertNull($decorator->getNextRequest($client, $jobConfig, $response, $response));
         // Assert 3 pages were true
         self::assertEquals(3, $i);
+
+        if (isset($config['pages'])) {
+            self::assertLoggerContains(
+                sprintf('Force stopping: page limit reached (%d pages).', $config['pages']),
+                'info',
+            );
+        } elseif (isset($config['volume'])) {
+            self::assertLoggerContains(
+                sprintf('Force stopping: volume limit reached (%d bytes).', $config['volume']),
+                'info',
+            );
+        } else {
+            $this->fail('No limit was reached');
+        }
     }
 
     public function limitProvider(): array
@@ -67,14 +78,9 @@ class ForceStopScrollerDecoratorTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new PageScroller([]);
+        $scroller = new PageScroller([], $this->logger);
 
-        $decorator = new ForceStopScrollerDecorator($scroller, [
-            'forceStop' => [
-                'time' => 3,
-            ],
-        ]);
-
+        $decorator = new ForceStopScrollerDecorator($scroller, ['forceStop' => ['time' => 3]], $this->logger);
         $response = ['a'];
 
         $i = 0;
@@ -86,6 +92,11 @@ class ForceStopScrollerDecoratorTest extends TestCase
         self::assertNull($decorator->getNextRequest($client, $jobConfig, $response, $response));
         // Assert 3 pages were true
         self::assertEquals(3, $i);
+
+        self::assertLoggerContains(
+            sprintf('Force stopping: time limit reached (%d seconds).', 3),
+            'info',
+        );
     }
 
     public function testCloneScrollerDecorator(): void
@@ -95,13 +106,9 @@ class ForceStopScrollerDecoratorTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new PageScroller([]);
+        $scroller = new PageScroller([], $this->logger);
 
-        $decorator = new ForceStopScrollerDecorator($scroller, [
-            'forceStop' => [
-                'time' => 3,
-            ],
-        ]);
+        $decorator = new ForceStopScrollerDecorator($scroller, ['forceStop' => ['time' => 3]], $this->logger);
 
         $response = ['a'];
         $decorator->getNextRequest($client, $jobConfig, [$response], $response);

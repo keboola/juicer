@@ -9,6 +9,8 @@ use Keboola\Juicer\Client\RestRequest;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\ScrollerInterface;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class HasMoreScrollerDecorator
@@ -32,7 +34,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
      *      ]
      * @throws UserException
      */
-    public function __construct(ScrollerInterface $scroller, array $config)
+    public function __construct(ScrollerInterface $scroller, array $config, LoggerInterface $logger)
     {
         if (!empty($config['nextPageFlag'])) {
             if (empty($config['nextPageFlag']['field'])) {
@@ -46,7 +48,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             if (!is_bool($config['nextPageFlag']['stopOn'])) {
                 throw new UserException(sprintf(
                     "'stopOn' value must be set to a boolean value for 'nextPageFlag', given '%s' type.",
-                    gettype($config['nextPageFlag']['stopOn'])
+                    gettype($config['nextPageFlag']['stopOn']),
                 ));
             }
 
@@ -56,7 +58,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
                 if (!is_bool($config['nextPageFlag']['ifNotSet'])) {
                     throw new UserException(sprintf(
                         "'ifNotSet' value must be boolean, given '%s' type.",
-                        gettype($config['nextPageFlag']['ifNotSet'])
+                        gettype($config['nextPageFlag']['ifNotSet']),
                     ));
                 }
                 $this->ifNotSet = $config['nextPageFlag']['ifNotSet'];
@@ -65,7 +67,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
             }
         }
 
-        parent::__construct($scroller);
+        parent::__construct($scroller, $logger);
     }
 
     /**
@@ -96,6 +98,11 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
         }
 
         if ((bool) $value === $this->stopOn) {
+            $this->logger->info(sprintf(
+                "Stopping scrolling because '%s' is '%s'",
+                $this->field,
+                $value ? 'true' : 'false',
+            ));
             return false;
         } else {
             return true;

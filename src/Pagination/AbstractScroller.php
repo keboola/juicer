@@ -4,8 +4,17 @@ declare(strict_types=1);
 
 namespace Keboola\Juicer\Pagination;
 
+use Psr\Log\LoggerInterface;
+
 abstract class AbstractScroller implements ScrollerInterface
 {
+    protected LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Get object vars by default
      */

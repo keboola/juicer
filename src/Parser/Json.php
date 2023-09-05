@@ -52,7 +52,7 @@ class Json implements ParserInterface
             } else {
                 if ($compatLevel !== self::LATEST_VERSION) {
                     $logger->warning(
-                        'Ignored request for legacy JSON parser, because configuration is already upgraded.'
+                        'Ignored request for legacy JSON parser, because configuration is already upgraded.',
                     );
                 }
                 $analyzer = new Analyzer($logger, new Structure(), true);
@@ -89,14 +89,14 @@ class Json implements ParserInterface
                 'Error parsing response JSON: ' . $e->getMessage(),
                 500,
                 $e,
-                $e->getData()
+                $e->getData(),
             );
         } catch (KeboolaLegacy\Json\Exception\JsonParserException $e) {
             throw new UserException(
                 'Error parsing response JSON: ' . $e->getMessage(),
                 500,
                 $e,
-                $e->getData()
+                $e->getData(),
             );
         }
     }

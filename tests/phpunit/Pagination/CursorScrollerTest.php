@@ -7,10 +7,10 @@ namespace Keboola\Juicer\Tests\Pagination;
 use Keboola\Juicer\Config\JobConfig;
 use Keboola\Juicer\Exception\UserException;
 use Keboola\Juicer\Pagination\CursorScroller;
+use Keboola\Juicer\Tests\ExtractorTestCase;
 use Keboola\Juicer\Tests\RestClientMockBuilder;
-use PHPUnit\Framework\TestCase;
 
-class CursorScrollerTest extends TestCase
+class CursorScrollerTest extends ExtractorTestCase
 {
     public function testGetNextRequest(): void
     {
@@ -19,7 +19,10 @@ class CursorScrollerTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new CursorScroller(['idKey' => 'id', 'param' => 'max_id', 'increment' => -1, 'reverse' => true]);
+        $scroller = new CursorScroller(
+            ['idKey' => 'id', 'param' => 'max_id', 'increment' => -1, 'reverse' => true],
+            $this->logger,
+        );
 
         $response = [
             (object) ['id' => 3],
@@ -40,6 +43,7 @@ class CursorScrollerTest extends TestCase
         $emptyResponse = [];
         $last = $scroller->getNextRequest($client, $config, $emptyResponse, $emptyResponse);
         self::assertNull($last);
+        self::assertLoggerContains('No data in response, stopping scrolling.', 'info');
     }
 
     public function testGetNextRequestNested(): void
@@ -49,7 +53,7 @@ class CursorScrollerTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new CursorScroller(['idKey' => 'id.int', 'param' => 'since_id']);
+        $scroller = new CursorScroller(['idKey' => 'id.int', 'param' => 'since_id'], $this->logger);
 
         $response = [
             (object) [
@@ -72,24 +76,24 @@ class CursorScrollerTest extends TestCase
     public function testInvalid(): void
     {
         try {
-            new CursorScroller([]);
+            new CursorScroller([], $this->logger);
             self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Missing \'pagination.idKey\' attribute required for cursor pagination',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
         try {
-            new CursorScroller(['idKey' => 'foo']);
+            new CursorScroller(['idKey' => 'foo'], $this->logger);
             self::fail('Must raise exception');
         } catch (UserException $e) {
             self::assertStringContainsString(
                 'Missing \'pagination.param\' attribute required for cursor pagination',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
-        new CursorScroller(['idKey' => 'foo', 'param' => 'bar']);
+        new CursorScroller(['idKey' => 'foo', 'param' => 'bar'], $this->logger);
     }
 
     public function testInvalidScroll(): void
@@ -99,7 +103,7 @@ class CursorScrollerTest extends TestCase
             'endpoint' => 'test',
         ]);
 
-        $scroller = new CursorScroller(['idKey' => 'id', 'param' => 'max_id', 'increment' => 1]);
+        $scroller = new CursorScroller(['idKey' => 'id', 'param' => 'max_id', 'increment' => 1], $this->logger);
 
         $response = [
             (object) ['id' => 'foo'],

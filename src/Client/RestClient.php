@@ -158,7 +158,7 @@ class RestClient
                 'The API request failed: [' . $response->getStatusCode() . '] ' . $e->getMessage(),
                 400,
                 $e,
-                ['body' => $data]
+                ['body' => $data],
             );
         } catch (RequestException|ConnectException $e) {
             // ConnectException has no response
@@ -201,7 +201,7 @@ class RestClient
                 'Invalid JSON response from API: ' . $e->getMessage(),
                 0,
                 null,
-                $e->getData()
+                $e->getData(),
             );
         }
 
