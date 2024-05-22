@@ -14,8 +14,6 @@ class ForceStopScrollerDecoratorTest extends ExtractorTestCase
 {
     /**
      * @dataProvider limitProvider
-     * @param array $config
-     * @param array $response
      */
     public function testCheckLimits(array $config, array $response): void
     {

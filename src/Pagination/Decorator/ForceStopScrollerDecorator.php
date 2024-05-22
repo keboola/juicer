@@ -83,7 +83,8 @@ class ForceStopScrollerDecorator extends AbstractScrollerDecorator
     }
 
     /**
-     *  Returns true if a limit is reached
+     * @param mixed $response the response from the previous request
+     * @return bool Returns true if a limit is reached
      */
     private function checkLimits($response): bool
     {
