@@ -117,12 +117,6 @@ class JsonMap implements ParserInterface
         return $results;
     }
 
-    /**
-     * @param Table[] $results
-     * @param Table[] $files
-     * @return array
-     * @throws UserException
-     */
     protected function mergeResults(array $results, array $files): array
     {
         foreach ($files as $name => $file) {

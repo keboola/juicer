@@ -52,7 +52,7 @@ class RestClient
      * - curl
      *      - codes (array) list of error codes to retry on
      *
-     * @param array $defaultOptions
+     * @param array $defaultOptions default options
      * @param array $ignoreErrors List of HTTP Status codes which are to be ignored
      */
     public function __construct(
