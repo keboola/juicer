@@ -21,6 +21,14 @@ abstract class AbstractResponseScroller extends AbstractScroller
         return $client->createRequest($jobConfig->getConfig());
     }
 
+    protected function getFollowupRequest(RestClient $client, array $config): ?RestRequest
+    {
+        if (!empty($config['followupRequest'])) {
+            $config['method'] = $config['followupRequest'];
+        }
+        return $client->createRequest($config);
+    }
+
     /**
      * @inheritdoc
      */

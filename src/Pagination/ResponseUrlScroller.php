@@ -78,7 +78,7 @@ class ResponseUrlScroller extends AbstractResponseScroller implements ScrollerIn
                 $config['params'] = array_replace($config['params'], $responseQuery);
             }
 
-            return $client->createRequest($config);
+            return $this->getFollowupRequest($client, $config);
         }
     }
 }
