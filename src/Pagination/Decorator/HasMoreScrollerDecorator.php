@@ -82,10 +82,7 @@ class HasMoreScrollerDecorator extends AbstractScrollerDecorator
         return $this->scroller->getNextRequest($client, $jobConfig, $response, $data);
     }
 
-    /**
-     * @param mixed $response
-     */
-    protected function hasMore($response): ?bool
+    protected function hasMore(mixed $response): ?bool
     {
         if (empty($this->field)) {
             return null;

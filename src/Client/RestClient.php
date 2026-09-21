@@ -52,7 +52,6 @@ class RestClient
      * - curl
      *      - codes (array) list of error codes to retry on
      *
-     * @param array $defaultOptions
      * @param array $ignoreErrors List of HTTP Status codes which are to be ignored
      */
     public function __construct(
@@ -61,7 +60,7 @@ class RestClient
         array $guzzleConfig = [],
         array $retryConfig = [],
         array $defaultOptions = [],
-        array $ignoreErrors = []
+        array $ignoreErrors = [],
     ) {
         // Add base url to guzzle config
         $this->baseUri = Utils::uriFor($baseUri);
@@ -128,7 +127,7 @@ class RestClient
      * @throws UserException
      * @throws \Exception
      */
-    public function download(RestRequest $request)
+    public function download(RestRequest $request): mixed
     {
         try {
             $response = $this->client->send($this->guzzleRequestFactory->create($request));
@@ -190,7 +189,7 @@ class RestClient
      * @return array|object|mixed Should be anything that can result from json_decode
      * @throws UserException
      */
-    public function getObjectFromResponse(ResponseInterface $response)
+    public function getObjectFromResponse(ResponseInterface $response): mixed
     {
         // Sanitize the JSON
         $body = (string) iconv('UTF-8', 'UTF-8//IGNORE', $response->getBody()->getContents());

@@ -12,10 +12,12 @@ interface ScrollerInterface
 {
     public function getFirstRequest(RestClient $client, JobConfig $jobConfig): ?RestRequest;
 
-    /**
-     * @param array|object $response
-     */
-    public function getNextRequest(RestClient $client, JobConfig $jobConfig, $response, array $data): ?RestRequest;
+    public function getNextRequest(
+        RestClient $client,
+        JobConfig $jobConfig,
+        array|object $response,
+        array $data,
+    ): ?RestRequest;
 
     /**
      * Reset the pagination pointer

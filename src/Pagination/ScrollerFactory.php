@@ -20,7 +20,7 @@ class ScrollerFactory
     private static function decorateScroller(
         ScrollerInterface $scroller,
         array $config,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ): ScrollerInterface {
         if (!empty($config['nextPageFlag'])) {
             $scroller = new Decorator\HasMoreScrollerDecorator($scroller, $config, $logger);

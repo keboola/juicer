@@ -88,9 +88,6 @@ class ResponseParamScroller extends AbstractResponseScroller implements Scroller
      * Overwrite original endpoint settings with endpoint,
      * params and method from scrollRequest
      *
-     * @param array $originalConfig
-     * @param array $newConfig
-     * @return array
      */
     private function createScrollRequest(array $originalConfig, array $newConfig): array
     {

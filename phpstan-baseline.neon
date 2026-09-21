@@ -1,0 +1,1303 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\GuzzleRequestFactory\:\:isHeaderSet\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/GuzzleRequestFactory.php
+
+		-
+			message: '#^Parameter \#3 \$headers of class GuzzleHttp\\Psr7\\Request constructor expects array\<array\<string\>\|string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Client/GuzzleRequestFactory.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:__construct\(\) has parameter \$defaultOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:__construct\(\) has parameter \$guzzleConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:__construct\(\) has parameter \$ignoreErrors with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:__construct\(\) has parameter \$retryConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:applyDefaultReuestOptions\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:applyDefaultReuestOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestClient\:\:createRequest\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Parameter \#1 \$defaultHostHeader of class Keboola\\Juicer\\Client\\GuzzleRequestFactory constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Client\\RestClient\:\:\$defaultRequestOptions type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Client\\RestClient\:\:\$ignoreErrors type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestClient.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestRequest\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestRequest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestRequest\:\:getHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestRequest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Client\\RestRequest\:\:getParams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestRequest.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Client\\RestRequest\:\:\$headers type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestRequest.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Client\\RestRequest\:\:\$params type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Client/RestRequest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\Config\:\:__construct\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/Config.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\Config\:\:getAttributes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/Config.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Config\\Config\:\:\$attributes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/Config.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:getConfig\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:getDataType\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:getEndpoint\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:getParams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:getParams\(\) should return array but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Config\\JobConfig\:\:setParams\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Config\\JobConfig\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Config\\JobConfig\:\:\$jobId \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Config/JobConfig.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Exception\\ApplicationException\:\:__construct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Exception\\ApplicationException\:\:getData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Exception\\ApplicationException\:\:\$data type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\AbstractScroller\:\:getState\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/AbstractScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\AbstractScroller\:\:setState\(\) has parameter \$state with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/AbstractScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\CursorScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\CursorScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\CursorScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Parameter \#2 \$data of function Keboola\\Utils\\getDataFromPath expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\CursorScroller\:\:\$idKey \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\CursorScroller\:\:\$increment \(int\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\CursorScroller\:\:\$param \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/CursorScroller.php
+
+		-
+			message: '#^Cannot access offset \(int\|string\) on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\AbstractScrollerDecorator\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\AbstractScrollerDecorator\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\AbstractScrollerDecorator\:\:getState\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\AbstractScrollerDecorator\:\:setState\(\) has parameter \$state with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$state of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:setState\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#3 \$response of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/AbstractScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''pages'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''volume'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:checkVolume\(\) has parameter \$response with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of function strtotime expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$response of method Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:checkVolume\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$value of function intval expects array\|bool\|float\|GMP\|int\|resource\|SimpleXMLElement\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#3 \$response of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\Decorator\\ForceStopScrollerDecorator\:\:\$pageLimit \(int\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/Decorator/ForceStopScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''ifNotSet'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''stopOn'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\HasMoreScrollerDecorator\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\HasMoreScrollerDecorator\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\HasMoreScrollerDecorator\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#3 \$response of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\Decorator\\HasMoreScrollerDecorator\:\:\$field \(string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/Decorator/HasMoreScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''count'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Cannot access offset ''field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\LimitStopScrollerDecorator\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\LimitStopScrollerDecorator\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\Decorator\\LimitStopScrollerDecorator\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$value of function intval expects array\|bool\|float\|GMP\|int\|resource\|SimpleXMLElement\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#2 \$data of function Keboola\\Utils\\getDataFromPath expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#3 \$response of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\Decorator\\LimitStopScrollerDecorator\:\:\$fieldName \(string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/Decorator/LimitStopScrollerDecorator.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Binary operation "\." between ''Scroller…'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\MultipleScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\MultipleScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\MultipleScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Parameter \#3 \$response of method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Part \$scrollerId \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 3
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\MultipleScroller\:\:\$defaultScroller \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/MultipleScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\NoScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/NoScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\NoScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/NoScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\NoScroller\:\:getState\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/NoScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\NoScroller\:\:setState\(\) has parameter \$state with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/NoScroller.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\OffsetScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\OffsetScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\OffsetScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\OffsetScroller\:\:getParams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/OffsetScroller.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 3
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\PageScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\PageScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\PageScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\PageScroller\:\:getParams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/PageScroller.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:createScrollRequest\(\) has parameter \$newConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:createScrollRequest\(\) has parameter \$originalConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:createScrollRequest\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Parameter \#2 \$data of function Keboola\\Utils\\getDataFromPath expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:\$queryParam \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:\$responseParam \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:\$scrollRequest \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseParamScroller\:\:\$scrollRequest type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseParamScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseUrlScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseUrlScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ResponseUrlScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#2 \$data of function Keboola\\Utils\\getDataFromPath expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseUrlScroller\:\:\$delimiter \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ResponseUrlScroller\:\:\$urlParam \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerFactory\:\:createScroller\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerFactory.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerFactory\:\:decorateScroller\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerFactory.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerFactory\:\:getScroller\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerFactory.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getNextRequest\(\) has parameter \$response with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:getState\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ScrollerInterface\:\:setState\(\) has parameter \$state with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ScrollerInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ZendeskResponseUrlScroller\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ZendeskResponseUrlScroller\:\:getNextRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Pagination\\ZendeskResponseUrlScroller\:\:getNextRequest\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#1 \$uri of class GuzzleHttp\\Psr7\\Uri constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#2 \$data of function Keboola\\Utils\\getDataFromPath expects array\|object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Parameter \#2 \$datetime of static method DateTime\:\:createFromFormat\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Pagination\\ZendeskResponseUrlScroller\:\:\$urlParam \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Pagination/ZendeskResponseUrlScroller.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\Json\:\:__construct\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/Json.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\Json\:\:getMetadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/Json.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\Json\:\:process\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/Json.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\Json\:\:process\(\) has parameter \$parentId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Parser/Json.php
+
+		-
+			message: '#^Parameter \#3 \$parentId of method Keboola\\Json\\Parser\:\:process\(\) expects array\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/Json.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:getMappers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:getMetadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:getResults\(\) should return array\<Keboola\\CsvTable\\Table\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:mergeResults\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:process\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\JsonMap\:\:process\(\) has parameter \$parentId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#1 \$array \(array\<Keboola\\CsvTable\\Table\>\) to function array_filter does not contain falsy values, the array will always stay the same\.$#'
+			identifier: arrayFilter.same
+			count: 2
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_diff expects an array of values castable to string, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#1 \$results of method Keboola\\Juicer\\Parser\\JsonMap\:\:mergeResults\(\) expects array\<Keboola\\CsvTable\\Table\>, array given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#1 \$row of method Keboola\\Csv\\CsvWriter\:\:writeRow\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#2 \$arrays of function array_diff expects an array of values castable to string, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Parser/JsonMap.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\ParserInterface\:\:getMetadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/ParserInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\ParserInterface\:\:process\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/ParserInterface.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Parser\\ParserInterface\:\:process\(\) has parameter \$parentId with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Parser/ParserInterface.php
+
+		-
+			message: '#^Cannot access offset ''codes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Cannot access offset ''retryHeader'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Retry\\RetryHandler\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryHandler\:\:\$curlCodes \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryHandler\:\:\$curlCodes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryHandler\:\:\$httpCodes \(array\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryHandler\:\:\$httpCodes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryHandler\:\:\$retryHeader \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Retry/RetryHandler.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Retry\\RetryMiddlewareFactory\:\:__construct\(\) has parameter \$retryConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Retry/RetryMiddlewareFactory.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Retry\\RetryMiddlewareFactory\:\:\$retryConfig type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Retry/RetryMiddlewareFactory.php
+
+		-
+			message: '#^Class Keboola\\Juicer\\Tests\\HistoryContainer implements generic interface ArrayAccess but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Tests/HistoryContainer.php
+
+		-
+			message: '#^Possibly invalid array key type int\|string\|null\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 2
+			path: src/Tests/HistoryContainer.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 4
+			path: src/Tests/HistoryContainer.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\HistoryItem\:\:__construct\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\HistoryItem\:\:fromArray\(\) has parameter \$array with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\HistoryItem\:\:getOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Parameter \#1 \$request of class Keboola\\Juicer\\Tests\\HistoryItem constructor expects Psr\\Http\\Message\\RequestInterface, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Parameter \#2 \$response of class Keboola\\Juicer\\Tests\\HistoryItem constructor expects Psr\\Http\\Message\\ResponseInterface\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Parameter \#3 \$error of class Keboola\\Juicer\\Tests\\HistoryItem constructor expects Throwable\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Parameter \#4 \$options of class Keboola\\Juicer\\Tests\\HistoryItem constructor expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\HistoryItem\:\:\$options type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/HistoryItem.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:setGuzzleConfig\(\) has parameter \$guzzleConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:setIgnoreErrors\(\) has parameter \$ignoreErrors with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:setRequestDefaultOptions\(\) has parameter \$defaultOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:setRetryConfig\(\) has parameter \$retryConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$queue of class GuzzleHttp\\Handler\\MockHandler constructor expects array\<int, mixed\>\|null, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$defaultOptions type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$guzzleConfig type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$history \(Keboola\\Juicer\\Tests\\HistoryContainer\|null\) does not accept array\|ArrayAccess\<int, array\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$ignoreErrors type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$logger \(Psr\\Log\\LoggerInterface\|null\) is never assigned Psr\\Log\\LoggerInterface so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$responses type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Property Keboola\\Juicer\\Tests\\RestClientMockBuilder\:\:\$retryConfig type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Tests/RestClientMockBuilder.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Client\\RestClientTest\:\:runAndAssertDelay\(\) has parameter \$retryConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Client/RestClientTest.php
+
+		-
+			message: '#^Parameter \#2 \$string of static method PHPUnit\\Framework\\Assert\:\:assertMatchesRegularExpression\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/phpunit/Client/RestClientTest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\ExtractorTestCase\:\:callMethod\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/ExtractorTestCase.php
+
+		-
+			message: '#^Parameter \#2 \$level of method Monolog\\Handler\\TestHandler\:\:hasRecordThatContains\(\) expects 100\|200\|250\|300\|400\|500\|550\|600\|''ALERT''\|''alert''\|''CRITICAL''\|''critical''\|''DEBUG''\|''debug''\|''EMERGENCY''\|''emergency''\|''ERROR''\|''error''\|''INFO''\|''info''\|''NOTICE''\|''notice''\|''WARNING''\|''warning'', mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/phpunit/ExtractorTestCase.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/phpunit/ExtractorTestCase.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Pagination\\Decorator\\ForceStopScrollerDecoratorTest\:\:limitProvider\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Pagination/Decorator/ForceStopScrollerDecoratorTest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Pagination\\Decorator\\ForceStopScrollerDecoratorTest\:\:testCheckLimits\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Pagination/Decorator/ForceStopScrollerDecoratorTest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Pagination\\Decorator\\ForceStopScrollerDecoratorTest\:\:testCheckLimits\(\) has parameter \$response with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Pagination/Decorator/ForceStopScrollerDecoratorTest.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/phpunit/Pagination/Decorator/ForceStopScrollerDecoratorTest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Pagination\\MultipleScrollerTest\:\:getScrollerConfig\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Pagination/MultipleScrollerTest.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and 10 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 3
+			path: tests/phpunit/Pagination/OffsetScrollerTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNull\(\) with Keboola\\Juicer\\Client\\RestRequest will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: tests/phpunit/Pagination/PageScrollerTest.php
+
+		-
+			message: '#^Cannot access offset ''limit'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/phpunit/Pagination/PageScrollerTest.php
+
+		-
+			message: '#^Cannot access offset ''page'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/phpunit/Pagination/PageScrollerTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertContainsOnlyInstancesOf\(\) with ''Keboola\\\\CsvTable…'' and array\<Keboola\\CsvTable\\Table\> will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/phpunit/Parser/JsonMapTest.php
+
+		-
+			message: '#^Method Keboola\\Juicer\\Tests\\Tests\\HistoryContainerTest\:\:createHistoryItemArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/Tests/HistoryContainerTest.php

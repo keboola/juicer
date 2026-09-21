@@ -36,7 +36,7 @@ class HistoryItem
         RequestInterface $request,
         ?ResponseInterface $response,
         ?Throwable $error,
-        array $options
+        array $options,
     ) {
         $this->request = $request;
         $this->response = $response;

@@ -23,10 +23,7 @@ class ExtractorTestCase extends TestCase
         parent::setUp();
     }
 
-    /**
-     * @param mixed $level
-     */
-    public static function assertLoggerContains(string $message, $level): void
+    public static function assertLoggerContains(string $message, mixed $level): void
     {
         self::assertTrue(
             self::$testHandler->hasRecordThatContains($message, $level),
@@ -34,10 +31,7 @@ class ExtractorTestCase extends TestCase
         );
     }
 
-    /**
-     * @return mixed
-     */
-    protected static function callMethod(object $obj, string $name, array $args)
+    protected static function callMethod(object $obj, string $name, array $args): mixed
     {
         $class = new ReflectionClass($obj);
         $method = $class->getMethod($name);
@@ -46,10 +40,7 @@ class ExtractorTestCase extends TestCase
         return $method->invokeArgs($obj, $args);
     }
 
-    /**
-     * @return mixed
-     */
-    protected static function getProperty(object $obj, string $name)
+    protected static function getProperty(object $obj, string $name): mixed
     {
         $class = new ReflectionClass($obj);
         $property = $class->getProperty($name);
