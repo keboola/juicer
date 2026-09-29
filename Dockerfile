@@ -1,4 +1,4 @@
-FROM php:7.4-cli
+FROM php:8.5-cli-bookworm
 
 ARG COMPOSER_FLAGS="--prefer-dist --no-interaction"
 ARG DEBIAN_FRONTEND=noninteractive
@@ -25,7 +25,7 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 # XDebug for code coverage
-RUN pecl install xdebug-3.1.5 \
+RUN pecl install xdebug-3.5.3 \
     && docker-php-ext-enable xdebug
 
 ## Composer - deps always cached unless changed

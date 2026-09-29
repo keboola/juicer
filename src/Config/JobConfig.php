@@ -103,10 +103,7 @@ class JobConfig
         $this->config['params'] = $params;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setParam(string $name, $value): void
+    public function setParam(string $name, mixed $value): void
     {
         $this->config['params'][$name] = $value;
     }

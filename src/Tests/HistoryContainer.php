@@ -74,27 +74,17 @@ class HistoryContainer implements ArrayAccess, Countable
         return count($this->items);
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->items[$offset]);
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetGet($offset): ?HistoryItem
+    public function offsetGet(mixed $offset): ?HistoryItem
     {
         return $this->items[$offset] ?? null;
     }
 
-    /**
-     * @param mixed $offset
-     * @param mixed $array
-     */
-    public function offsetSet($offset, $array): void
+    public function offsetSet(mixed $offset, mixed $array): void
     {
         if (!is_array($array)) {
             throw new InvalidArgumentException('Value must be array.');
@@ -110,10 +100,7 @@ class HistoryContainer implements ArrayAccess, Countable
         }
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->items[$offset]);
     }

@@ -42,10 +42,7 @@ class Config
         return $this->attributes;
     }
 
-    /**
-     * @return bool|mixed
-     */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
         return empty($this->attributes[$name]) ? false : $this->attributes[$name];
     }

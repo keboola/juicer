@@ -72,7 +72,7 @@ class RetryHandler
         int $retries,
         RequestInterface $request,
         ?ResponseInterface $response,
-        ?Throwable $exception
+        ?Throwable $exception,
     ): bool {
         $this->lastRequest = $request;
         $this->lastException = $exception;
@@ -101,7 +101,7 @@ class RetryHandler
      */
     public function delay(
         int $retries,
-        ?ResponseInterface $response
+        ?ResponseInterface $response,
     ): int {
         $delayMs = null;
         if ($response && $response->hasHeader($this->retryHeader)) {
@@ -143,7 +143,7 @@ class RetryHandler
         RequestInterface $request,
         ?ResponseInterface $response,
         ?Throwable $exception,
-        int $delayMs
+        int $delayMs,
     ): void {
         $bodyStream = $response ? $response->getBody() : null;
         if ($bodyStream) {
